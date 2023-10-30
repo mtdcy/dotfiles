@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# test on ubuntu 20.04
+Trash="$HOME/.local/share/Trash"
+
+while [ $# -gt 0 ]; do
+    opt="$1"; shift; 
+
+    case "$opt" in 
+        --list)
+            echo "trash files @ $Trash: "
+            [[ -d "$Trash" ]] && ls "$Trash/files" || echo "trash --list not implemented"
+            # gio trash --list not working 
+            ;;
+        --empty)
+            /usr/bin/rm -rfv $Trash/info/* $Trash/files/*
+            # gio trash --empty not working
+            ;;
+        --restore) 
+            echo "trash --list not implemented"
+            exit 1
+            ;;
+        *)
+            gio trash "$opt" 
+            ;;
+    esac
+done

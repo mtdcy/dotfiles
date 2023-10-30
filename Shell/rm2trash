@@ -1,0 +1,42 @@
+#!/bin/bash 
+
+xwd=$(dirname $(readlink -f "$0"))
+. "$xwd/xlib.sh"
+
+cmd="$xwd/$(uname -s | tr A-Z a-z)/trash"
+
+[ ! -e "$cmd" ] && { xlog error "missing command $cmd, exit ..."; exit 1; }
+
+for file in "$@"; do
+    case "$file" in 
+        --list|--empty)
+            exec $cmd "$file"
+            ;;
+        --restore) 
+            xlog error "$0 --restore is not implemented"
+            exit 1
+            ;;
+        -*)
+            # unsupported options -> ignore 
+            ;;
+        *)
+            lnk=$(readlink "$file")
+            if [ -z "$lnk" ]; then
+                if [ -e "$file" ]; then
+                    xlog "move '$file' to trash ..."
+                    # external disk: trash may fail, which lead to delete forever
+                    $cmd "$file" || {
+                        xlog warn "delete '$file' permenantely"
+                        /bin/rm -rfv "$file"
+                    }
+                else
+                    xlog warn "'$file' doesn't exists, skip ..."
+                fi
+            else
+                # remove link 
+                xlog "unlink '$file' -> '$lnk' ..."
+                unlink "$file"
+            fi
+            ;;
+    esac
+done
