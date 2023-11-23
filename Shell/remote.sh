@@ -8,12 +8,16 @@ cd $(dirname $0)
 
 PORT=10000
 
-ns="netstat -anp tcp"   # macOS
-[ "$(uname)" = "Linux" ] && ns="netstat -tnlp"
+pbcopy="pbcopy" 
+netstat="netstat -anp tcp"   # macOS
+if [ "$(uname)" = "Linux" ]; then
+    pbcopy="xclip -selection clipboard"
+    netstat="netstat -tnlp"
+fi
 
 # find available port
 while true; do
-    $ns | grep $PORT 2>&1 > /dev/null || break
+    $netstat | grep $PORT 2>&1 > /dev/null || break
     PORT=$(expr $PORT + 1)
 done
 
@@ -25,11 +29,12 @@ xlog info "$$: start copy/paste listen @ $PORT"
         text=$(nc -l $PORT)
         [ "$text" == "$$" ] && break # stop when received pid
 
-        echo "$text" | pbcopy 
+        echo "$text" | $pbcopy 
     done
     xlog info "$$: stop listening ..."
 } &
 
+# for zsh, save this to rcopy.sh to remote
 rcopy() {
     if [ ! -r "$@" ]; then
         echo "$@ does not exists, or access denied ..."

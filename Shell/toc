@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e 
+
+xwd=$(dirname $(readlink -f "$0"))
+. "$xwd/xlib.sh"
+
+cmd="$xwd/$(uname -s | tr A-Z a-z)/$(uname -m)/gh-md-toc"
+
+[ -x "$cmd" ] || { xlog error "no executable $cmd"; exit 1; }
+
+exec $cmd --hide-footer --no-escape "$@" | pbcopy
