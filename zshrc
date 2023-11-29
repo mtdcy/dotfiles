@@ -105,3 +105,9 @@ export SYSTEMD_EDITOR=vim
 
 # logo
 #$(dirname $(readlink -f ${(%):-%x}))/bin/screenfetch
+
+if [ -d /usr/local/go ]; then
+    export PATH=/usr/local/go/bin:$PATH
+fi
+export GOPATH=$HOME/.go
+export PATH=$GOPATH/bin:$PATH
