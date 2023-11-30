@@ -189,20 +189,14 @@ let g:tagbar_autoshowtag = 1
 let g:tagbar_iconchars = ['+', '-']     "
 let g:tagbar_compact = 1                "
 
-" Taglist
-"nmap <F10> :TlistToggle<CR>
-"let g:Tlist_Use_Right_Window = 1
-"let g:Tlist_Show_One_File = 1
-"let g:Tlist_Show_Menu = 1
-"let g:Tlist_Exit_OnlyWindow = 1
-"let g:Tlist_Compact_Format = 1
-"let g:Tlist_Max_Submenu_Items = 100
-"let g:Tlist_GainFocus_On_ToggleOpen = 1
-
 " syntastic - auto errors check on :w
+"  => syntastic is deprecated, keep it here for old languages
+"   => install new plugin for new languages 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
-let g:syntastic_vim_checkers = ['vint']
+let g:syntastic_vim_checkers = ['vint', 'shfmt']
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
 let g:syntastic_vim_vint_quiet_messages = { "!level" : "errors" }
 
 " neosnippet
