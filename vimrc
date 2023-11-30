@@ -179,6 +179,8 @@ au FileType *.pkg setlocal filetype=sh
 "}}}
 
 " => Plugin "{{{
+" bufexplorer 
+
 " NERDTreeToggle
 nmap <F9> :NERDTreeToggle <CR>
 
@@ -219,6 +221,7 @@ let g:go_highlight_extra_types = 1
 augroup Go
     autocmd FileType go nmap <buffer> gb        <Plug>(go-build)
     autocmd FileType go nmap <buffer> gr        <Plug>(go-run)
+    autocmd FileType go nmap <buffer> gd        <Plug>(go-def)
     autocmd FileType go nmap <buffer> fj        <Plug>(go-def)
 augroup END
 

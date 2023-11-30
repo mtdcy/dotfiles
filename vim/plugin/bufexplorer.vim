@@ -1,5 +1,5 @@
 "============================================================================
-"    Copyright: Copyright (c) 2001-2017, Jeff Lanzarotta
+"    Copyright: Copyright (c) 2001-2023, Jeff Lanzarotta
 "               All rights reserved.
 "
 "               Redistribution and use in source and binary forms, with or
@@ -35,8 +35,8 @@
 "               EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 " Name Of File: bufexplorer.vim
 "  Description: Buffer Explorer Vim Plugin
-"   Maintainer: Jeff Lanzarotta (delux256-vim at outlook dot com)
-" Last Changed: Monday, 18 September 2017
+"   Maintainer: Jeff Lanzarotta (my name at gmail dot com)
+" Last Changed: Monday, 01 May 2023
 "      Version: See g:bufexplorer_version for version number.
 "        Usage: This file should reside in the plugin directory and be
 "               automatically sourced.
@@ -74,14 +74,20 @@ endif
 "1}}}
 
 " Version number
-let g:bufexplorer_version = "7.4.19"
+let g:bufexplorer_version = "7.4.26"
 
 " Plugin Code {{{1
 " Check for Vim version {{{2
+if !exists("g:bufExplorerVersionWarn")
+    let g:bufExplorerVersionWarn = 1
+endif
+
 if v:version < 700
-    echohl WarningMsg
-    echo "Sorry, bufexplorer ".g:bufexplorer_version." required Vim 7.0 or greater."
-    echohl None
+    if g:bufExplorerVersionWarn
+        echohl WarningMsg
+        echo "Sorry, bufexplorer ".g:bufexplorer_version." required Vim 7.0 or greater."
+        echohl None
+    endif
     finish
 endif
 " Check to see if the version of Vim has the correct patch applied, if not, do
@@ -89,9 +95,11 @@ endif
 if v:version > 703 || v:version == 703 && has('patch1261') && has('patch1264')
     " We are good to go.
 else
-    echohl WarningMsg
-    echo "Sorry, bufexplorer ".g:bufexplorer_version." required Vim 7.3 or greater with patch1261 and patch1264."
-    echohl None
+    if g:bufExplorerVersionWarn
+        echohl WarningMsg
+        echo "Sorry, bufexplorer ".g:bufexplorer_version." required Vim 7.3 or greater with patch1261 and patch1264."
+        echohl None
+    endif
     finish
 endif
 
@@ -124,10 +132,14 @@ let s:originBuffer = 0
 let s:running = 0
 let s:sort_by = ["number", "name", "fullpath", "mru", "extension"]
 let s:splitMode = ""
+let s:didSplit = 0
 let s:types = {"fullname": ':p', "path": ':p:h', "relativename": ':~:.', "relativepath": ':~:.:h', "shortname": ':t'}
 
 " Setup the autocommands that handle the MRUList and other stuff. {{{2
 autocmd VimEnter * call s:Setup()
+
+" Reset MRUList and buffer->tab associations after loading a session. {{{2
+autocmd SessionLoadPost * call s:Reset()
 
 " Setup {{{2
 function! s:Setup()
@@ -147,8 +159,9 @@ endfunction
 " Reset {{{2
 function! s:Reset()
     " Build initial MRUList. This makes sure all the files specified on the
-    " command line are picked up correctly.
-    let s:MRUList = range(1, bufnr('$'))
+    " command line are picked up correctly. Check buffers exist so this also
+    " works after wiping buffers and loading a session (e.g. sessionman.vim)
+    let s:MRUList = filter(range(1, bufnr('$')), 'bufexists(v:val)')
 
     " Initialize the association of buffers to tabs for any buffers
     " that have been created prior to now, e.g., files specified as
@@ -304,7 +317,7 @@ endfunction
 " ShouldIgnore {{{2
 function! s:ShouldIgnore(buf)
     " Ignore temporary buffers with buftype set.
-    if empty(getbufvar(a:buf, "&buftype") == 0)
+    if empty(getbufvar(a:buf, "&buftype")) == 0
         return 1
     endif
 
@@ -353,6 +366,7 @@ function! s:Cleanup()
 
     let s:running = 0
     let s:splitMode = ""
+    let s:didSplit = 0
 
     delmarks!
 endfunction
@@ -384,12 +398,14 @@ endfunction
 function! BufExplorerHorizontalSplit()
     let s:splitMode = "sp"
     execute "BufExplorer"
+    let s:splitMode = ""
 endfunction
 
 " BufExplorerVerticalSplit {{{2
 function! BufExplorerVerticalSplit()
     let s:splitMode = "vsp"
     execute "BufExplorer"
+    let s:splitMode = ""
 endfunction
 
 " ToggleBufExplorer {{{2
@@ -443,6 +459,9 @@ function! BufExplorer()
 
         " Restore the original settings.
         let [&splitbelow, &splitright] = [_splitbelow, _splitright]
+
+        " Remember that a split was triggered
+        let s:didSplit = 1
     endif
 
     if !exists("b:displayMode") || b:displayMode != "winmanager"
@@ -461,12 +480,12 @@ endfunction
 
 " DisplayBufferList {{{2
 function! s:DisplayBufferList()
-    " Do not set bufhidden since it wipes out the data if we switch away from
-    " the buffer using CTRL-^.
     setlocal buftype=nofile
     setlocal modifiable
+    setlocal noreadonly
     setlocal noswapfile
     setlocal nowrap
+    setlocal bufhidden=wipe
 
     call s:SetupSyntax()
     call s:MapKeys()
@@ -743,6 +762,11 @@ function! s:BuildBufferList()
 
         let line = buf.attributes." "
 
+        if exists("g:loaded_webdevicons")
+            let line .= WebDevIconsGetFileTypeSymbol(buf.shortname)
+            let line .= " "
+        endif
+
         " Are we to split the path and file name?
         if g:bufExplorerSplitOutPathName
             let type = (g:bufExplorerShowRelativePath) ? "relativepath" : "path"
@@ -906,7 +930,7 @@ function! s:SelectBuffer(...)
             endif
 
             " Switch to the selected buffer.
-            execute "keepalt silent b!" _bufNbr
+            execute "keepjumps keepalt silent b!" _bufNbr
         endif
 
         " Make the buffer 'listed' again.
@@ -942,11 +966,7 @@ function! s:RemoveBuffer(mode)
         return
     endif
 
-    " Do not allow this buffer to be deleted if it is the last one.
-    if len(s:MRUList) == 1
-        call s:Error("Sorry, you are not allowed to delete the last buffer")
-        return
-    endif
+    let mode = a:mode
 
     " These commands are to temporarily suspend the activity of winmanager.
     if exists("b:displayMode") && b:displayMode == "winmanager"
@@ -956,12 +976,26 @@ function! s:RemoveBuffer(mode)
     let _bufNbr = str2nr(getline('.'))
 
     if getbufvar(_bufNbr, '&modified') == 1
-        call s:Error("Sorry, no write since last change for buffer "._bufNbr.", unable to delete")
-        return
-    else
-        " Okay, everything is good, delete or wipe the buffer.
-        call s:DeleteBuffer(_bufNbr, a:mode)
+        " Calling confirm() requires Vim built with dialog option
+        if !has("dialog_con") && !has("dialog_gui")
+            call s:Error("Sorry, no write since last change for buffer "._bufNbr.", unable to delete")
+            return
+        endif
+
+        let answer = confirm('No write since last change for buffer '._bufNbr.'. Delete anyway?', "&Yes\n&No", 2)
+
+        if a:mode == "delete" && answer == 1
+            let mode = "force_delete"
+        elseif a:mode == "wipe" && answer == 1
+            let mode = "force_wipe"
+        else
+            return
+        endif
+
     endif
+
+    " Okay, everything is good, delete or wipe the buffer.
+    call s:DeleteBuffer(_bufNbr, mode)
 
     " Reactivate winmanager autocommand activity.
     if exists("b:displayMode") && b:displayMode == "winmanager"
@@ -977,6 +1011,10 @@ function! s:DeleteBuffer(buf, mode)
         " Wipe/Delete buffer from Vim.
         if a:mode == "wipe"
             execute "silent bwipe" a:buf
+        elseif a:mode == "force_wipe"
+            execute "silent bwipe!" a:buf
+        elseif a:mode == "force_delete"
+            execute "silent bdelete!" a:buf
         else
             execute "silent bdelete" a:buf
         endif
@@ -1009,7 +1047,7 @@ function! s:Close()
     endif
 
     " If we needed to split the main window, close the split one.
-    if s:splitMode != "" && bufwinnr(s:originBuffer) != -1
+    if s:didSplit == 1 && bufwinnr(s:originBuffer) != -1
         execute "wincmd c"
     endif
 
