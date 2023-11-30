@@ -185,13 +185,9 @@ nmap <F9> :NERDTreeToggle <CR>
 " tagbar [FIXME: tagbar use on fly tags, but we have loaded a tag file]
 nmap <F10> :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
-let g:tagbar_compact = 1                "
-let g:tagbar_iconchars = ['+', '-']     "
 let g:tagbar_autoshowtag = 1
-let g:tagbar_autopreview = 0
-let g:tagbar_foldlevel = 1
-let g:tagbar_previewwin_pos = "rightbelow"
-let g:tagbar_autopreview = 1
+let g:tagbar_iconchars = ['+', '-']     "
+let g:tagbar_compact = 1                "
 
 " Taglist
 "nmap <F10> :TlistToggle<CR>
