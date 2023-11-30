@@ -306,7 +306,6 @@ if has('nvim')
     imap <silent> <expr><Enter> SuperEnter()
 
     " echodoc 
-    "set cmdheight=2
     let g:echodoc#enable_at_startup = 1
     let g:echodoc#type = "floating"
     let g:echodoc#floating_config = {'border': 'single'}
