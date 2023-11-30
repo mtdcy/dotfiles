@@ -195,19 +195,42 @@ let g:tagbar_autopreview = 1
 
 " Taglist
 "nmap <F10> :TlistToggle<CR>
-let g:Tlist_Use_Right_Window = 1
-let g:Tlist_Show_One_File = 1
-let g:Tlist_Show_Menu = 1
-let g:Tlist_Exit_OnlyWindow = 1
-let g:Tlist_Compact_Format = 1
-let g:Tlist_Max_Submenu_Items = 100
-let g:Tlist_GainFocus_On_ToggleOpen = 1
+"let g:Tlist_Use_Right_Window = 1
+"let g:Tlist_Show_One_File = 1
+"let g:Tlist_Show_Menu = 1
+"let g:Tlist_Exit_OnlyWindow = 1
+"let g:Tlist_Compact_Format = 1
+"let g:Tlist_Max_Submenu_Items = 100
+"let g:Tlist_GainFocus_On_ToggleOpen = 1
 
 " syntastic - auto errors check on :w
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_vim_checkers = ['vint']
 let g:syntastic_vim_vint_quiet_messages = { "!level" : "errors" }
+
+" neosnippet
+imap <C-o>  <Plug>(neosnippet_expand_or_jump)
+smap <C-o>  <Plug>(neosnippet_expand_or_jump)
+let g:neosnippet#enable_snipmate_compatibility = 1
+
+" vim-go
+set autowrite   " auto save file before run or build
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+
+augroup Go
+    autocmd FileType go nmap <buffer> gb        <Plug>(go-build)
+    autocmd FileType go nmap <buffer> gr        <Plug>(go-run)
+    autocmd FileType go nmap <buffer> fj        <Plug>(go-def)
+augroup END
 
 " vim-racer
 let g:racer_experimental_completer = 1
@@ -229,3 +252,5 @@ augroup cgroup
 augroup END
 
 " }}}
+
+nmap <buffer> <F1>  i

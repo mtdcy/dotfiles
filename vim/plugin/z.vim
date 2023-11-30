@@ -32,7 +32,7 @@
 
 " this options set should work in global
 " set completopt and preview window on the bottom
-set completeopt=menuone,longest
+set completeopt=menu,longest
 set complete=],.,i,d,b,u,w " :h 'complete'
 
 " use cstag instead of tag
@@ -42,7 +42,12 @@ set complete=],.,i,d,b,u,w " :h 'complete'
 
 let g:simple_ide_setup = 1
 let s:select_first = 1
-let s:completing = 0
+
+let s:tabling = 0 
+" 0 - disable
+" 1 - omnifunc
+" 2 - snippet
+" 3 - words
 
 let s:types = '\.\(asm\|c\|cpp\|cc\|h\|rs\)$'
 let s:fileList = ".files"
@@ -156,66 +161,94 @@ function! z#select_first()
     endif
 endfunction
 
-function! z#startcomplete()
-    let s:completing = 1
-    "set ic
-endfunction
-
-function! z#endcomplete()
-    "set noic
-    let s:completing = 0
-endfunction
-
 function! z#supertab()
+    echom "mode: " . mode() ", tabling: " . s:tabling
     if pumvisible()
-        call z#endcomplete()
         " next candidate on pop list
+        let s:tabling = 0
         return "\<C-N>"
     else
-        call z#startcomplete()
         let word = z#gettext_before_cursor()
-        if word =~? '\(\s\+\|^\|,\|;\|"\|(\|)\|[\|]\|{\|}\)$'   " spcaces or empty line
-            return "\<TAB>"                             " insert tab
-        elseif word =~? '\(\.\|->\|::\)$'
-            return "\<C-X>\<C-O>" . z#select_first()    " using omni complete
+        " . or -> or :: 
+        if word =~? '\(\.\|->\|::\)$'
+            " omnifunc补全优先snippet
+            let s:tabling = 1
+            return "\<C-X>\<C-O>" . z#select_first()    
+        elseif exists('g:loaded_neosnippet') && neosnippet#expandable_or_jumpable()
+            if word =~? '\(\s\|^\)$'
+                " 光标前没字符才跳转到下一个位置
+                let s:tabling = 2
+                return "\<Plug>(neosnippet_jump)"
+            elseif neosnippet#expandable()
+                " snippet 展开
+                let s:tabling = 2
+                return "\<Plug>(neosnippet_expand)"
+            elseif s:tabling == 3
+                " 已经进行一次字符补全
+                let s:tabling = 2
+                return "\<Plug>(neosnippet_jump)"
+            else
+                " 可跳转，但是光标前有字符，执行字符补全操作
+                let s:tabling = 3
+                return "\<C-N>" . z#select_first() 
+            endif
+        " spcaces or empty line or ,; or {} or [] or () or <>
+        elseif word =~? '\(\s\+\|^\|,\|;\|"\|(\|)\|[\|]\|{\|}\|<\|>\)$'   
+            let s:tabling = 0
+            return "\<TAB>"
+        elseif s:tabling == 3
+            " 避免Tab卡在<C-N>上
+            let s:tabling = 0
+            return "\<TAB>"
         else
+            let s:tabling = 3
             return "\<C-N>" . z#select_first() 
         endif
     endif
-    return "\<TAB>"
 endfunction
 
 function! z#superbs() 
-    if pumvisible()                                             " undo & close popup
-        call z#endcomplete()
+    echom "mode: " . mode() ", tabling: " . s:tabling
+    let s:tabling = 0
+    if pumvisible()     " undo & close popup
         return "\<C-E>"
+    else
+        return "\<BS>"
     endif
-    return "\<BS>"
 endfunction
 
 function! z#superenter() 
+    let s:tabling = 0
     if pumvisible()
-        call z#endcomplete()
-        return "\<C-Y>"
+        if exists('g:loaded_neosnippet') && neosnippet#expandable() 
+            return "\<C-Y>\<Plug>(neosnippet_expand)"
+        else
+            " unlike superspace, no space here
+            return "\<C-Y>"
+        endif
     else
         return "\<Enter>"
     endif
 endfunction
 
 function! z#superspace()
+    let s:tabling = 0
     if pumvisible()
-        call z#endcomplete()
-        " select candidate and insert space
-        return "\<C-Y>\<Space>"
+        if exists('g:loaded_neosnippet') && neosnippet#expandable() 
+            return "\<C-Y>\<Plug>(neosnippet_expand)"
+        else
+            " select candidate and insert space
+            return "\<C-Y>\<Space>"
+        endif
     else
         return "\<Space>"
     endif
 endfunction
 
 function! z#superesc()
+    let s:tabling = 0
     if pumvisible()
-        call z#endcomplete()
-        return "\<C-E>\<ESC>"
+        return "\<C-E>"
     endif
     return "\<ESC>"
 endfunction
@@ -232,12 +265,14 @@ augroup tagsmngr
     "au FileType * call z#setup_completion()
 augroup END
 
-" supertab
-inoremap <silent> <expr><TAB>   z#supertab()
-inoremap <silent> <expr><BS>    z#superbs()
-inoremap <silent> <expr><Enter> z#superenter()
-inoremap <silent> <expr><Space> z#superspace()
-inoremap <silent> <expr><ESC>   z#superesc()
+" supertab for insert mode
+imap <silent> <expr><TAB>   z#supertab()
+imap <silent> <expr><BS>    z#superbs()
+imap <silent> <expr><Enter> z#superenter()
+imap <silent> <expr><Space> z#superspace()
+imap <silent> <expr><ESC>   z#superesc()
+" supertab for select mode
+smap <silent> <expr><TAB>   z#supertab()
 
 " set cscope key map
 "set cscopequickfix=s-,g-,d-,c-,t-,e-,f-,i-                          " ???

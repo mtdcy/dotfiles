@@ -73,7 +73,7 @@ alias history="history 0"
 # sudo preserve PATH
 alias sudo="sudo env \"PATH=$PATH\""
 
-which rm2trash > /dev/null 2>&1 && alias rm="rm2trash"
+which rm2trash > /dev/null 2>&1 && alias trm="rm2trash"
 
 # plugins
 source $HOME/.zsh/zsh-256color.zsh
