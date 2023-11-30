@@ -52,7 +52,7 @@ else
     "set paste => cause inoremap stop working
     set pastetoggle=<F12>
 endif
-set antialias
+"set antialias
 
 " 显示行号
 set number
@@ -89,7 +89,9 @@ set nocompatible
 " 有关搜索的选项
 set hls
 set incsearch
-"set ic smartcase
+au InsertEnter * set noic 
+au InsertLeave * set ic
+set smartcase
 
 " 一直启动鼠标
 set mouse=a
@@ -244,6 +246,71 @@ augroup cgroup
     autocmd FileType *      nmap <buffer> bj        <C-T>
 augroup END
 
-" }}}
+" deoplete
+if has('nvim')
+    set completeopt=menu,longest
+    set complete=],.,i,d,b,u,w " :h 'complete'
 
-nmap <buffer> <F1>  i
+    let g:deoplete#enable_at_startup = 1
+
+    call deoplete#custom#source('_',
+                \ 'smart_case', v:true 
+                \ )
+
+    " 为每个语言定义completion source
+    " 是的vim script和zsh script都有，这就是deoplete
+    call deoplete#custom#option( 
+                \ 'sources', {
+                \   'cpp'   : ['LanguageClient'],
+                \   'c'     : ['LanguageClient'],
+                \   'vim'   : ['vim'],
+                \   'zsh'   : ['zsh']
+                \ })
+    " for vim-go
+    call deoplete#custom#option( 'omni_patterns', { 'go' : '[^. *\t]\.\w*' })
+
+    " 补全结束或离开插入模式时，关闭预览窗口
+    autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+    function! SuperTab() abort
+        if pumvisible() 
+            return "\<C-N>"
+        elseif neosnippet#jumpable()
+            return "\<Plug>(neosnippet_jump)"
+        else
+            return "\<TAB>"
+        endif 
+    endfunction 
+    imap <silent> <expr><TAB>  SuperTab()
+
+    " Space: 只选择候选词，区别于Enter，这样可以避免snippets
+    function! SuperSpace()
+        if pumvisible()
+            return "\<C-Y>\<Space>"
+        else
+            return "\<Space>"
+        endif 
+    endfunction()
+    imap <silent> <expr><Space> SuperSpace()
+
+    " Enter: 候选词选择 + snippets
+    function! SuperEnter() abort
+        if neosnippet#expandable() 
+            return "\<Plug>(neosnippet_expand)"
+        elseif pumvisible()
+            return "\<C-Y>"
+        else
+            return "\<Enter>"
+        endif
+    endfunction
+    imap <silent> <expr><Enter> SuperEnter()
+
+    " echodoc 
+    "set cmdheight=2
+    let g:echodoc#enable_at_startup = 1
+    let g:echodoc#type = "floating"
+    let g:echodoc#floating_config = {'border': 'single'}
+    highlight link EchoDocFloat Pmenu
+endif
+
+" }}}
