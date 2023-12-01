@@ -182,8 +182,10 @@ autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' 
 " tagbar: use on fly tags
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
-let g:tagbar_iconchars = ['+', '-']     "
-let g:tagbar_compact = 1                "
+let g:tagbar_compact = 1
+" 避免在Tagbar中打开新的buffer
+autocmd BufEnter * if winnr() == winnr('l') && bufname('#') =~ '__Tagbar__\.\d\+' && bufname('%') !~ '__Tagbar__\.\d\+' && winnr('$') > 1 |
+            \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 
 " syntastic - auto errors check on :w
 "  => syntastic is deprecated, keep it here for old languages
@@ -217,118 +219,142 @@ let g:racer_experimental_completer = 1
 
 " {{{ => neovim 
 " deoplete
-if has('nvim')
-    set completeopt=menu,longest
-    set complete=],.,i,d,b,u,w " :h 'complete'
+set completeopt=menu,longest
+set complete=],.,i,d,b,u,w " :h 'complete'
 
-    let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 1
 
-    call deoplete#custom#source('smart_case', v:true)
+call deoplete#custom#source('smart_case', v:true)
 
-    " 为每个语言定义completion source
-    " 是的vim script和zsh script都有，这就是deoplete
-    call deoplete#custom#option(
-                \ 'sources', {
-                \   '_'     : ['buffer', 'tag'],
-                \   'cpp'   : ['LanguageClient', 'tag'],
-                \   'c'     : ['LanguageClient', 'tag'],
-                \   'vim'   : ['vim'],
-                \   'zsh'   : ['zsh']
-                \ })
-    " for vim-go
-    call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
+" 为每个语言定义completion source
+" 是的vim script和zsh script都有，这就是deoplete
+call deoplete#custom#option(
+            \ 'sources', {
+            \   '_'     : ['buffer', 'tag'],
+            \   'cpp'   : ['LanguageClient', 'tag'],
+            \   'c'     : ['LanguageClient', 'tag'],
+            \   'vim'   : ['vim'],
+            \   'zsh'   : ['zsh']
+            \ })
+" for vim-go
+call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
 
-    " 补全结束或离开插入模式时，关闭预览窗口
-    autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+" 补全结束或离开插入模式时，关闭预览窗口
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
-    function! SuperTab() abort
-        if pumvisible() 
-            return "\<C-N>"
-        elseif neosnippet#jumpable()
-            return "\<Plug>(neosnippet_jump)"
-        else
-            return "\<TAB>"
-        endif 
-    endfunction 
+function! SuperTab() abort
+    if pumvisible() 
+        return "\<C-N>"
+    elseif neosnippet#jumpable()
+        return "\<Plug>(neosnippet_jump)"
+    else
+        return "\<TAB>"
+    endif 
+endfunction 
 
-    " Space: 只选择候选词，区别于Enter，这样可以避免snippets
-    function! SuperSpace()
-        if pumvisible()
-            return "\<C-Y>\<Space>"
-        else
-            return "\<Space>"
-        endif 
-    endfunction()
+" Space: 只选择候选词，区别于Enter，这样可以避免snippets
+function! SuperSpace()
+    if pumvisible()
+        return "\<C-Y>\<Space>"
+    else
+        return "\<Space>"
+    endif 
+endfunction()
 
-    " Enter: 候选词选择 + snippets
-    function! SuperEnter() abort
-        if neosnippet#expandable() 
-            return "\<Plug>(neosnippet_expand)"
-        elseif pumvisible()
-            return "\<C-Y>"
-        else
-            return "\<Enter>"
-        endif
-    endfunction
+" Enter: 候选词选择 + snippets
+function! SuperEnter() abort
+    if neosnippet#expandable() 
+        return "\<Plug>(neosnippet_expand)"
+    elseif pumvisible()
+        return "\<C-Y>"
+    else
+        return "\<Enter>"
+    endif
+endfunction
 
-    " echodoc 
-    let g:echodoc#enable_at_startup = 1
-    let g:echodoc#type = "floating"
-    let g:echodoc#floating_config = {'border': 'single'}
-    highlight link EchoDocFloat Pmenu
+" echodoc 
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = "floating"
+let g:echodoc#floating_config = {'border': 'single'}
+highlight link EchoDocFloat Pmenu
 
-    " signify
-    let g:signify_disable_by_default = 0
-    let g:signify_number_highlight = 1
-endif
+" signify
+let g:signify_disable_by_default = 0
+let g:signify_number_highlight = 1
 " }}}
 
 " {{{ => 快捷键
+" 非必要不加<silent>，这样我们可以很好的看到具体执行的命令
 " 设置mapleader
 let mapleader = ";"
 let g:mapleader = ";"
 
-nmap <leader>se     :e $MYVIMRC<CR>
-nmap <leader>ss     :source $MYVIMRC<CR>
+" 已经有定义的按键:
+"  - `w`, `b`   : word forward or backward
+"  - `e`,       : word forward end
+"  - `n`, `N`   : search next or prev
+"  - `r`        : replace 
+"  - `i`, `I`   : insert, insert at line beginning
+"  - `a`, `A`   : append, append at line end
+"  - `o`, `O`   : new line after or before current line
+"  - `y`, `Y`   : yank
+"  - `p`, `P`   : paste after or before current cursor
+"  ...
+"  :h <char> 查看更多 => 最佳实践：使用<leader>
+"
+" => 注释不要写在map的后面，vim不会处理中间的空格
 
+" 编辑和加载.vimrc/init.vim
+nmap <leader>se             :e $MYVIMRC<CR>
+nmap <leader>ss             :source $MYVIMRC<CR>
+
+" SuperTab
 imap <silent> <expr><TAB>   SuperTab()
 imap <silent> <expr><Space> SuperSpace()
 imap <silent> <expr><Enter> SuperEnter()
 
 " 跳转 
-                                " Go to first line - `gg`
-nmap    gG          G           " Go to last line
-nmap    gd          <C-]>       " Go to Define 
-nmap    gt          <C-T>       " Go Back/Go to Top of stack
+" Go to first line - `gg`                                 
+" Go to last line
+nmap gG         G
+" Go to Define 
+nmap gd         <C-]>
+" Go Back/Go to Top of stack
+nmap gt         <C-T>
 
 " `b` is for back, so add leading here
-nmap    <leader>be  :ToggleBufExplorer<CR>  " Buffer explorer
-nmap    <leader>bn  :bnext<CR>              " Buffer next
-nmap    <leader>bp  :bprev<CR>              " Buffer prev
-
-imap    <C-o>   <Plug>(neosnippet_expand_or_jump)
-smap    <C-o>   <Plug>(neosnippet_expand_or_jump)
+" Buffer explorer
+nmap <leader>be :ToggleBufExplorer<CR>
+" Buffer next
+nmap <leader>bn :bnext<CR>
+" Buffer prev
+nmap <leader>bp :bprev<CR>
 
 " 窗口移动
-nmap    <C-j>   <C-W>j      " Up
-nmap    <C-k>   <C-W>k      " Down
-nmap    <C-h>   <C-W>h      " Left
-nmap    <C-l>   <C-W>l      " Right
+nmap <C-j>      <C-W>j
+nmap <C-k>      <C-W>k
+nmap <C-h>      <C-W>h
+nmap <C-l>      <C-W>l
 
-" 触发
-nmap    <F9>    :NERDTreeToggle<CR>     " Left file manager
-nmap    <F10>   :TagbarToggle<CR>       " Right tag manager
+" 触发(单手模式）=> 读代码必须
+nmap <F8>       :ToggleBufExplorer<CR>
+nmap <F9>       :NERDTreeToggle<CR>
+nmap <F10>      :TagbarToggle<CR>
+
+" 其他
+imap <C-o>      <Plug>(neosnippet_expand_or_jump)
+smap <C-o>      <Plug>(neosnippet_expand_or_jump)
 
 " 语言绑定
-augroup BEGIN
+augroup LANG
     autocmd!
-    autocmd FileType go     nmap <buffer> gb        <Plug>(go-build)
-    autocmd FileType go     nmap <buffer> gr        <Plug>(go-run)
+    autocmd FileType go     nmap <buffer>gb     <Plug>(go-build)
+    autocmd FileType go     nmap <buffer>gr     <Plug>(go-run)
 
-    autocmd FileType go     nmap <buffer> gd        <Plug>(go-def)
-    autocmd FileType rust   nmap <buffer> gd        <Plug>(rust-def)
-    autocmd FileType rust   nmap <buffer> gt        <Plug>(rust-def-split)
-    "autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
-    "autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
+    autocmd FileType go     nmap <buffer>gd     <Plug>(go-def)
+    autocmd FileType go     nmap <buffer>gt     <Plug>(go-def-pop)
+    
+    autocmd FileType rust   nmap <buffer>gd     <Plug>(rust-def)
+    " non pop in racer
 augroup END
 " }}}
