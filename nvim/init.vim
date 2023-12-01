@@ -85,13 +85,6 @@ syntax on
 " 使用非兼容模式
 set nocompatible
 
-" 有关搜索的选项
-set hls
-set incsearch
-au InsertEnter * set noic 
-au InsertLeave * set ic
-set smartcase
-
 " 一直启动鼠标
 set mouse=a
 
@@ -106,21 +99,28 @@ set noshowmatch
 
 " }}}
 
+" {{{ => Search: 
+" 有关搜索的选项
+set hls
+set incsearch
+set smartcase
+au InsertEnter * set noic 
+au InsertLeave * set ic
+" }}}
+
 " => Status Line {{{
-
-
 set laststatus=2
 set statusline=[%{mode()}][%n]\ %<%F%m%r%q%w        " buffer property
-set statusline+=\ %#warningmsg#                     " syntastic 
-set statusline+=\ %{SyntasticStatuslineFlag()}      " syntastic
-set statusline+=%*                                  " syntastic: reset color
+"set statusline+=\ %#warningmsg#                     " syntastic 
+"set statusline+=\ %{SyntasticStatuslineFlag()}      " syntastic
+"set statusline+=%*                                  " syntastic: reset color
 set statusline+=%=                                  " separation
 set statusline+=\ %l/%L:%c\ %p%%                    " cursor position
 set statusline+=\ %y[%{&fenc}][%{&ff}]              " file property
 
 " }}}
 
-" => Files "{{{
+" {{{ => File Format
 "
 " ts    - tabstop       - tab宽度
 " sts   - softtabstop   - 按下tab时的宽度（用tab和space组合填充）
@@ -140,14 +140,21 @@ set ts=4 sts=4 sw=4 et ff=unix
 set autoindent 
 set smartindent
 set cindent
-set cinwords=if,else,while,do,for,switch
-set cinkeys=0{,0},0(,0),0[,0],:,;,0#,~^F,o,O,0=if,e,0=switch,0=case,0=break,0=whilea,0=for,0=do
-set cinoptions=>s,e0,n0,f0,{0,}0,^0,Ls,:s,=s,l1,b1,g0,hs,N-s,E-s,ps,t0,is,+-s,t0,cs,C0,/0,(0,us,U0,w0,W0,k0,m1,M0,#0,P0
+"set cinwords=if,else,while,do,for,switch
+"set cinkeys=0{,0},0(,0),0[,0],:,;,0#,~^F,o,O,0=if,e,0=switch,0=case,0=break,0=whilea,0=for,0=do
+"set cinoptions=>s,e0,n0,f0,{0,}0,^0,Ls,:s,=s,l1,b1,g0,hs,N-s,E-s,ps,t0,is,+-s,t0,cs,C0,/0,(0,us,U0,w0,W0,k0,m1,M0,#0,P0
+"}}}
 
-" fold default by marker
+" {{{ => Fold: auto open & close 
+set foldenable 
+set foldclose=all
+set foldopen=all
+set foldlevel=0
 set foldmethod=marker
-set foldlevelstart=99
+set foldnestmax=2
+" }}}
 
+" {{{ => Jump to last position 
 function! JumpToLastPos()
     if line("'\"") > 0 && line ("'\"") <= line("$") && &ft !~# 'commit'
         exe "normal! g'\""
@@ -163,13 +170,20 @@ augroup FILES
     "au FileType c,cpp,rust setlocal tw=79 ff=unix
     au FileType c,cpp,rust,go,vim setlocal ff=unix fdm=syntax
 augroup END
+" }}}
 
-"}}}
+" {{{ => Plugins 
 
-" => Plugins "{{{
-" bufexplorer 
+" {{{ => completeopt
+set completeopt=menu,longest,noselect,noinsert
+set complete=],.,i,d,b,u,w " :h 'complete'
+" }}}
 
-" NERDTreeToggle
+" {{{ => bufexplorer 
+" NOTHING HERE
+" }}}
+
+" {{{ => NERDTree
 "autocmd VimEnter * NERDTree
 "autocmd VimEnter * NERDTree | wincmd p
 " Exit Vim if NERDTree is the only window remaining in the only tab.
@@ -178,90 +192,150 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 "  => 很好的解决在错误窗口打开bufexplorer的问题
 autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
             \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+" }}}
 
-" tagbar: use on fly tags
+" {{{ => tagbar 
+" use on fly tags
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
 let g:tagbar_compact = 1
 " 避免在Tagbar中打开新的buffer
 autocmd BufEnter * if winnr() == winnr('l') && bufname('#') =~ '__Tagbar__\.\d\+' && bufname('%') !~ '__Tagbar__\.\d\+' && winnr('$') > 1 |
             \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
-
-" syntastic - auto errors check on :w
-"  => syntastic is deprecated, keep it here for old languages
-"   => install new plugin for new languages 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_vim_checkers = ['vint', 'shfmt']
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-let g:syntastic_vim_vint_quiet_messages = { "!level" : "errors" }
-
-" neosnippet
-let g:neosnippet#enable_snipmate_compatibility = 1
-
-" vim-go
-set autowrite   " auto save file before run or build
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
-
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_extra_types = 1
-
-" BUG: first doc windows determine the size
-let g:go_doc_max_height = 10    
-let g:go_def_reuse_buffer = 1   " BUG: not working
-
-" vim-racer
-let g:racer_experimental_completer = 1
-
 " }}}
 
-" {{{ => neovim 
-" deoplete
-set completeopt=menu,longest
-set complete=],.,i,d,b,u,w " :h 'complete'
+" {{{ => neosnippet
+let g:neosnippet#enable_snipmate_compatibility = 1
+" }}}
 
-let g:deoplete#enable_at_startup = 1
+" {{{ => vim-go
+let g:go_code_completion_enabled = 0
+if g:go_code_completion_enabled 
+    set autowrite   " auto save file before run or build
+    let g:go_def_mode='gopls'
+    let g:go_info_mode='gopls'
 
-call deoplete#custom#source('smart_case', v:true)
+    let g:go_highlight_types = 1
+    let g:go_highlight_fields = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_function_calls = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_extra_types = 1
 
-" 为每个语言定义completion source
-" 是的vim script和zsh script都有，这就是deoplete
-call deoplete#custom#option(
-            \ 'sources', {
-            \   '_'     : ['buffer', 'tag'],
-            \   'cpp'   : ['LanguageClient', 'tag'],
-            \   'c'     : ['LanguageClient', 'tag'],
-            \   'vim'   : ['vim'],
-            \   'zsh'   : ['zsh']
-            \ })
-" for vim-go
-call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
-
-" 补全结束或离开插入模式时，关闭预览窗口
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-
-" echodoc 
-let g:echodoc#enable_at_startup = 1
-if has('nvim')
-    let g:echodoc#type = "floating"
-    let g:echodoc#floating_config = {'border': 'single', 'title': ' echodoc ', 'title_pos' : 'center'}
-else
-    let g:echodoc#type = "popup"
+    " BUG: first doc windows determine the size
+    let g:go_doc_max_height = 10    
+    let g:go_def_reuse_buffer = 1   " BUG: not working
 endif
-highlight link EchoDocFloat Pmenu
+" }}}
 
-" signify
+" {{{ => vim-racer
+let g:racer_experimental_completer = 1
+" }}}
+
+" {{{ => echodoc 
+let g:echodoc#enable_at_startup = 1
+if g:echodoc#enable_at_startup 
+    if has('nvim')
+        let g:echodoc#type = "floating"
+        let g:echodoc#floating_config = {'border': 'single', 'title': ' echodoc ', 'title_pos' : 'center'}
+    else
+        let g:echodoc#type = "popup"
+    endif
+    highlight link EchoDocFloat Pmenu
+endif 
+" }}}
+
+" {{{ => signify
 let g:signify_disable_by_default = 0
 let g:signify_number_highlight = 1
 " }}}
 
-" {{{ => 快捷键
+" {{{ => ALE 
+"  => ALE可以替换deoplete, vim-go, echodoc
+let g:ale_enabled = 1
+if g:ale_enabled
+    " => deoplete
+    let g:ale_completion_enabled = 0 
+    if g:ale_completion_enabled
+        let g:ale_completion_autoimport = 1
+        set omnifunc=ale#completion#OmniFunc " 支持手动补全
+        set paste& " ALE complete won't work with paste
+    endif
+
+    " linting/error check
+    " ~/.config/nvim/ale_linters
+    let g:ale_linters = {
+                \ '_'       : [''],
+                \ 'c'       : ['clang'],
+                \ 'c++'     : ['clang'],
+                \ 'vim'     : ['vint', 'vimls'],
+                \ 'sh'      : ['bashate'],
+                \ 'go'      : ['gopls'],
+                \ }
+
+    " autoload/ale/fixers
+    let g:ale_fix_on_save=1
+    let g:ale_fixers = {
+                \ '_'       : ['generic'],
+                \ 'go'      : ['goimports', 'gopls'],
+                \ }
+
+    " 如果设置这个，下面的功能都无法使用
+    let g:ale_use_neovim_diagnostics_api = 1
+    if g:ale_use_neovim_diagnostics_api == 0
+        " 防止界面跳动
+        let g:ale_sign_column_always = 1 
+        let g:ale_sign_highlight_linenrs = 1
+        let g:ale_set_highlights = 1
+    endif
+endif
+" }}}
+
+" {{{ => deoplete
+" 只开启一个自动补全插件 => 目录来看deoplete的补全功能更强一些
+if exists('g:ale_completion_enabled') && g:ale_completion_enabled
+    let g:deoplete#enable_at_startup = 0
+else 
+    let g:deoplete#enable_at_startup = 1
+endif
+
+if g:deoplete#enable_at_startup 
+    " 为每个语言定义completion source
+    if g:ale_enabled 
+        " ALE as completion source for deoplete
+        call deoplete#custom#option(
+                    \ 'sources', {
+                    \   '_'     : ['ale', 'buffer' ],
+                    \ })
+    else
+        call deoplete#custom#option(
+                    \ 'sources', {
+                    \   '_'     : ['buffer', 'tag'],
+                    \   'cpp'   : ['LanguageClient', 'tag'],
+                    \   'c'     : ['LanguageClient', 'tag'],
+                    \   'vim'   : ['vim'],
+                    \   'zsh'   : ['zsh']
+                    \ })
+    endif
+
+    call deoplete#custom#source('_', 'smart_case', v:true)
+
+    " complete cross filetype
+    call deoplete#custom#var('buffer', 'require_same_filetype', v:false)
+
+    " for vim-go
+    if g:go_code_completion_enabled 
+        call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
+    endif
+
+    " 补全结束或离开插入模式时，关闭预览窗口
+    autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+endif
+" }}}
+
+" }}}
+
+" {{{ => Key maps 
 " 非必要不加<silent>，这样我们可以很好的看到具体执行的命令
 " 设置mapleader
 let mapleader = ";"
@@ -355,7 +429,8 @@ nmap gD         10<C-W>sgd<C-W>w
 nmap gT         <C-W>W<C-W>c
 " Go to man or doc
 nmap gh         K10<C-W>_<C-W>w
-" 
+" Go to next error of ale 
+nmap ge         <Plug>(ale_next_wrap)
 
 " 其他
 imap <C-o>      <Plug>(neosnippet_expand_or_jump)
@@ -376,3 +451,4 @@ augroup LANG
     " non pop in racer
 augroup END
 " }}}
+
