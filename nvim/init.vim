@@ -98,21 +98,11 @@ set mouse=a
 " show command on the bottom of the screen
 set showcmd
 
-" 设置mapleader
-let mapleader = ";"
-let g:mapleader = ";"
-
 " set backspace behavior
 set backspace=indent,eol,start
 
 " no bracket match 
 set noshowmatch
-
-" Smart way to move btw. windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
 
 " }}}
 
@@ -164,29 +154,32 @@ function! JumpToLastPos()
     endif
 endfunction
 
-" autocmd for all files
-augroup files
+" autocmd for files
+augroup FILES
     au!
     " 自动跳转到上一次打开的位置
     au BufReadPost * call JumpToLastPos()
     " set extra properties for interest files
     "au FileType c,cpp,rust setlocal tw=79 ff=unix
-    au FileType c,cpp,rust setlocal ff=unix fdm=syntax
+    au FileType c,cpp,rust,go,vim setlocal ff=unix fdm=syntax
 augroup END
-
-" For LiteOS project
-au FileType *.pkg setlocal filetype=sh
 
 "}}}
 
-" => Plugin "{{{
+" => Plugins "{{{
 " bufexplorer 
 
 " NERDTreeToggle
-nmap <F9> :NERDTreeToggle <CR>
+"autocmd VimEnter * NERDTree
+"autocmd VimEnter * NERDTree | wincmd p
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+"  => 很好的解决在错误窗口打开bufexplorer的问题
+autocmd BufEnter * if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+            \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 
-" tagbar [FIXME: tagbar use on fly tags, but we have loaded a tag file]
-nmap <F10> :TagbarToggle<CR>
+" tagbar: use on fly tags
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
 let g:tagbar_iconchars = ['+', '-']     "
@@ -203,8 +196,6 @@ let g:syntastic_check_on_wq = 1
 let g:syntastic_vim_vint_quiet_messages = { "!level" : "errors" }
 
 " neosnippet
-imap <C-o>  <Plug>(neosnippet_expand_or_jump)
-smap <C-o>  <Plug>(neosnippet_expand_or_jump)
 let g:neosnippet#enable_snipmate_compatibility = 1
 
 " vim-go
@@ -219,31 +210,8 @@ let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 
-augroup Go
-    autocmd FileType go nmap <buffer> gb        <Plug>(go-build)
-    autocmd FileType go nmap <buffer> gr        <Plug>(go-run)
-    autocmd FileType go nmap <buffer> gd        <Plug>(go-def)
-    autocmd FileType go nmap <buffer> fj        <Plug>(go-def)
-augroup END
-
 " vim-racer
 let g:racer_experimental_completer = 1
-augroup Racer
-    autocmd!
-    autocmd FileType rust nmap <buffer> fj          <Plug>(rust-def)
-    autocmd FileType rust nmap <buffer> fJ          <Plug>(rust-def-split)
-    "autocmd FileType rust nmap <buffer> gs         <Plug>(rust-def-split)
-    "autocmd FileType rust nmap <buffer> gx         <Plug>(rust-def-vertical)
-    "autocmd FileType rust nmap <buffer> gt         <Plug>(rust-def-tab)
-    "autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
-    "autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
-augroup END
-
-augroup cgroup
-    autocmd!
-    autocmd FileType c,c++  nmap <buffer> fj        <C-]>
-    autocmd FileType *      nmap <buffer> bj        <C-T>
-augroup END
 
 " }}}
 
@@ -255,21 +223,20 @@ if has('nvim')
 
     let g:deoplete#enable_at_startup = 1
 
-    call deoplete#custom#source('_',
-                \ 'smart_case', v:true 
-                \ )
+    call deoplete#custom#source('smart_case', v:true)
 
     " 为每个语言定义completion source
     " 是的vim script和zsh script都有，这就是deoplete
-    call deoplete#custom#option( 
+    call deoplete#custom#option(
                 \ 'sources', {
-                \   'cpp'   : ['LanguageClient'],
-                \   'c'     : ['LanguageClient'],
+                \   '_'     : ['buffer', 'tag'],
+                \   'cpp'   : ['LanguageClient', 'tag'],
+                \   'c'     : ['LanguageClient', 'tag'],
                 \   'vim'   : ['vim'],
                 \   'zsh'   : ['zsh']
                 \ })
     " for vim-go
-    call deoplete#custom#option( 'omni_patterns', { 'go' : '[^. *\t]\.\w*' })
+    call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
 
     " 补全结束或离开插入模式时，关闭预览窗口
     autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
@@ -283,7 +250,6 @@ if has('nvim')
             return "\<TAB>"
         endif 
     endfunction 
-    imap <silent> <expr><TAB>  SuperTab()
 
     " Space: 只选择候选词，区别于Enter，这样可以避免snippets
     function! SuperSpace()
@@ -293,7 +259,6 @@ if has('nvim')
             return "\<Space>"
         endif 
     endfunction()
-    imap <silent> <expr><Space> SuperSpace()
 
     " Enter: 候选词选择 + snippets
     function! SuperEnter() abort
@@ -305,12 +270,65 @@ if has('nvim')
             return "\<Enter>"
         endif
     endfunction
-    imap <silent> <expr><Enter> SuperEnter()
 
     " echodoc 
     let g:echodoc#enable_at_startup = 1
     let g:echodoc#type = "floating"
     let g:echodoc#floating_config = {'border': 'single'}
     highlight link EchoDocFloat Pmenu
+
+    " signify
+    let g:signify_disable_by_default = 0
+    let g:signify_number_highlight = 1
 endif
+" }}}
+
+" {{{ => 快捷键
+" 设置mapleader
+let mapleader = ";"
+let g:mapleader = ";"
+
+nmap <leader>se     :e $MYVIMRC<CR>
+nmap <leader>ss     :source $MYVIMRC<CR>
+
+imap <silent> <expr><TAB>   SuperTab()
+imap <silent> <expr><Space> SuperSpace()
+imap <silent> <expr><Enter> SuperEnter()
+
+" 跳转 
+                                " Go to first line - `gg`
+nmap    gG          G           " Go to last line
+nmap    gd          <C-]>       " Go to Define 
+nmap    gt          <C-T>       " Go Back/Go to Top of stack
+
+" `b` is for back, so add leading here
+nmap    <leader>be  :ToggleBufExplorer<CR>  " Buffer explorer
+nmap    <leader>bn  :bnext<CR>              " Buffer next
+nmap    <leader>bp  :bprev<CR>              " Buffer prev
+
+imap    <C-o>   <Plug>(neosnippet_expand_or_jump)
+smap    <C-o>   <Plug>(neosnippet_expand_or_jump)
+
+" 窗口移动
+nmap    <C-j>   <C-W>j      " Up
+nmap    <C-k>   <C-W>k      " Down
+nmap    <C-h>   <C-W>h      " Left
+nmap    <C-l>   <C-W>l      " Right
+
+" 触发
+nmap    <F9>    :NERDTreeToggle<CR>     " Left file manager
+nmap    <F10>   :TagbarToggle<CR>       " Right tag manager
+
+" 语言绑定
+augroup BEGIN
+    autocmd!
+    autocmd FileType go     nmap <buffer> gb        <Plug>(go-build)
+    autocmd FileType go     nmap <buffer> gr        <Plug>(go-run)
+
+    autocmd FileType go     nmap <buffer> gd        <Plug>(go-def)
+    autocmd FileType rust   nmap <buffer> gd        <Plug>(rust-def)
+    autocmd FileType rust   nmap <buffer> gt        <Plug>(rust-def-split)
+    "autocmd FileType rust nmap <buffer> <leader>gd <Plug>(rust-doc)
+    "autocmd FileType rust nmap <buffer> <leader>gD <Plug>(rust-doc-tab)
+augroup END
 " }}}
