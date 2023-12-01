@@ -68,8 +68,8 @@ set ffs=unix,dos
 set nobackup
 set nowritebackup
 
-" 上下移动时，留3行
-set so=3
+" 上下移动时，留1行
+set so=1
 
 " Don't ask me to save file before switching buffers
 set hidden
@@ -212,6 +212,10 @@ let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 
+" BUG: first doc windows determine the size
+let g:go_doc_max_height = 10    
+let g:go_def_reuse_buffer = 1   " BUG: not working
+
 " vim-racer
 let g:racer_experimental_completer = 1
 
@@ -242,40 +246,14 @@ call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
 " 补全结束或离开插入模式时，关闭预览窗口
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
-function! SuperTab() abort
-    if pumvisible() 
-        return "\<C-N>"
-    elseif neosnippet#jumpable()
-        return "\<Plug>(neosnippet_jump)"
-    else
-        return "\<TAB>"
-    endif 
-endfunction 
-
-" Space: 只选择候选词，区别于Enter，这样可以避免snippets
-function! SuperSpace()
-    if pumvisible()
-        return "\<C-Y>\<Space>"
-    else
-        return "\<Space>"
-    endif 
-endfunction()
-
-" Enter: 候选词选择 + snippets
-function! SuperEnter() abort
-    if neosnippet#expandable() 
-        return "\<Plug>(neosnippet_expand)"
-    elseif pumvisible()
-        return "\<C-Y>"
-    else
-        return "\<Enter>"
-    endif
-endfunction
-
 " echodoc 
 let g:echodoc#enable_at_startup = 1
-let g:echodoc#type = "floating"
-let g:echodoc#floating_config = {'border': 'single'}
+if has('nvim')
+    let g:echodoc#type = "floating"
+    let g:echodoc#floating_config = {'border': 'single', 'title': ' echodoc ', 'title_pos' : 'center'}
+else
+    let g:echodoc#type = "popup"
+endif
 highlight link EchoDocFloat Pmenu
 
 " signify
@@ -309,26 +287,38 @@ nmap <leader>se             :e $MYVIMRC<CR>
 nmap <leader>ss             :source $MYVIMRC<CR>
 
 " SuperTab
+function! SuperTab() abort
+    if pumvisible() 
+        return "\<C-N>"
+    elseif neosnippet#jumpable()
+        return "\<Plug>(neosnippet_jump)"
+    else
+        return "\<TAB>"
+    endif 
+endfunction 
+
+" Space: 只选择候选词，区别于Enter，这样可以避免snippets
+function! SuperSpace()
+    if pumvisible()
+        return "\<C-Y>\<Space>"
+    else
+        return "\<Space>"
+    endif 
+endfunction()
+
+" Enter: 候选词选择 + snippets
+function! SuperEnter() abort
+    if neosnippet#expandable() 
+        return "\<Plug>(neosnippet_expand)"
+    elseif pumvisible()
+        return "\<C-Y>"
+    else
+        return "\<Enter>"
+    endif
+endfunction
 imap <silent> <expr><TAB>   SuperTab()
 imap <silent> <expr><Space> SuperSpace()
 imap <silent> <expr><Enter> SuperEnter()
-
-" 跳转 
-" Go to first line - `gg`                                 
-" Go to last line
-nmap gG         G
-" Go to Define 
-nmap gd         <C-]>
-" Go Back/Go to Top of stack
-nmap gt         <C-T>
-
-" `b` is for back, so add leading here
-" Buffer explorer
-nmap <leader>be :ToggleBufExplorer<CR>
-" Buffer next
-nmap <leader>bn :bnext<CR>
-" Buffer prev
-nmap <leader>bp :bprev<CR>
 
 " 窗口移动
 nmap <C-j>      <C-W>j
@@ -336,10 +326,36 @@ nmap <C-k>      <C-W>k
 nmap <C-h>      <C-W>h
 nmap <C-l>      <C-W>l
 
+" Buffer explorer 
+nmap <C-e>      :ToggleBufExplorer<CR>
+nmap <C-n>      :bnext<CR>
+nmap <C-p>      :bprev<CR>
+
 " 触发(单手模式）=> 读代码必须
 nmap <F8>       :ToggleBufExplorer<CR>
 nmap <F9>       :NERDTreeToggle<CR>
 nmap <F10>      :TagbarToggle<CR>
+
+" 跳转 - Goto
+" Go to first line - `gg`
+" Go to last line
+nmap gG         G
+" Go to begin or end of code block
+nmap g[         [{
+nmap g]         ]}
+" Go to Forward and Backward 
+nmap gf         <C-F>
+nmap gb         <C-B>
+" Go to Define and Back(Top of stack)
+nmap gd         <C-]>
+nmap gt         <C-T>
+" Go to Define in split => :h CTRL-W
+"  => 先分割窗口，再在新窗口中用`gd`跳转
+nmap gD         10<C-W>sgd<C-W>w
+nmap gT         <C-W>W<C-W>c
+" Go to man or doc
+nmap gh         K10<C-W>_<C-W>w
+" 
 
 " 其他
 imap <C-o>      <Plug>(neosnippet_expand_or_jump)
@@ -348,11 +364,13 @@ smap <C-o>      <Plug>(neosnippet_expand_or_jump)
 " 语言绑定
 augroup LANG
     autocmd!
-    autocmd FileType go     nmap <buffer>gb     <Plug>(go-build)
-    autocmd FileType go     nmap <buffer>gr     <Plug>(go-run)
+    autocmd FileType go     nmap <buffer>gB     <Plug>(go-build)
+    autocmd FileType go     nmap <buffer>gR     <Plug>(go-run)
 
-    autocmd FileType go     nmap <buffer>gd     <Plug>(go-def)
-    autocmd FileType go     nmap <buffer>gt     <Plug>(go-def-pop)
+    " => 由于vim-go使用omnifunc，所以没必要再次设置这些快捷键
+    "autocmd FileType go     nmap <buffer>gd     <Plug>(go-def)
+    "autocmd FileType go     nmap <buffer>gt     <Plug>(go-def-pop)
+    "autocmd FileType go     nmap <buffer>gh     <Plug>(go-doc-split)<C-W>w
     
     autocmd FileType rust   nmap <buffer>gd     <Plug>(rust-def)
     " non pop in racer
