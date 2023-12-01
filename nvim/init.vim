@@ -29,7 +29,7 @@
 " set color and theme
 set termguicolors
 set background=dark
-colorscheme solarized8
+colorscheme solarized8_flat
 
 " 字体
 if has('gui_running')
@@ -62,14 +62,14 @@ set fileencodings=utf-8,gb18030,gbk,latin1
 
 " 文件类型
 set fileformat=unix
-set ffs=unix,dos
+set fileformats=unix,dos
 
 " 不备份文件
 set nobackup
 set nowritebackup
 
 " 上下移动时，留1行
-set so=1
+set scrolloff=1
 
 " Don't ask me to save file before switching buffers
 set hidden
@@ -83,7 +83,7 @@ syntax on
 "set regexpengine=1  " force old regex engine, solve slow problem
 
 " 使用非兼容模式
-set nocompatible
+"set nocompatible
 
 " 一直启动鼠标
 set mouse=a
@@ -101,7 +101,7 @@ set noshowmatch
 
 " {{{ => Search: 
 " 有关搜索的选项
-set hls
+set hlsearch 
 set incsearch
 set smartcase
 au InsertEnter * set noic 
@@ -136,7 +136,7 @@ autocmd BufEnter * silent! lcd %:p:h " alternative for autochdir
 filetype plugin indent on
 
 " common settings
-set ts=4 sts=4 sw=4 et ff=unix
+set tabstop=4 sts=4 sw=4 et ff=unix
 set autoindent 
 set smartindent
 set cindent
@@ -145,10 +145,11 @@ set cindent
 "set cinoptions=>s,e0,n0,f0,{0,}0,^0,Ls,:s,=s,l1,b1,g0,hs,N-s,E-s,ps,t0,is,+-s,t0,cs,C0,/0,(0,us,U0,w0,W0,k0,m1,M0,#0,P0
 "}}}
 
-" {{{ => Fold: auto open & close 
+" {{{ => Fold: 
+" auto open, but don't close 
 set foldenable 
-set foldclose=all
 set foldopen=all
+set foldclose=all
 set foldlevel=0
 set foldmethod=marker
 set foldnestmax=2
@@ -156,7 +157,7 @@ set foldnestmax=2
 
 " {{{ => Jump to last position 
 function! JumpToLastPos()
-    if line("'\"") > 0 && line ("'\"") <= line("$") && &ft !~# 'commit'
+    if line("'\"") > 0 && line ("'\"") <= line('$') && &filetype !~# 'commit'
         exe "normal! g'\""
     endif
 endfunction
@@ -175,7 +176,7 @@ augroup END
 " {{{ => Plugins 
 
 " {{{ => completeopt
-set completeopt=menu,longest,noselect,noinsert
+"set completeopt=menu,longest
 set complete=],.,i,d,b,u,w " :h 'complete'
 " }}}
 
@@ -204,30 +205,6 @@ autocmd BufEnter * if winnr() == winnr('l') && bufname('#') =~ '__Tagbar__\.\d\+
             \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 " }}}
 
-" {{{ => neosnippet
-let g:neosnippet#enable_snipmate_compatibility = 1
-" }}}
-
-" {{{ => vim-go
-let g:go_code_completion_enabled = 0
-if g:go_code_completion_enabled 
-    set autowrite   " auto save file before run or build
-    let g:go_def_mode='gopls'
-    let g:go_info_mode='gopls'
-
-    let g:go_highlight_types = 1
-    let g:go_highlight_fields = 1
-    let g:go_highlight_functions = 1
-    let g:go_highlight_function_calls = 1
-    let g:go_highlight_operators = 1
-    let g:go_highlight_extra_types = 1
-
-    " BUG: first doc windows determine the size
-    let g:go_doc_max_height = 10    
-    let g:go_def_reuse_buffer = 1   " BUG: not working
-endif
-" }}}
-
 " {{{ => vim-racer
 let g:racer_experimental_completer = 1
 " }}}
@@ -236,10 +213,10 @@ let g:racer_experimental_completer = 1
 let g:echodoc#enable_at_startup = 1
 if g:echodoc#enable_at_startup 
     if has('nvim')
-        let g:echodoc#type = "floating"
+        let g:echodoc#type = 'floating'
         let g:echodoc#floating_config = {'border': 'single', 'title': ' echodoc ', 'title_pos' : 'center'}
     else
-        let g:echodoc#type = "popup"
+        let g:echodoc#type = 'popup'
     endif
     highlight link EchoDocFloat Pmenu
 endif 
@@ -254,7 +231,7 @@ let g:signify_number_highlight = 1
 "  => ALE可以替换deoplete, vim-go, echodoc
 let g:ale_enabled = 1
 if g:ale_enabled
-    " => deoplete
+    " => prefer deoplete
     let g:ale_completion_enabled = 0 
     if g:ale_completion_enabled
         let g:ale_completion_autoimport = 1
@@ -268,7 +245,7 @@ if g:ale_enabled
                 \ '_'       : [''],
                 \ 'c'       : ['clang'],
                 \ 'c++'     : ['clang'],
-                \ 'vim'     : ['vint', 'vimls'],
+                \ 'vim'     : ['vimls'],
                 \ 'sh'      : ['bashate'],
                 \ 'go'      : ['gopls'],
                 \ }
@@ -291,6 +268,29 @@ if g:ale_enabled
 endif
 " }}}
 
+" {{{ => vim-go
+" vim-go 的补全差点意思，其他还好
+if g:ale_enabled 
+    let g:go_code_completion_enabled = 0
+else
+    let g:go_code_completion_enabled = 1
+endif
+set autowrite   " auto save file before run or build
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
+
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+
+" BUG: first doc windows determine the size
+let g:go_doc_max_height = 10    
+let g:go_def_reuse_buffer = 1   " BUG: not working
+" }}}
+
 " {{{ => deoplete
 " 只开启一个自动补全插件 => 目录来看deoplete的补全功能更强一些
 if exists('g:ale_completion_enabled') && g:ale_completion_enabled
@@ -299,18 +299,52 @@ else
     let g:deoplete#enable_at_startup = 1
 endif
 
+" 后台自动补全，前台手动显示候选列表
+"  => 不仅实现了自动补全，同时还减少的界面打扰
+" Tab: 
+"  1. 开始自动补全
+"  2. 选择候选词
+"  3. snippet跳转
+"  4. 插入Tab 
+" Space: 
+"  1. 选取候选词
+"  2. 插入Space 
+" Enter:
+"  1. 选取候选词
+"  2. snippet
+"  3. 回车
 if g:deoplete#enable_at_startup 
+    " neosnippet: 与deoplete配合
+    let g:neosnippet#enable_snipmate_compatibility = 1
+
+    " 补全时有个preview窗口 => 导致界面总是变动
+    set completeopt-=preview
     " 为每个语言定义completion source
     if g:ale_enabled 
+        " insert longest match word
+        "set completeopt+=longest
+        "  => 'buffer'和'longest'冲突，补全时会删除光标前面的字符
+        "   => 但是不开启'buffer'，则普通文本无法补全，比如注释
+        "    => 如果不使用'longest'，则每次都会填充第一个候选词，很麻烦
+        "     => map Backspace, 如果不是需要的，则用BS删除已经填充的部分
+
         " ALE as completion source for deoplete
         call deoplete#custom#option(
-                    \ 'sources', {
-                    \   '_'     : ['ale', 'buffer' ],
+                    \ 'sources', { 
+                    \   '_' : ['ale', 'buffer']
+                    \ })
+        " 异步自动补全，候选框抖动, 干扰界面, 改成手动模式
+        call deoplete#custom#option({
+                    \ 'auto_complete_popup' : 'manual',
+                    \ 'num_processes'       : 4,
+                    \ 'refresh_always'      : v:false,
+                    \ 'refresh_backspace'   : v:false,
+                    \ 'prev_completion_mode': 'length',
                     \ })
     else
         call deoplete#custom#option(
                     \ 'sources', {
-                    \   '_'     : ['buffer', 'tag'],
+                    \   '_'     : ['tag', 'buffer'],
                     \   'cpp'   : ['LanguageClient', 'tag'],
                     \   'c'     : ['LanguageClient', 'tag'],
                     \   'vim'   : ['vim'],
@@ -318,18 +352,45 @@ if g:deoplete#enable_at_startup
                     \ })
     endif
 
-    call deoplete#custom#source('_', 'smart_case', v:true)
-
-    " complete cross filetype
-    call deoplete#custom#var('buffer', 'require_same_filetype', v:false)
-
-    " for vim-go
-    if g:go_code_completion_enabled 
+    " complete with vim-go => 手动模式omni不工作，为什么？
+    if g:go_code_completion_enabled
         call deoplete#custom#option('omni_patterns', { 'go' : '[^. *\t]\.\w*' })
     endif
 
+	call deoplete#custom#source('_', 'smart_case', v:true)
+    " complete cross filetype
+    call deoplete#custom#var('buffer', 'require_same_filetype', v:false)
+
     " 补全结束或离开插入模式时，关闭预览窗口
     autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+    function! s:check_back_space() abort
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1] =~# '\s'
+    endfunction
+    function! s:check_snippet_jump() abort
+        return neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)" : "\<Tab>"
+    endfunction
+
+    " Tab: 开始补全，选择候选词，snippets, Tab
+    inoremap <expr><Tab>
+                \ pumvisible() ? "\<C-N>" :
+                \ <SID>check_back_space() ? <SID>check_snippet_jump() :
+                \ deoplete#can_complete() ? deoplete#complete() : <SID>check_snippet_jump()
+
+    " Space: 只选取候选词，区别于Enter，这样可以避免snippets
+    inoremap <expr><Space>
+                \ pumvisible() ? "\<C-Y>\<Space>" : "\<Space>"
+
+    " Enter: 选取候选词 + snippets 
+    inoremap <expr><Enter>
+                \ neosnippet#expandable() ? "\<Plug>(neosnippet_expand)" :
+                \ pumvisible() ? "\<C-Y>" : "\<Enter>"
+
+    " Backspace: 删除已经填充的部分
+    inoremap <expr><BS>  pumvisible() ? "\<C-E>" : "\<BS>"
+    " ESC: 取消已经填充的部分并退出插入模式
+    inoremap <expr><ESC> pumvisible() ? "\<C-E>\<ESC>" : "\<ESC>"
 endif
 " }}}
 
@@ -338,8 +399,8 @@ endif
 " {{{ => Key maps 
 " 非必要不加<silent>，这样我们可以很好的看到具体执行的命令
 " 设置mapleader
-let mapleader = ";"
-let g:mapleader = ";"
+let mapleader = ';'
+let g:mapleader = ';'
 
 " 已经有定义的按键:
 "  - `w`, `b`   : word forward or backward
@@ -357,42 +418,8 @@ let g:mapleader = ";"
 " => 注释不要写在map的后面，vim不会处理中间的空格
 
 " 编辑和加载.vimrc/init.vim
-nmap <leader>se             :e $MYVIMRC<CR>
-nmap <leader>ss             :source $MYVIMRC<CR>
-
-" SuperTab
-function! SuperTab() abort
-    if pumvisible() 
-        return "\<C-N>"
-    elseif neosnippet#jumpable()
-        return "\<Plug>(neosnippet_jump)"
-    else
-        return "\<TAB>"
-    endif 
-endfunction 
-
-" Space: 只选择候选词，区别于Enter，这样可以避免snippets
-function! SuperSpace()
-    if pumvisible()
-        return "\<C-Y>\<Space>"
-    else
-        return "\<Space>"
-    endif 
-endfunction()
-
-" Enter: 候选词选择 + snippets
-function! SuperEnter() abort
-    if neosnippet#expandable() 
-        return "\<Plug>(neosnippet_expand)"
-    elseif pumvisible()
-        return "\<C-Y>"
-    else
-        return "\<Enter>"
-    endif
-endfunction
-imap <silent> <expr><TAB>   SuperTab()
-imap <silent> <expr><Space> SuperSpace()
-imap <silent> <expr><Enter> SuperEnter()
+nmap <leader>se :e $MYVIMRC<CR>
+nmap <leader>ss :source $MYVIMRC<CR>
 
 " 窗口移动
 nmap <C-j>      <C-W>j

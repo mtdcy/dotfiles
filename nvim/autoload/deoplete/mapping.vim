@@ -116,7 +116,7 @@ function! deoplete#mapping#_set_completeopt(is_async) abort
   if !exists('g:deoplete#_saved_completeopt')
     let g:deoplete#_saved_completeopt = &completeopt
   endif
-  set completeopt-=longest
+  "set completeopt-=longest
   set completeopt+=menuone
   set completeopt-=menu
   if &completeopt !~# 'noinsert\|noselect' || a:is_async
