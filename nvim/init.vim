@@ -147,9 +147,10 @@ set cindent
 
 " {{{ => Fold: 
 " auto open, but don't close 
+"  => 打开文件时不折叠，但重新加载init.vim就ok，奇怪!
 set foldenable 
 set foldopen=all
-set foldclose=all
+set foldclose
 set foldlevel=0
 set foldmethod=marker
 set foldnestmax=2
@@ -240,15 +241,17 @@ if g:ale_enabled
     endif
 
     " linting/error check
+    "  => BUG: not working as expected
+    let g:ale_lint_on_text_changed = 'normal'
     " ~/.config/nvim/ale_linters
-    let g:ale_linters = {
-                \ '_'       : [''],
-                \ 'c'       : ['clang'],
-                \ 'c++'     : ['clang'],
-                \ 'vim'     : ['vimls'],
-                \ 'sh'      : ['bashate'],
-                \ 'go'      : ['gopls'],
-                \ }
+    "let g:ale_linters = {
+    "            \ '_'       : [''],
+    "            \ 'c'       : ['clang'],
+    "            \ 'c++'     : ['clang'],
+    "            \ 'vim'     : ['vimls'],
+    "            \ 'sh'      : ['bashate'],
+    "            \ 'go'      : ['gopls'],
+    "            \ }
 
     " autoload/ale/fixers
     let g:ale_fix_on_save=1
@@ -258,7 +261,7 @@ if g:ale_enabled
                 \ }
 
     " 如果设置这个，下面的功能都无法使用
-    let g:ale_use_neovim_diagnostics_api = 1
+    let g:ale_use_neovim_diagnostics_api = 0
     if g:ale_use_neovim_diagnostics_api == 0
         " 防止界面跳动
         let g:ale_sign_column_always = 1 
@@ -319,19 +322,23 @@ if g:deoplete#enable_at_startup
 
     " 补全时有个preview窗口 => 导致界面总是变动
     set completeopt-=preview
+    " 不兼容paste
+    set paste&
+
     " 为每个语言定义completion source
     if g:ale_enabled 
         " insert longest match word
-        "set completeopt+=longest
-        "  => 'buffer'和'longest'冲突，补全时会删除光标前面的字符
+        set completeopt+=longest
+        "  => 'buffer'和'longest'冲突，补全时会删除光标前面的字符(vim only?)
         "   => 但是不开启'buffer'，则普通文本无法补全，比如注释
         "    => 如果不使用'longest'，则每次都会填充第一个候选词，很麻烦
-        "     => map Backspace, 如果不是需要的，则用BS删除已经填充的部分
+        "     => map Backspace, 如果不是需要的候选词，则用BS删除已经填充的部分
 
         " ALE as completion source for deoplete
         call deoplete#custom#option(
-                    \ 'sources', { 
-                    \   '_' : ['ale', 'buffer']
+                    \ 'sources', {
+                    \   '_'     : ['ale', 'neosnippet', 'buffer', 'file'],
+                    \   'vim'   : ['vim', 'around'],
                     \ })
         " 异步自动补全，候选框抖动, 干扰界面, 改成手动模式
         call deoplete#custom#option({
@@ -361,9 +368,6 @@ if g:deoplete#enable_at_startup
     " complete cross filetype
     call deoplete#custom#var('buffer', 'require_same_filetype', v:false)
 
-    " 补全结束或离开插入模式时，关闭预览窗口
-    autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-
     function! s:check_back_space() abort
         let col = col('.') - 1
         return !col || getline('.')[col - 1] =~# '\s'
@@ -378,15 +382,13 @@ if g:deoplete#enable_at_startup
                 \ <SID>check_back_space() ? <SID>check_snippet_jump() :
                 \ deoplete#can_complete() ? deoplete#complete() : <SID>check_snippet_jump()
 
-    " Space: 只选取候选词，区别于Enter，这样可以避免snippets
-    inoremap <expr><Space>
-                \ pumvisible() ? "\<C-Y>\<Space>" : "\<Space>"
-
     " Enter: 选取候选词 + snippets 
     inoremap <expr><Enter>
                 \ neosnippet#expandable() ? "\<Plug>(neosnippet_expand)" :
                 \ pumvisible() ? "\<C-Y>" : "\<Enter>"
 
+    " Space: 只选取候选词，区别于Enter，这样可以避免snippets
+    inoremap <expr><Space> pumvisible() ? "\<C-Y>\<Space>" : "\<Space>"
     " Backspace: 删除已经填充的部分
     inoremap <expr><BS>  pumvisible() ? "\<C-E>" : "\<BS>"
     " ESC: 取消已经填充的部分并退出插入模式
@@ -458,6 +460,9 @@ nmap gT         <C-W>W<C-W>c
 nmap gh         K10<C-W>_<C-W>w
 " Go to next error of ale 
 nmap ge         <Plug>(ale_next_wrap)
+" Go to yank 
+vmap gy         "+y
+nmap gp         "+p
 
 " 其他
 imap <C-o>      <Plug>(neosnippet_expand_or_jump)
