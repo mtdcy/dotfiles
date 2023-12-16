@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Lines configured by zsh-newuser-install
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=10000
@@ -5,7 +12,6 @@ SAVEHIST=10000
 export HISTTIMEFORMAT="[%F %T] "
 setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_ALL_DUPS
-
 setopt autocd extendedglob nomatch notify
 bindkey -v
 # End of lines configured by zsh-newuser-install
@@ -13,13 +19,19 @@ bindkey -v
 # The following lines were added by compinstall
 zstyle ':completion:*' completer _complete _ignored
 zstyle :compinstall filename '$HOME/.zshrc'
-
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit
 # End of lines added by compinstall
 
-# $PATH
-#which brew > /dev/null 2>&1
+if [ $(id -u) -eq 0 ]; then
+    export PROMPT='%(?.%F{40}√.%F{196}✗)%f [%F{160}%n@%m%f %F{63}%~%f] %F{196}#%f '
+else
+    export PROMPT='%(?.%F{40}√.%F{196}✗)%f [%F{76}%n@%m%f %F{63}%~%f] %F{40}$%f '
+fi
+# $?, n jobs, date
+export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
+
+# which brew > /dev/null 2>&1
 if [ -e /usr/local/bin/brew ]; then
     export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
     export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
@@ -42,15 +54,6 @@ export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40
 export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
 export PAGER=less
 export LESS=-R
-#export PROMPT='%(?.%F{green}√.%F{red}?)%f [%F{220}%n@%m%f %~] %# '
-# $? [user@hostname pwd] $
-if [ $(id -u) -eq 0 ]; then
-    export PROMPT='%(?.%F{40}√.%F{196}✗)%f [%F{160}%n@%m%f %F{63}%~%f] %F{196}#%f '
-else
-    export PROMPT='%(?.%F{40}√.%F{196}✗)%f [%F{76}%n@%m%f %F{63}%~%f] %F{40}$%f '
-fi
-# $?, n jobs, date
-export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
 export LANG=en_US.UTF-8
 export EDITOR='vim'
@@ -111,3 +114,9 @@ if [ -d /usr/local/go ]; then
 fi
 export GOPATH=$HOME/.go
 export PATH=$GOPATH/bin:$PATH
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[ -d ~/.zsh/powerlevel10k ] && source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
