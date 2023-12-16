@@ -115,6 +115,9 @@ fi
 export GOPATH=$HOME/.go
 export PATH=$GOPATH/bin:$PATH
 
+# https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting
+precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [ -d ~/.zsh/powerlevel10k ] && source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
 
