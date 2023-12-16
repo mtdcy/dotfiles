@@ -1,0 +1,3 @@
+[submodule "nvim"]
+	path = nvim
+	url = https://git.mtdcy.top:8443/mtdcy/pretty.nvim.git
