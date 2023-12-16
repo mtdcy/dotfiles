@@ -95,7 +95,7 @@ fi
 
 # rust & cargo
 if [ -d $HOME/.cargo ]; then
-    fpath+=~/.zfunc
+    fpath+=~/.zsh/zfunc
     source "$HOME/.cargo/env"
 fi
 
