@@ -123,10 +123,44 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
     [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-    # post settings: must after .p10k.zsh
+    # override default settings: must after .p10k.zsh
     # move context to left prompt 
-    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context vcs dir newline prompt_char)
-    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS#context})
+    typeset -a POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir newline prompt_char)
+    typeset -a POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS#context})
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
+    # show background jobs count 
+    typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='≡'
+    typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
+    # others
 fi
+
+# show relative path to $HOME
+#  => keep code here let me known how to do it
+function zsh_directory_name() {
+    emulate -L zsh
+    [[ $1 == d ]] || return
+    typeset -ga reply=(${2:t} $#HOME)
+    return
+}
+
+# help: search prompt_example in '.p10k.zsh'
+function prompt_reporoot() {
+    local d="$PWD"
+    while [ ! -e "$d/.git" ] && [ "$d" != '/' ]; do d=$(dirname $d); done
+
+    if [ "$d" != '/' ]; then
+        typeset -g REPOROOT="$d"
+        p10k segment -f "$POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR" -t "$(basename $REPOROOT)"
+    elif [ ! -z "$REPOROOT" ]; then
+        unset REPOROOT 
+    fi
+}
+
+function prompt_repodir() {
+    if [ -z "$REPOROOT" ]; then
+        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$PWD"
+    else
+        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "git:${PWD#$REPOROOT}/"
+    fi
+}
