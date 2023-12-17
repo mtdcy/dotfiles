@@ -141,12 +141,12 @@ fi
 
 # show relative path to $HOME
 #  => keep code here let me known how to do it
-function zsh_directory_name() {
-    emulate -L zsh
-    [[ $1 == d ]] || return
-    typeset -ga reply=(${2:t} $#HOME)
-    return
-}
+#function zsh_directory_name() {
+#    emulate -L zsh
+#    [[ $1 == d ]] || return
+#    typeset -ga reply=(${2:t} $#HOME)
+#    return
+#}
 
 # help: search prompt_example in '.p10k.zsh'
 function prompt_reporoot() {
