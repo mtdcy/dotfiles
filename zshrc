@@ -116,28 +116,7 @@ export GOPATH=$HOME/.go
 export PATH=$GOPATH/bin:$PATH
 
 # https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting
-precmd() { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
-
-# https://stackoverflow.com/questions/30169090/zsh-behavior-on-enter
-my-accept-line () {
-    # check if the buffer does not contain any words
-    if [ ${#${(z)BUFFER}} -eq 0 ]; then
-        # put newline so that the output does not start next to the prompt
-        echo
-        # check if inside git repository
-        if git rev-parse --git-dir > /dev/null 2>&1 ; then
-            git status
-        else
-            ls
-        fi
-    fi
-    # in any case run the `accept-line' widget
-    zle accept-line
-}
-# create a widget from `my-accept-line' with the same name
-zle -N my-accept-line
-# rebind Enter, usually this is `^M'
-bindkey '^M' my-accept-line
+precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 if [ -d ~/.zsh/powerlevel10k ]; then
