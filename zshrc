@@ -124,7 +124,9 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
     # post settings: must after .p10k.zsh
-    # remove context from right prompt 
-    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir vcs newline prompt_char)
+    # move context to left prompt 
+    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context vcs dir newline prompt_char)
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS#context})
+    # always show context
+    unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
 fi
