@@ -112,7 +112,12 @@ export PATH=$GOPATH/bin:$PATH
 precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[ -d ~/.zsh/powerlevel10k ] && source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
+if [ -d ~/.zsh/powerlevel10k ]; then
+    source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
+    [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    # post settings: must after .p10k.zsh
+    # remove context from right prompt 
+    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir vcs newline prompt_char)
+    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS#context})
+fi
