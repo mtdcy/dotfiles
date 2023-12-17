@@ -83,6 +83,8 @@ source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
 source $HOME/.zsh/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-history-substring-search.zsh
+# no underline for path
+typeset -g ZSH_HIGHLIGHT_STYLES[path]=''
 autoload -U history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
