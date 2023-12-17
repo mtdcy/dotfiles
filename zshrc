@@ -81,6 +81,7 @@ which rm2trash > /dev/null 2>&1 && alias trm="rm2trash"
 # plugins
 source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
+source $HOME/.zsh/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-history-substring-search.zsh
 autoload -U history-search-end
 zle -N history-beginning-search-backward-end history-search-end
@@ -120,7 +121,6 @@ precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 if [ -d ~/.zsh/powerlevel10k ]; then
-    source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
     [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
     # override default settings: must after .p10k.zsh
@@ -132,7 +132,9 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     # show background jobs count 
     typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='≡'
     typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
-    # others
+   
+    # load the theme at last
+    source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
 fi
 
 # show relative path to $HOME
