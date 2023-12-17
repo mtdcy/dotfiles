@@ -153,7 +153,7 @@ function prompt_reporoot() {
 
     if [ "$d" != '/' ]; then
         typeset -g REPOROOT="$d"
-        p10k segment -f "$POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR" -t "$(basename $REPOROOT)"
+        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$(basename $REPOROOT)"
     elif [ ! -z "$REPOROOT" ]; then
         unset REPOROOT 
     fi
@@ -161,8 +161,8 @@ function prompt_reporoot() {
 
 function prompt_repodir() {
     if [ -z "$REPOROOT" ]; then
-        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$PWD"
+        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t '%~'
     else
-        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "git:${PWD#$REPOROOT}/"
+        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$(realpath --relative-base=$REPOROOT $PWD)"
     fi
 }
