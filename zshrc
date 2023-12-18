@@ -127,7 +127,7 @@ if [ -d ~/.zsh/powerlevel10k ]; then
 
     # override default settings: must after .p10k.zsh
     # move context to left prompt 
-    typeset -a POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir newline prompt_char)
+    typeset -a POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir_joined newline prompt_char)
     typeset -a POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS#context})
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
