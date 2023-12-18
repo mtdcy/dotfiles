@@ -10,13 +10,13 @@ $SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
 
 EDITOR="$(which vim)"
 if which update-alternatives; then
-    sudo update-alternatives --install "$(which editor)" editor "$EDITOR"
+    sudo update-alternatives --install "$(which editor)" editor "$EDITOR" 100
     sudo update-alternatives --set editor "$EDITOR"
 fi
 
 # symlinks:
 git update-index --assume-unchanged zsh/history 
-for i in bin bashrc zsh zshrc; do
+for i in bin bashrc zsh zshrc vim vimrc; do
     ln -svfT $PWD/$i $HOME/.$i 
 done
 
