@@ -1,4 +1,5 @@
 [submodule "nvim"]
-	path = nvim
+    path = nvim
     url = https://git.mtdcy.top:8443/mtdcy/pretty.nvim.git
+    branch = main
     ignore = dirty
