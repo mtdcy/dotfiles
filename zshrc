@@ -1,3 +1,4 @@
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -5,24 +6,26 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# reconfig with 'autoload -U zsh-newuser-install && zsh-newuser-install'
 # Lines configured by zsh-newuser-install
 HISTFILE=$HOME/.zsh/history
 HISTSIZE=10000
 SAVEHIST=10000
-export HISTTIMEFORMAT="[%F %T] "
-setopt HIST_FIND_NO_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt autocd extendedglob nomatch notify
+setopt autocd beep extendedglob histfindnodups histignorealldups
+setopt nomatch notify
 bindkey -v
 # End of lines configured by zsh-newuser-install
 
+# reconfig with 'autoload -U compinstall && compinstall'
 # The following lines were added by compinstall
-zstyle ':completion:*' completer _complete _ignored
+zstyle ':completion:*' completer _expand _complete _ignored _match _correct _approximate _prefix
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' word true
 zstyle :compinstall filename '$HOME/.zshrc'
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit
 # End of lines added by compinstall
 
+# keep these PROMPT settings in case p10k not working
 if [ $(id -u) -eq 0 ]; then
     export PROMPT='%(?.%F{40}√.%F{196}✗)%f [%F{160}%n@%m%f %F{63}%~%f] %F{196}#%f '
 else
@@ -40,8 +43,9 @@ if [ -e /usr/local/bin/brew ]; then
 fi
 export PATH=$HOME/.bin:$PATH
 
-ls --version 2>/dev/null | grep coreutils > /dev/null 
-if [ $? -eq 0 ]; then
+if which gls > /dev/null 2>&1; then
+    alias ls='gls --color=auto' 
+elif ls --version 2>/dev/null | grep coreutils > /dev/null; then
     alias ls='ls --color=auto'  # GNU coreutils
 else
     alias ls='ls -G'            # macOS ls
@@ -49,12 +53,15 @@ fi
 alias ll='ls -lh'
 alias lla='ls -lha'
 alias du='du -h --max-depth=1'
+alias grep='grep --color=auto'
 
-export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40:su=31;40:sg=31;40:tw=31;40:ow=31;40:'
 export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
+export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40:su=31;40:sg=31;40:tw=31;40:ow=31;40:'
+# Zsh to use the same colors as ls
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
+
 export PAGER=less
 export LESS=-R
-
 export LANG=en_US.UTF-8
 export EDITOR='vim'
 export SYSTEMD_EDITOR='vim'
@@ -72,9 +79,6 @@ alias -s 7z="7z x"
 
 alias ping="ping -c3"
 alias history="history 0"
-
-# sudo preserve PATH
-alias sudo="sudo env \"PATH=$PATH\""
 
 which rm2trash > /dev/null 2>&1 && alias trm="rm2trash"
 
@@ -96,22 +100,24 @@ else
     bindkey '^[[B' history-substring-search-down
 fi
 
+# homebrew
+export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles
+export HOMEBREW_API_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles/api
+
+# sudo & systemd
+alias sudo="sudo env \"PATH=$PATH\""
+export SYSTEMD_EDITOR=vim 
+
+# logo
+#$(dirname $(readlink -f ${(%):-%x}))/bin/screenfetch
+
 # rust & cargo
 if [ -d $HOME/.cargo ]; then
     fpath+=~/.zsh/zfunc
     source "$HOME/.cargo/env"
 fi
 
-# homebrew
-export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles
-export HOMEBREW_API_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles/api
-
-# systemd
-export SYSTEMD_EDITOR=vim 
-
-# logo
-#$(dirname $(readlink -f ${(%):-%x}))/bin/screenfetch
-
+# go
 if [ -d /usr/local/go ]; then
     export PATH=/usr/local/go/bin:$PATH
 fi
@@ -130,12 +136,15 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir_joined newline prompt_char)
     # alter right prompt
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
-    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=(docker_host)
+    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( docker_host )
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
     # show background jobs count 
-    typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='≡'
-    typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
+    POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
+    POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE_ALWAYS=true
+    POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='≡'
+    # date & time 
+    POWERLEVEL9K_TIME_FORMAT='%D{%m-%d %H:%M:%S}'
    
     # load the theme at last
     source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
