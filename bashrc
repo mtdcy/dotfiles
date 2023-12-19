@@ -128,3 +128,5 @@ export PATH=$HOME/.bin:$PATH
 $(dirname $(readlink -f $BASH_SOURCE))/bin/screenfetch
 
 #}}}
+export HOMEBREW_BOTTLE_DOMAIN=https://chinanet.mirrors.ustc.edu.cn/homebrew-bottles
+export HOMEBREW_API_DOMAIN=https://chinanet.mirrors.ustc.edu.cn/homebrew-bottles/api

@@ -101,8 +101,8 @@ else
 fi
 
 # homebrew
-export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles
-export HOMEBREW_API_DOMAIN=https://mirrors.aliyun.com/homebrew/homebrew-bottles/api
+export HOMEBREW_BOTTLE_DOMAIN=https://chinanet.mirrors.ustc.edu.cn/homebrew-bottles
+export HOMEBREW_API_DOMAIN=https://chinanet.mirrors.ustc.edu.cn/homebrew-bottles/api
 
 # sudo & systemd
 alias sudo="sudo env \"PATH=$PATH\""
