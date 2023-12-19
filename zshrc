@@ -123,12 +123,14 @@ precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 if [ -d ~/.zsh/powerlevel10k ]; then
-    [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    [[ -e ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
     # override default settings: must after .p10k.zsh
     # move context to left prompt 
-    typeset -a POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir_joined newline prompt_char)
-    typeset -a POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS#context})
+    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir_joined newline prompt_char)
+    # alter right prompt
+    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
+    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=(docker_host)
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
     # show background jobs count 
@@ -167,4 +169,8 @@ function prompt_repodir() {
     else
         p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$(realpath --relative-base=$REPOROOT $PWD)"
     fi
+}
+
+function prompt_docker_host() {
+    [ -z "$DOCKER_HOST" ] || p10k segment -f skyblue1 -t "🐳 $DOCKER_HOST 🐳"
 }
