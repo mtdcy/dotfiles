@@ -12,6 +12,8 @@ if [ "$(uname)" = "Darwin" ]; then
         brew --prefix "$i" || brew install "$i"
     done
 elif [ -f /etc/apt/sources.list ]; then
+    sudo apt install auto-apt-proxy
+    auto-apt-proxy ||
     sudo sed \
         -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
         -i /etc/apt/sources.list
@@ -66,15 +68,6 @@ git config --global --replace-all alias.cp      "cherry-pick --no-ff -x"
 git config --global --replace-all alias.lg      "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %ci)'"
 git config --global --replace-all alias.lg1     "log -n 1 --color --name-status --parents"
 git config --global --replace-all alias.lga     "log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %cr)'"
-git config --global --replace-all alias.ls      "log --oneline --no-merges --reverse"
-
 
 git config --global --get user.name     || git config --global --replace-all user.name  "$(read -p 'user.name: '; echo $REPLY)"
 git config --global --get user.email    || git config --global --replace-all user.email "$(read -p 'user.email: '; echo $REPLY)"
-
-# nvim:
-if [ "$1" = "all" ]; then
-    git submodule update --init --recursive
-    git submodule update --recursive --remote
-    cd nvim && ./install.sh 
-fi
