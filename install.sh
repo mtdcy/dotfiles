@@ -1,11 +1,32 @@
 #!/bin/bash 
 
-pkg='brew'
-which apt && pkg='apt'
+cd $(dirname "$0") || exit 1
+. bin/xlib.sh 
 
-which zsh || $pkg install zsh
-which vim || $pkg install vim
+MIRRORS=${1:-https://chinanet.mirrors.ustc.edu.cn}
 
+# pre-install
+if [ "$(uname)" = "Darwin" ]; then
+    which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
+    for i in coreutils gnu-sed grep awk; do
+        brew --prefix "$i" || brew install "$i"
+    done
+elif [ -f /etc/apt/sources.list ]; then
+    sudo sed \
+        -e "/^deb/ s|http[s]*://.*/|$MIRRORS/|g" \
+        -i /etc/apt/sources.list
+    sudo apt update
+fi
+
+which brew && pm='brew'
+which apt  && pm='apt'
+[ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
+
+for i in zsh vim git wget tree; do
+    which "$i" || $pm install "$i"
+done
+
+# switch shell to zsh
 $SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
 
 EDITOR="$(which vim)"
@@ -17,11 +38,10 @@ fi
 # symlinks:
 git update-index --assume-unchanged zsh/history 
 for i in bin bashrc zsh zshrc vim vimrc; do
-    ln -svfT $PWD/$i $HOME/.$i 
+    ln -svfT "$PWD/$i" "$HOME/.$i"
 done
 
 # git
-which git || $pkg install git 
 which less &&
 git config --global --replace-all core.pager    "less -F -X" ||
 git config --global --replace-all core.pager    "more"
