@@ -13,7 +13,7 @@ if [ "$(uname)" = "Darwin" ]; then
     done
 elif [ -f /etc/apt/sources.list ]; then
     sudo sed \
-        -e "/^deb/ s|http[s]*://.*/|$MIRRORS/|g" \
+        -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
         -i /etc/apt/sources.list
     sudo apt update
 fi
