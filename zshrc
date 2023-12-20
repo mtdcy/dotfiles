@@ -41,7 +41,7 @@ if [ -e /usr/local/bin/brew ]; then
     export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
     export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"
 fi
-export PATH=$HOME/.bin:$PATH
+export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
 if which gls > /dev/null 2>&1; then
     alias ls='gls --color=auto' 
