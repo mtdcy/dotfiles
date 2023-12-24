@@ -1,13 +1,17 @@
 #!/bin/bash 
+# 
+# vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
+set -e 
 
 cd $(dirname "$0") || exit 1
 . bin/xlib.sh 
 
-MIRRORS=${1:-https://chinanet.mirrors.ustc.edu.cn}
+MIRRORS=${MIRRORS:-https://chinanet.mirrors.ustc.edu.cn}
 
-# pre-install
+#>> pre-install
 if [ "$(uname)" = "Darwin" ]; then
-    which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
+    #which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
+    HOMEBREW="$MIRRORS" ./install-homebrew.sh || exit 1
     for i in coreutils gnu-sed grep awk; do
         brew --prefix "$i" || brew install "$i"
     done
@@ -21,14 +25,17 @@ elif [ -f /etc/apt/sources.list ]; then
 fi
 
 which brew && pm='brew'
-which apt  && pm='apt'
+if [ "$(uname)" = "Linux" ]; then
+    which apt  && pm='apt'
+fi
 [ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
 
 for i in zsh vim git wget tree; do
     which "$i" || $pm install "$i"
 done
+#<<
 
-# switch shell to zsh
+#>> default settings
 $SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
 
 EDITOR="$(which vim)"
@@ -36,14 +43,15 @@ if which update-alternatives; then
     sudo update-alternatives --install "$(which editor)" editor "$EDITOR" 100
     sudo update-alternatives --set editor "$EDITOR"
 fi
+#<<
 
-# symlinks:
+#>> install files
 git update-index --assume-unchanged zsh/history 
 for i in bin bashrc zsh zshrc vim vimrc; do
     ln -svfT "$PWD/$i" "$HOME/.$i"
 done
 
-# fonts:
+# install fonts instead of create symlinks.
 if [ "$(uname)" = "Darwin" ]; then
     mkdir -pv ~/Library/Fonts 
     cp -fv fonts/* ~/Library/Fonts/
@@ -51,8 +59,9 @@ else
     mkdir -pv ~/.local/share/fonts
     cp -fv fonts/* ~/.local/share/fonts/
 fi
+#<<
 
-# git
+#>> git:
 which less &&
 git config --global --replace-all core.pager    "less -F -X" ||
 git config --global --replace-all core.pager    "more"
@@ -80,3 +89,11 @@ git config --global --replace-all alias.lga     "log --color --graph --all --pre
 
 git config --global --get user.name     || git config --global --replace-all user.name  "$(read -p 'user.name: '; echo $REPLY)"
 git config --global --get user.email    || git config --global --replace-all user.email "$(read -p 'user.email: '; echo $REPLY)"
+#<<
+
+#>> submodules: 
+git submodule update --init --recursive || true
+
+# install nvim 
+[ "$1" = "all" ] && ./nvim/install.sh 
+#<<

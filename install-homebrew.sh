@@ -7,7 +7,7 @@ brewver() { brew --version | awk -F' ' -v ver=$1 '$2 >= ver {print $2}'; }
 
 #HOMEBREW=https://github.com/Homebrew
 #HOMEBREW=https://mirrors.aliyun.com/homebrew aliyun: no bottles
-HOMEBREW=${1:-https://mirrors.ustc.edu.cn}
+HOMEBREW=${HOMEBREW:-https://mirrors.ustc.edu.cn}
 
 echo "HOMEBREW: $HOMEBREW"
 export HOMEBREW_BOTTLE_DOMAIN=$HOMEBREW/homebrew-bottles
