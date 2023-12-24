@@ -43,6 +43,15 @@ for i in bin bashrc zsh zshrc vim vimrc; do
     ln -svfT "$PWD/$i" "$HOME/.$i"
 done
 
+# fonts:
+if [ "$(uname)" = "Darwin" ]; then
+    mkdir -pv ~/Library/Fonts 
+    cp -fv fonts/* ~/Library/Fonts/
+else
+    mkdir -pv ~/.local/share/fonts
+    cp -fv fonts/* ~/.local/share/fonts/
+fi
+
 # git
 which less &&
 git config --global --replace-all core.pager    "less -F -X" ||
