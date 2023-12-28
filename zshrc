@@ -1,3 +1,4 @@
+# Copyright (c) 2014, Chen Fang mtdcy.chen@gmail.com
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -133,10 +134,10 @@ if [ -d ~/.zsh/powerlevel10k ]; then
 
     # override default settings: must after .p10k.zsh
     # move context to left prompt 
-    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context reporoot vcs_joined repodir_joined newline prompt_char)
+    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(term os_icon_joined context reporoot vcs_joined repodir_joined newline prompt_char)
     # alter right prompt
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
-    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( docker_host )
+    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( docker_host tmux screen )
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
     # show background jobs count 
@@ -160,6 +161,10 @@ fi
 #}
 
 # help: search prompt_example in '.p10k.zsh'
+function prompt_term() {
+    [ -z "$TMUX" ] || p10k segment -f "$POWERLEVEL9K_OS_ICON_FOREGROUND" -t '⧉' #'⌨'
+}
+
 function prompt_reporoot() {
     local d="$PWD"
     while [ ! -e "$d/.git" ] && [ "$d" != '/' ]; do d=$(dirname $d); done
@@ -183,3 +188,22 @@ function prompt_repodir() {
 function prompt_docker_host() {
     [ -z "$DOCKER_HOST" ] || p10k segment -f skyblue1 -t "🐳 $DOCKER_HOST 🐳"
 }
+
+# screen
+screen_attach_or_open() {
+    [ $# -gt 0 ] && screen "$@" && return
+    screen -D -R -S "$(basename $PWD)"
+}
+alias screen='screen_attach_or_open'
+
+tmux_attach_or_new() {
+    # detach if inside tmux
+    [ ! -z "$TMUX" ] && tmux detach && return
+    # run tmux commands
+    [ $# -gt 0 ] && tmux "$@" && return
+    # attach or new
+    local T="$(basename $PWD)"
+    tmux has-session -t "$T" > /dev/null 2>&1 && 
+        tmux attach-session -t "$T" || tmux new -t "$T"
+}
+alias T='tmux_attach_or_new'
