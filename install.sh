@@ -1,7 +1,7 @@
 #!/bin/bash 
 # 
 # vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
-set -e 
+set -e
 
 cd $(dirname "$0") || exit 1
 . bin/xlib.sh 
@@ -43,9 +43,9 @@ done
 $SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
 
 EDITOR="$(which vim)"
-if which update-alternatives; then
-    sudo update-alternatives --install "$(which editor)" editor "$EDITOR" 100
-    sudo update-alternatives --set editor "$EDITOR"
+if which update-alternatives && which editor; then
+    sudo update-alternatives --install "$(which editor)" editor "$(readlink -f $EDITOR)" 100
+    sudo update-alternatives --set editor "$(readlink -f $EDITOR)"
 fi
 #<<
 
