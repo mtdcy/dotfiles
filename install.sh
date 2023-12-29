@@ -97,6 +97,7 @@ git config --global --get user.email    || git config --global --replace-all use
 
 #>> submodules: 
 git submodule update --init --recursive || true
+git submodule update --remote --merge || true
 
 # install nvim 
 [ "$1" = "all" ] && MIRRORS=$MIRRORS ./nvim/install.sh 
