@@ -6,7 +6,11 @@ set -e
 cd $(dirname "$0") || exit 1
 . bin/xlib.sh 
 
-MIRRORS=${MIRRORS:-https://chinanet.mirrors.ustc.edu.cn}
+[ -z "$MIRRORS" ] && 
+    curl -o /dev/null https://cache.mtdcy.top && 
+    MIRRORS=https://cache.mtdcy.top
+
+MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
 
 #>> pre-install
 if [ "$(uname)" = "Darwin" ]; then
@@ -95,5 +99,11 @@ git config --global --get user.email    || git config --global --replace-all use
 git submodule update --init --recursive || true
 
 # install nvim 
-[ "$1" = "all" ] && ./nvim/install.sh 
+[ "$1" = "all" ] && MIRRORS=$MIRRORS ./nvim/install.sh 
+#<<
+
+#>> applications:
+if [ "$(uname)" = "Darwin" ]; then
+    defaults import com.googlecode.iterm2 iterm2/com.googlecode.iterm2.plist
+fi
 #<<
