@@ -25,14 +25,14 @@ git -C "$(brew --repo)" remote set-url origin $HOMEBREW/brew.git
     git -C "$(brew --repo homebrew/core)" remote set-url origin $HOMEBREW/homebrew-core.git 
 }
 
-# enable homebrew cask
+# enable homebrew cask for brew < 4.0
 [ "$(brewver 4.0)" = "" ] && {
     git -C "$(brew --repo homebrew/cask)" remote set-url origin "$HOMEBREW/homebrew-cask.git" ||
     brew tap --custom-remote --force-auto-update homebrew/cask "$HOMEBREW/homebrew-cask.git"
+    
+    git -C "$(brew --repo homebrew/cask-versions)" remote set-url origin "$HOMEBREW/homebrew-cask-versions.git" ||
+    brew tap --custom-remote --force-auto-update homebrew/cask-versions "$HOMEBREW/homebrew-cask-versions.git"
 }
-
-git -C "$(brew --repo homebrew/cask-versions)" remote set-url origin "$HOMEBREW/homebrew-cask-versions.git" ||
-brew tap --custom-remote --force-auto-update homebrew/cask-versions "$HOMEBREW/homebrew-cask-versions.git"
 
 # enable homebrew service 
 git -C "$(brew --repo homebrew/services)" remote set-url origin "$HOMEBREW/homebrew-services.git" ||
