@@ -116,7 +116,7 @@ function prompt_reporoot() {
 
     if [ "$d" != '/' ]; then
         typeset -g REPOROOT="$d"
-        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$(basename $REPOROOT)"
+        p10k segment -f skyblue1 -t "$(basename $REPOROOT)"
     elif [ ! -z "$REPOROOT" ]; then
         unset REPOROOT 
     fi
@@ -124,9 +124,9 @@ function prompt_reporoot() {
 
 function prompt_repodir() {
     if [ -z "$REPOROOT" ]; then
-        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t '%~'
+        p10k segment -f skyblue1 -t '%~'
     else
-        p10k segment -f "$POWERLEVEL9K_DIR_FOREGROUND" -t "$(realpath --relative-base=$REPOROOT $PWD)"
+        p10k segment -f skyblue1 -t "$(realpath --relative-base=$REPOROOT $PWD)"
     fi
 }
 
