@@ -35,9 +35,13 @@ fi
 # $?, n jobs, date
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
-[ -d /mnt/TrueNAS/Homebrew ] && export PATH=/mnt/TrueNAS/Homebrew/bin:$PATH
-if which brew > /dev/null 2>&1; then
+echo $PATH | grep -w sbin > /dev/null 2>&1 || export PATH="/sbin:$PATH"
+
+[ -d /home/linuxbrew ] && 
+    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" ||
     export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+
+if which brew > /dev/null 2>&1; then
     export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
     export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
     export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"

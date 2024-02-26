@@ -11,43 +11,7 @@ cd $(dirname "$0") || exit 1
     MIRRORS=https://cache.mtdcy.top
 
 MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
-
-#>> pre-install
-if [ "$(uname)" = "Darwin" ]; then
-    #which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
-    HOMEBREW="$MIRRORS" ./install-homebrew.sh || exit 1
-    for i in coreutils gnu-sed grep awk; do
-        brew --prefix "$i" || brew install "$i"
-    done
-elif [ -f /etc/apt/sources.list ]; then
-    sudo apt install auto-apt-proxy
-    auto-apt-proxy ||
-    sudo sed \
-        -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
-        -i /etc/apt/sources.list
-    sudo apt update
-fi
-
-which brew && pm='brew'
-if [ "$(uname)" = "Linux" ]; then
-    which apt  && pm='apt'
-fi
-[ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
-
-for i in zsh vim git wget tree; do
-    which "$i" || $pm install "$i"
-done
-#<<
-
-#>> default settings
-$SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
-
-EDITOR="$(which vim)"
-if which update-alternatives && which editor; then
-    sudo update-alternatives --install "$(which editor)" editor "$(readlink -f $EDITOR)" 100
-    sudo update-alternatives --set editor "$(readlink -f $EDITOR)"
-fi
-#<<
+INSTALL_HOMEBREW=${INSTALL_HOMEBREW:-0}
 
 #>> install files
 git update-index --assume-unchanged zsh/history 
@@ -62,6 +26,49 @@ if [ "$(uname)" = "Darwin" ]; then
 else
     mkdir -pv ~/.local/share/fonts
     cp -fv fonts/* ~/.local/share/fonts/
+fi
+#<<
+
+#>> install programs
+if [ "$(uname)" = "Darwin" ] || [ "$INSTALL_HOMEBREW" -eq 1 ]; then
+    #which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
+    MIRRORS="$MIRRORS" ./install-homebrew.sh || exit 1
+
+    # install gnu tools
+    for i in coreutils gnu-sed grep awk; do
+        brew --prefix "$i" || brew install "$i"
+    done
+
+    pm='NONINTERACTIVE=1 brew install'
+elif which brew; then
+    xlog info "linuxbrew present"
+    pm='NONINTERACTIVE=1 brew install'
+elif [ -f /etc/apt/sources.list ]; then
+    sudo apt install auto-apt-proxy
+    auto-apt-proxy ||
+    sudo sed \
+        -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
+        -i /etc/apt/sources.list
+    sudo apt update
+
+    pm='sudo apt install -y'
+fi
+
+[ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
+
+# install host tools
+for i in zsh vim git wget tree; do
+    which "$i" || eval -- $pm "$i"
+done
+#<<
+
+#>> default settings
+$SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
+
+EDITOR="$(which vim)"
+if which update-alternatives && which editor; then
+    sudo update-alternatives --install "$(which editor)" editor "$(readlink -f $EDITOR)" 100
+    sudo update-alternatives --set editor "$(readlink -f $EDITOR)"
 fi
 #<<
 
