@@ -97,7 +97,7 @@ git config --global --replace-all merge.tool vimdiff
 git config --global --replace-all merge.conflictstyle diff3
 git config --global --replace-all core.excludesfile '*.swp'
 
-git config --global --replace-all alias.pl      "pull --rebase"
+git config --global --replace-all alias.pl      "pull --rebase --recurse-submodules"
 git config --global --replace-all alias.st      status 
 git config --global --replace-all alias.co      checkout
 git config --global --replace-all alias.ci      commit
