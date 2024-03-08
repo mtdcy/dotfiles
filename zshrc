@@ -3,9 +3,9 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+#fi
 
 # reconfig with 'autoload -U zsh-newuser-install && zsh-newuser-install'
 # Lines configured by zsh-newuser-install
@@ -18,13 +18,20 @@ bindkey -v
 # End of lines configured by zsh-newuser-install
 
 # reconfig with 'autoload -U compinstall && compinstall'
+
 # The following lines were added by compinstall
-zstyle ':completion:*' completer _expand _complete _ignored _match _correct _approximate _prefix
+
+zstyle ':completion:*' completer _expand _complete _correct
 zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' max-errors 3 numeric
 zstyle ':completion:*' word true
-zstyle :compinstall filename '$HOME/.zshrc'
-autoload -Uz compinit && compinit
+zstyle :compinstall filename "$HOME/.zshrc"
+
+autoload -Uz compinit
 # End of lines added by compinstall
+
+# check cache dayly: https://gist.github.com/ctechols/ca1035271ad134841284
+[[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]] && compinit || compinit -C
 
 # keep these PROMPT settings in case p10k not working
 if [ $(id -u) -eq 0 ]; then
@@ -35,65 +42,21 @@ fi
 # $?, n jobs, date
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
-echo $PATH | grep -w sbin > /dev/null 2>&1 || export PATH="/sbin:$PATH"
-
-[ -d /home/linuxbrew ] && 
-    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" ||
-    export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
-
-if which brew > /dev/null 2>&1; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-    export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
-    export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"
-fi
-export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
-
-if which gls > /dev/null 2>&1; then
-    alias ls='gls --color=auto' 
-elif ls --version 2>/dev/null | grep coreutils > /dev/null; then
-    alias ls='ls --color=auto'  # GNU coreutils
-else
-    alias ls='ls -G'            # macOS ls
-fi
-alias ll='ls -lh'
-alias lla='ls -lha'
-alias du='du -h --max-depth=1'
-alias grep='grep --color=auto'
-
-export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
-export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40:su=31;40:sg=31;40:tw=31;40:ow=31;40:'
-# Zsh to use the same colors as ls
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
-
-export PAGER=less
-export LESS=-R
-export LANG=en_US.UTF-8
-export EDITOR='vim'
-export SYSTEMD_EDITOR='vim'
-
-# extract
-alias -s zip="unzip"
-alias -s gz="tar -xzvf"
-alias -s tgz="tar -xzvf"
-alias -s bz2="tar -xjvf"
-alias -s xz="tar -xJvf"
-alias -s rar="unrar x"
-alias -s tar="tar -xvf"
-alias -s Z="uncompress"
-alias -s 7z="7z x"
-
-alias ping="ping -c3"
-alias history="history 0"
-
-which rm2trash > /dev/null 2>&1 && alias trm="rm2trash"
-
 # plugins
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+#ZSH_AUTOSUGGEST_MANUAL_REBIND=1    # how to rebind?
+ZSH_AUTOSUGGEST_STRATEGY=(history)  # completion, match_prev_cmd
+
 source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
 source $HOME/.zsh/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-history-substring-search.zsh
+
+bindkey '^l' autosuggest-accept
+
 # no underline for path
 typeset -g ZSH_HIGHLIGHT_STYLES[path]=''
+
 autoload -U history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
@@ -105,32 +68,8 @@ else
     bindkey '^[[B' history-substring-search-down
 fi
 
-# homebrew
-export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
-export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
-
-# sudo & systemd
-alias sudo="sudo env \"PATH=$PATH\""
-export SYSTEMD_EDITOR=vim 
-
-# logo
-#$(dirname $(readlink -f ${(%):-%x}))/bin/screenfetch
-
-# rust & cargo
-if [ -d $HOME/.cargo ]; then
-    fpath+=~/.zsh/zfunc
-    source "$HOME/.cargo/env"
-fi
-
-# go
-if [ -d /usr/local/go ]; then
-    export PATH=/usr/local/go/bin:$PATH
-fi
-export GOPATH=$HOME/.go
-export PATH=$GOPATH/bin:$PATH
-
 # https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting
-precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
+#precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 if [ -d ~/.zsh/powerlevel10k ]; then
@@ -198,7 +137,6 @@ screen_attach_or_open() {
     [ $# -gt 0 ] && screen "$@" && return
     screen -D -R -S "$(basename $PWD)"
 }
-alias screen='screen_attach_or_open'
 
 tmux_attach_or_new() {
     # detach if inside tmux
@@ -210,4 +148,88 @@ tmux_attach_or_new() {
     tmux has-session -t "$T" > /dev/null 2>&1 && 
         tmux attach-session -t "$T" || tmux new -t "$T"
 }
-alias T='tmux_attach_or_new'
+
+# zfunc
+[ -d ~/.zsh/zfunc ] && fpath+=($HOME/.zsh/zfunc)
+
+# COLORS
+export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
+export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40:su=31;40:sg=31;40:tw=31;40:ow=31;40:'
+# Zsh to use the same colors as ls
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
+
+# PATHs
+echo $PATH | grep -w sbin > /dev/null 2>&1 || export PATH="/sbin:$PATH"
+
+# sudo & systemd
+alias sudo="sudo env \"PATH=$PATH\""
+export SYSTEMD_EDITOR=vim 
+
+# rust & cargo
+if [ -d $HOME/.cargo ]; then
+    source "$HOME/.cargo/env"
+fi
+
+# go
+if [ -d /usr/local/go ]; then
+    export PATH=/usr/local/go/bin:$PATH
+fi
+
+export GOPATH=$HOME/.go
+[ -d "$GOPATH" ] && export PATH=$GOPATH/bin:$PATH
+
+# homebrew
+export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
+export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
+
+[ -d /home/linuxbrew ] && 
+    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" ||
+    export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+
+if which brew > /dev/null 2>&1; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"
+fi
+export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
+
+# alias
+if which gls > /dev/null 2>&1; then
+    alias ls='gls --color=auto' 
+elif ls --version 2>/dev/null | grep coreutils > /dev/null; then
+    alias ls='ls --color=auto'  # GNU coreutils
+else
+    alias ls='ls -G'            # macOS ls
+fi
+alias ll='ls -lh'
+alias lla='ls -lha'
+alias du='du -h --max-depth=1'
+alias grep='grep --color=auto'
+
+# ENVs
+export PAGER=less
+export LESS=-R
+export LANG=en_US.UTF-8
+export EDITOR='vim'
+export SYSTEMD_EDITOR='vim'
+
+# extract
+alias -s zip="unzip"
+alias -s gz="tar -xzvf"
+alias -s tgz="tar -xzvf"
+alias -s bz2="tar -xjvf"
+alias -s xz="tar -xJvf"
+alias -s rar="unrar x"
+alias -s tar="tar -xvf"
+alias -s Z="uncompress"
+alias -s 7z="7z x"
+
+alias ping="ping -c3"
+alias history="history 0"
+
+which rm2trash > /dev/null 2>&1 && alias trm="rm2trash"
+
+which tmux &> /dev/null && alias T='tmux_attach_or_new' || alias T='screen_attach_or_open'
+
+# logo
+which screenfetch &> /dev/null && screenfetch

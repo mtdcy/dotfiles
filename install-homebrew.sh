@@ -38,6 +38,8 @@ brew tap --custom-remote --force-auto-update homebrew/services "$MIRRORS/homebre
 
 brew update 
 #brew upgrade --force --verbose
+
+brew install coreutils gnu-sed grep awk
 brew cleanup
 
 SHRC=()
@@ -46,6 +48,7 @@ SHRC=()
 [ -e "$PWD/bashrc" ]   && SHRC+=("$PWD/bashrc")
 [ -e "$PWD/zshrc" ]    && SHRC+=("$PWD/zshrc")
 
+SED="$(brew --prefix gnu-sed)/libexec/gnubin/sed"
 for i in "${SHRC[@]}"; do
     grep "export HOMEBREW_BOTTLE_DOMAIN=" "$i" || 
     echo "export HOMEBREW_BOTTLE_DOMAIN=$HOMEBREW_BOTTLE_DOMAIN" >> "$i"
@@ -53,7 +56,7 @@ for i in "${SHRC[@]}"; do
     grep "export HOMEBREW_API_DOMAIN=" "$i" || 
     echo "export HOMEBREW_API_DOMAIN=$HOMEBREW_API_DOMAIN" >> "$i"
 
-    sed \
+    $SED \
         -e "s|\(^.*HOMEBREW_BOTTLE_DOMAIN=\).*$|\1$HOMEBREW_BOTTLE_DOMAIN|" \
         -e "s|\(^.*HOMEBREW_API_DOMAIN=\).*$|\1$HOMEBREW_API_DOMAIN|" \
         -i "$i"

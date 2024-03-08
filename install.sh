@@ -13,6 +13,39 @@ cd $(dirname "$0") || exit 1
 MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
 INSTALL_HOMEBREW=${INSTALL_HOMEBREW:-0}
 
+#>> install programs
+if [ "$(uname)" = "Darwin" ] || [ "$INSTALL_HOMEBREW" -eq 1 ]; then
+    #which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
+    MIRRORS="$MIRRORS" ./install-homebrew.sh || exit 1
+
+    # install gnu tools
+    for i in coreutils gnu-sed grep awk; do
+        brew --prefix "$i" || brew install "$i"
+    done
+
+    pm='NONINTERACTIVE=1 brew install'
+elif which brew; then
+    xlog info "linuxbrew present"
+    pm='NONINTERACTIVE=1 brew install'
+elif [ -f /etc/apt/sources.list ]; then
+    #sudo apt install auto-apt-proxy
+    #auto-apt-proxy ||
+    #sudo sed \
+    #    -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
+    #    -i /etc/apt/sources.list
+    sudo apt update
+
+    pm='sudo apt install -y'
+fi
+
+if which brew; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"
+fi
+
+## its safe to use gnu tools from now on ##
+
 #>> install files
 git update-index --assume-unchanged zsh/history 
 for i in bin bashrc zsh zshrc vim vimrc tmux.conf; do
@@ -29,36 +62,12 @@ else
 fi
 #<<
 
-#>> install programs
-if [ "$(uname)" = "Darwin" ] || [ "$INSTALL_HOMEBREW" -eq 1 ]; then
-    #which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
-    MIRRORS="$MIRRORS" ./install-homebrew.sh || exit 1
-
-    # install gnu tools
-    for i in coreutils gnu-sed grep awk; do
-        brew --prefix "$i" || brew install "$i"
-    done
-
-    pm='NONINTERACTIVE=1 brew install'
-elif which brew; then
-    xlog info "linuxbrew present"
-    pm='NONINTERACTIVE=1 brew install'
-elif [ -f /etc/apt/sources.list ]; then
-    sudo apt install auto-apt-proxy
-    auto-apt-proxy ||
-    sudo sed \
-        -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
-        -i /etc/apt/sources.list
-    sudo apt update
-
-    pm='sudo apt install -y'
-fi
-
 [ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
 
 # install host tools
 for i in zsh vim git wget tree; do
-    which "$i" || eval -- $pm "$i"
+    #which "$i" || eval -- $pm "$i"
+    eval -- $pm "$i"
 done
 #<<
 
