@@ -50,6 +50,9 @@ SHRC=()
 
 SED="$(brew --prefix gnu-sed)/libexec/gnubin/sed"
 for i in "${SHRC[@]}"; do
+    grep "export HOMEBREW_NO_AUTO_UPDATE=1" ||
+    echo "export HOMEBREW_NO_AUTO_UPDATE=1" >> "$i" 
+
     grep "export HOMEBREW_BOTTLE_DOMAIN=" "$i" || 
     echo "export HOMEBREW_BOTTLE_DOMAIN=$HOMEBREW_BOTTLE_DOMAIN" >> "$i"
 
