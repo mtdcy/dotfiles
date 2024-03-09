@@ -1,5 +1,7 @@
 # Copyright (c) 2014, Chen Fang mtdcy.chen@gmail.com
 
+#zmodload zsh/zprof
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -21,17 +23,15 @@ bindkey -v
 
 # The following lines were added by compinstall
 
-zstyle ':completion:*' completer _expand _complete _correct
+zstyle ':completion:*' completer _expand _complete #_correct
 zstyle ':completion:*' matcher-list '' 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' max-errors 3 numeric
 zstyle ':completion:*' word true
 zstyle :compinstall filename "$HOME/.zshrc"
 
 autoload -Uz compinit
+compinit
 # End of lines added by compinstall
-
-# check cache dayly: https://gist.github.com/ctechols/ca1035271ad134841284
-[[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]] && compinit || compinit -C
 
 # keep these PROMPT settings in case p10k not working
 if [ $(id -u) -eq 0 ]; then
@@ -43,6 +43,8 @@ fi
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
 # plugins
+[ -d "$HOME/.zsh/zfunc" ] && fpath+=("$HOME/.zsh/zfunc")
+
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 #ZSH_AUTOSUGGEST_MANUAL_REBIND=1    # how to rebind?
 ZSH_AUTOSUGGEST_STRATEGY=(history)  # completion, match_prev_cmd
@@ -69,7 +71,7 @@ else
 fi
 
 # https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting
-#precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
+precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 if [ -d ~/.zsh/powerlevel10k ]; then
@@ -133,24 +135,21 @@ function prompt_docker_host() {
 }
 
 # screen
-screen_attach_or_open() {
+function screen_attach_or_open() {
     [ $# -gt 0 ] && screen "$@" && return
     screen -D -R -S "$(basename $PWD)"
 }
 
-tmux_attach_or_new() {
+function tmux_attach_or_new() {
     # detach if inside tmux
-    [ ! -z "$TMUX" ] && tmux detach && return
+    [ -n "$TMUX" ] && tmux detach && return
     # run tmux commands
     [ $# -gt 0 ] && tmux "$@" && return
     # attach or new
     local T="$(basename $PWD)"
-    tmux has-session -t "$T" > /dev/null 2>&1 && 
-        tmux attach-session -t "$T" || tmux new -t "$T"
+    tmux has-session -t "$T" &> /dev/null && 
+    tmux attach-session -t "$T" || tmux new -t "$T"
 }
-
-# zfunc
-[ -d ~/.zsh/zfunc ] && fpath+=($HOME/.zsh/zfunc)
 
 # COLORS
 export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
@@ -159,42 +158,37 @@ export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
 
 # PATHs
-echo $PATH | grep -w sbin > /dev/null 2>&1 || export PATH="/sbin:$PATH"
+echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
 
 # sudo & systemd
 alias sudo="sudo env \"PATH=$PATH\""
 export SYSTEMD_EDITOR=vim 
 
 # rust & cargo
-if [ -d $HOME/.cargo ]; then
-    source "$HOME/.cargo/env"
-fi
+[ -d "$HOME/.cargo" ] && source "$HOME/.cargo/env"
 
 # go
-if [ -d /usr/local/go ]; then
-    export PATH=/usr/local/go/bin:$PATH
-fi
-
-export GOPATH=$HOME/.go
-[ -d "$GOPATH" ] && export PATH=$GOPATH/bin:$PATH
+export GOPATH="$HOME/.go"
+[ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
+[ -d "$GOPATH" ]     && export PATH=$GOPATH/bin:$PATH
 
 # homebrew
-export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
-export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
+if which brew &> /dev/null; then
+    eval "$(brew shellenv)"
+    brewprefix="$(brew --prefix)" # run only once to reduce start time
+    export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
+    export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
+    export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
 
-[ -d /home/linuxbrew ] && 
-    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" ||
-    export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
-
-if which brew > /dev/null 2>&1; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-    export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
-    export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"
+    export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
+    export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
 fi
+
+# user PATH: shoud export after other PATH
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
 # alias
-if which gls > /dev/null 2>&1; then
+if which gls &> /dev/null; then
     alias ls='gls --color=auto' 
 elif ls --version 2>/dev/null | grep coreutils > /dev/null; then
     alias ls='ls --color=auto'  # GNU coreutils
@@ -211,7 +205,6 @@ export PAGER=less
 export LESS=-R
 export LANG=en_US.UTF-8
 export EDITOR='vim'
-export SYSTEMD_EDITOR='vim'
 
 # extract
 alias -s zip="unzip"
@@ -227,9 +220,13 @@ alias -s 7z="7z x"
 alias ping="ping -c3"
 alias history="history 0"
 
-which rm2trash > /dev/null 2>&1 && alias trm="rm2trash"
+which rm2trash &> /dev/null && alias trm="rm2trash"
 
 which tmux &> /dev/null && alias T='tmux_attach_or_new' || alias T='screen_attach_or_open'
 
-# logo
-which screenfetch &> /dev/null && screenfetch
+# logo: take long time
+which screenfetch &> /dev/null && screenfetch -E
+
+# DEBUG
+timezsh() { /usr/bin/time $SHELL -i -c exit; }
+#zprof
