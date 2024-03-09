@@ -164,17 +164,11 @@ echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
 alias sudo="sudo env \"PATH=$PATH\""
 export SYSTEMD_EDITOR=vim 
 
-# rust & cargo
-[ -d "$HOME/.cargo" ] && source "$HOME/.cargo/env"
+# homebrew & linuxbrew
+[ -d /home/linuxbrew ]     && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+[ -x /usr/local/bin/brew ] && eval "$(/usr/local/bin/brew shellenv)"
 
-# go
-export GOPATH="$HOME/.go"
-[ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
-[ -d "$GOPATH" ]     && export PATH=$GOPATH/bin:$PATH
-
-# homebrew
 if which brew &> /dev/null; then
-    eval "$(brew shellenv)"
     brewprefix="$(brew --prefix)" # run only once to reduce start time
     export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
     export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
@@ -183,6 +177,14 @@ if which brew &> /dev/null; then
     export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
     export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
 fi
+
+# rust & cargo
+[ -d "$HOME/.cargo" ] && source "$HOME/.cargo/env"
+
+# go
+export GOPATH="$HOME/.go"
+[ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
+[ -d "$GOPATH" ]     && export PATH=$GOPATH/bin:$PATH
 
 # user PATH: shoud export after other PATH
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
@@ -223,9 +225,6 @@ alias history="history 0"
 which rm2trash &> /dev/null && alias trm="rm2trash"
 
 which tmux &> /dev/null && alias T='tmux_attach_or_new' || alias T='screen_attach_or_open'
-
-# logo: take long time
-which screenfetch &> /dev/null && screenfetch -E
 
 # DEBUG
 timezsh() { /usr/bin/time $SHELL -i -c exit; }

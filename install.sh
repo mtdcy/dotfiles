@@ -48,7 +48,7 @@ fi
 
 #>> install files
 git update-index --assume-unchanged zsh/history 
-for i in bin bashrc zsh zshrc vim vimrc tmux.conf; do
+for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
     ln -svfT "$PWD/$i" "$HOME/.$i"
 done
 
