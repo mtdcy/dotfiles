@@ -123,10 +123,16 @@ export PATH=$HOME/.bin:$PATH
 
 ##}}}
 
-# logo #{{{
+# homebrew & linuxbrew
+[ -d /home/linuxbrew ]     && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+[ -x /usr/local/bin/brew ] && eval "$(/usr/local/bin/brew shellenv)"
 
-$(dirname $(readlink -f $BASH_SOURCE))/bin/screenfetch
+if which brew &> /dev/null; then
+    brewprefix="$(brew --prefix)" # run only once to reduce start time
+    export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
+    export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
+    export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
 
-#}}}
-export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
-export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
+    export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
+    export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
+fi
