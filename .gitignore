@@ -2,3 +2,4 @@
 *.zwc
 zsh/history 
 .*.swp
+bin/prebuilts

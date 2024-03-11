@@ -1,8 +1,0 @@
-#!/bin/bash 
-
-# cause git commit not work properly
-#which mvim > /dev/null 2>&1 && mvim "$@" && exit 
-#which vim > /dev/null 2>&1 && vim "$@" && exit
-
-dest=$(dirname $(readlink -f $0))/$(uname -s | tr A-Z a-z)/$(uname -m)/vim
-[ -d $dest ] && $dest/run "$@"
