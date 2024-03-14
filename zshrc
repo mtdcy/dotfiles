@@ -53,6 +53,7 @@ source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
 source $HOME/.zsh/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-history-substring-search.zsh
+source $HOME/.zsh/zsh-iterm2-shell-integration.zsh
 
 bindkey '^l' autosuggest-accept
 
