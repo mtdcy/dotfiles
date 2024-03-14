@@ -157,37 +157,9 @@ export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd
 # Zsh to use the same colors as ls
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
 
-# PATHs
-echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
-
 # sudo & systemd
 alias sudo="sudo env \"PATH=$PATH\""
 export SYSTEMD_EDITOR=vim 
-
-# homebrew & linuxbrew
-[ -d /home/linuxbrew ]     && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-[ -x /usr/local/bin/brew ] && eval "$(/usr/local/bin/brew shellenv)"
-
-if which brew &> /dev/null; then
-    brewprefix="$(brew --prefix)" # run only once to reduce start time
-    export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
-    export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
-    export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
-
-    export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
-    export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
-fi
-
-# rust & cargo
-[ -d "$HOME/.cargo" ] && source "$HOME/.cargo/env"
-
-# go
-export GOPATH="$HOME/.go"
-[ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
-[ -d "$GOPATH" ]     && export PATH=$GOPATH/bin:$PATH
-
-# user PATH: shoud export after other PATH
-export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
 # alias
 if which gls &> /dev/null; then
