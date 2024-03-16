@@ -2,8 +2,6 @@
 # 
 # vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
 set -e
-LANG=C.UTF-8
-LC_ALL=$LANG
 
 cd $(dirname "$0") || exit 1
 . bin/xlib.sh 
@@ -13,42 +11,22 @@ cd $(dirname "$0") || exit 1
     MIRRORS=https://cache.mtdcy.top
 
 MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
-
-CMDLETS=${CMDLETS:-https://git.mtdcy.top:8443/mtdcy/UniStatic/raw/branch/main/cmdlets.sh}
-
-# gnu utils
-utils=(sed grep awk ln)
-
-#>> Install cmdlets.sh and GNU utils
-curl -o bin/cmdlets.sh "$CMDLETS" || xlog error "failed to get $CMDLETS"
-
-# create synlinks for utils
-for x in "${utils[@]}"; do
-    ln -sfv cmdlets.sh "bin/$x"
-done
-#<< its safe to use gnu tools from now on ##
-
-#>> install dotfiles
-git update-index --assume-unchanged zsh/history 
-for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
-    ./bin/ln -svfT "$PWD/$i" "$HOME/.$i"
-done
-
-# install fonts instead of create symlinks.
-if [ "$(uname)" = "Darwin" ]; then
-    mkdir -pv ~/Library/Fonts 
-    cp -fv fonts/* ~/Library/Fonts/
-else
-    mkdir -pv ~/.local/share/fonts
-    cp -fv fonts/* ~/.local/share/fonts/
-fi
-
-. bashrc
-#<<
+INSTALL_HOMEBREW=${INSTALL_HOMEBREW:-0}
 
 #>> install programs
-if which brew; then # prefer 
-    pm='NONINTERACTIVE=1 brew install -q'
+if [ "$(uname)" = "Darwin" ] || [ "$INSTALL_HOMEBREW" -eq 1 ]; then
+    #which brew || ./install-homebrew.sh "$MIRRORS" || exit 1
+    MIRRORS="$MIRRORS" ./install-homebrew.sh || exit 1
+
+    # install gnu tools
+    for i in coreutils gnu-sed grep awk; do
+        brew --prefix "$i" || brew install "$i"
+    done
+
+    pm='NONINTERACTIVE=1 brew install'
+elif which brew; then
+    xlog info "linuxbrew present"
+    pm='NONINTERACTIVE=1 brew install'
 elif [ -f /etc/apt/sources.list ]; then
     #sudo apt install auto-apt-proxy
     #auto-apt-proxy ||
@@ -60,17 +38,39 @@ elif [ -f /etc/apt/sources.list ]; then
     pm='sudo apt install -y'
 fi
 
+if which brew; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix grep)/libexec/gnubin:$PATH"
+fi
+## its safe to use gnu tools from now on ##
+
+#>> install files
+git update-index --assume-unchanged zsh/history 
+for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
+    ln -svfT "$PWD/$i" "$HOME/.$i"
+done
+
+# install fonts instead of create symlinks.
+if [ "$(uname)" = "Darwin" ]; then
+    mkdir -pv ~/Library/Fonts 
+    cp -fv fonts/* ~/Library/Fonts/
+else
+    mkdir -pv ~/.local/share/fonts
+    cp -fv fonts/* ~/.local/share/fonts/
+fi
+#<<
+
 [ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
 
-eval -- "$pm zsh vim git wget tree tmux htop lazygit"
+# install host tools
+for i in zsh vim git wget tree; do
+    #which "$i" || eval -- $pm "$i"
+    eval -- $pm "$i"
+done
 
-# special packages
-if which brew &> /dev/null; then
-    brew install -q go || true
-elif which apt  &> /dev/null; then
-    sudo apt install -y golang || true
-fi
-#<< 
+
+#<<
 
 #>> default settings
 $SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
@@ -108,8 +108,8 @@ git config --global --replace-all alias.lg      "log --color --graph --pretty=fo
 git config --global --replace-all alias.lg1     "log -n 1 --color --name-status --parents"
 git config --global --replace-all alias.lga     "log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %cr)'"
 
-git config --global --get user.name     || git config --global --replace-all user.name  "$(read -r -p 'user.name: '; echo "$REPLY")"
-git config --global --get user.email    || git config --global --replace-all user.email "$(read -r -p 'user.email: '; echo "$REPLY")"
+git config --global --get user.name     || git config --global --replace-all user.name  "$(read -p 'user.name: '; echo $REPLY)"
+git config --global --get user.email    || git config --global --replace-all user.email "$(read -p 'user.email: '; echo $REPLY)"
 #<<
 
 #>> submodules: 

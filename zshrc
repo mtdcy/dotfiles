@@ -199,6 +199,8 @@ which rm2trash &> /dev/null && alias trm="rm2trash"
 
 which tmux &> /dev/null && alias T='tmux_attach_or_new' || alias T='screen_attach_or_open'
 
+which lazygit &> /dev/null && alias G='lazygit' || true
+
 # DEBUG
 timezsh() { /usr/bin/time $SHELL -i -c exit; }
 #zprof
