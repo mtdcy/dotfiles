@@ -12,6 +12,7 @@ if which brew &> /dev/null; then
     export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
     export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
     export PATH="$brewprefix/opt/gnu-tar/libexec/gnubin:$PATH"
+    export PATH="$brewprefix/opt/findutils/libexec/gnubin:$PATH"
 
     export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
     export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api

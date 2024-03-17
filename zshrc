@@ -83,7 +83,7 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(term os_icon_joined context reporoot vcs_joined repodir_joined newline prompt_char)
     # alter right prompt
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
-    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( docker_host tmux screen )
+    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( remote_host )
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
     # show background jobs count 
@@ -131,8 +131,10 @@ function prompt_repodir() {
     fi
 }
 
-function prompt_docker_host() {
-    [ -z "$DOCKER_HOST" ] || p10k segment -f skyblue1 -t "🐳 $DOCKER_HOST 🐳"
+function prompt_remote_host() {
+    [ -z "$DOCKER_HOST" ]   || { p10k segment -f skyblue1 -t "🐳 $DOCKER_HOST 🐳"   ; return; }
+    [ -z "$DOCKER_IMAGE" ]  || { p10k segment -f skyblue1 -t "⌨ $DOCKER_IMAGE ⌨"  ; return; }
+    [ -z "$REMOTE_HOST" ]   || { p10k segment -f skyblue1 -t "⌨ $REMOTE_HOST ⌨"     ; return; }
 }
 
 # screen
