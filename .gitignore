@@ -3,3 +3,4 @@
 zsh/history 
 .*.swp
 bin/prebuilts
+lazygit/state.yml
