@@ -25,13 +25,18 @@ curl -o bin/cmdlets.sh "$CMDLETS" || xlog error "failed to get $CMDLETS"
 # create synlinks for utils
 for x in "${utils[@]}"; do
     ln -sfv cmdlets.sh "bin/$x"
+    eval export "${x^^}=$x"
 done
 #<< its safe to use gnu tools from now on ##
 
 #>> install dotfiles
 git update-index --assume-unchanged zsh/history 
 for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
-    ./bin/ln -svfT "$PWD/$i" "$HOME/.$i"
+    $LN -svfT "$PWD/$i" "$HOME/.$i"
+done
+
+for i in lazygit nvim; do
+    $LN -svfT "$PWD/$i" "$HOME/.config/$i"
 done
 
 # install fonts instead of create symlinks.
