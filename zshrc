@@ -79,22 +79,22 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     [[ -e ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
     # override default settings: must after .p10k.zsh
-    # move context to left prompt 
+    # move context to left prompt
     POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(term os_icon_joined context reporoot vcs_joined repodir_joined newline prompt_char)
     # alter right prompt
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( remote_host )
     # always show context
     unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
-    # show background jobs count 
+    # show background jobs count
     POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
     POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE_ALWAYS=true
     POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='≡'
-    # date & time 
+    # date & time
     POWERLEVEL9K_TIME_FORMAT='%D{%m-%d %H:%M:%S}'
-   
+
     # load the theme at last
-    source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme 
+    source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme
 fi
 
 # show relative path to $HOME
@@ -119,7 +119,7 @@ function prompt_reporoot() {
         typeset -g REPOROOT="$d"
         p10k segment -f skyblue1 -t "$(basename $REPOROOT)"
     elif [ ! -z "$REPOROOT" ]; then
-        unset REPOROOT 
+        unset REPOROOT
     fi
 }
 
@@ -144,13 +144,13 @@ function screen_attach_or_open() {
 }
 
 function tmux_attach_or_new() {
-    # detach if inside tmux
-    [ -n "$TMUX" ] && tmux detach && return
     # run tmux commands
     [ $# -gt 0 ] && tmux "$@" && return
+    # detach if inside tmux
+    [ -n "$TMUX" ] && tmux detach && return
     # attach or new
     local T="$(basename $PWD)"
-    tmux has-session -t "$T" &> /dev/null && 
+    tmux has-session -t "$T" &> /dev/null &&
     tmux attach-session -t "$T" || tmux new -t "$T"
 }
 
@@ -158,23 +158,25 @@ function tmux_attach_or_new() {
 export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
 export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40:su=31;40:sg=31;40:tw=31;40:ow=31;40:'
 # Zsh to use the same colors as ls
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # sudo & systemd
-alias sudo="sudo env \"PATH=$PATH\""
-export SYSTEMD_EDITOR=vim 
+#alias sudo="sudo env \"PATH=$PATH\""
+alias sudo="sudo --preserve-env=PATH"
+export SYSTEMD_EDITOR=vim
 
 # alias
+hidden="--hide='@*' --hide='#recycle'"
 if which gls &> /dev/null; then
-    alias ls='gls --color=auto' 
+    alias ls="gls --color=auto $hidden"
 elif ls --version 2>/dev/null | grep coreutils > /dev/null; then
-    alias ls='ls --color=auto'  # GNU coreutils
+    alias ls="ls --color=auto $hidden" # GNU coreutils
 else
-    alias ls='ls -G'            # macOS ls
+    alias ls='ls -G' # macOS ls, no hide
 fi
 alias ll='ls -lh'
 alias lla='ls -lha'
-alias du='du -h --max-depth=1'
+alias du="du -ah --time --max-depth=1 --exclude='@eaDir' 2>/dev/null"
 alias grep='grep --color=auto'
 
 # ENVs
@@ -199,10 +201,23 @@ alias history="history 0"
 
 which rm2trash &> /dev/null && alias trm="rm2trash"
 
-which tmux &> /dev/null && alias T='tmux_attach_or_new' || alias T='screen_attach_or_open'
+if which tmux &> /dev/null; then
+    alias T='tmux_attach_or_new'
+else
+    alias T='screen_attach_or_open'
+fi
 
 which lazygit &> /dev/null && alias G='lazygit' || true
 
 # DEBUG
 timezsh() { /usr/bin/time $SHELL -i -c exit; }
 #zprof
+
+if [ "$(uname -o)" != Darwin ]; then
+    sed -e 's/cpu_temp=.*$/cpu_temp="C"/' \
+        -e 's/memory_unit=.*$/memory_unit=gib/' \
+        -e 's/speed_shorthand=.*$/speed_shorthand=on/' \
+        -i $HOME/.config/neofetch/config.conf &> /dev/null || true
+
+    neofetch 2> /dev/null
+fi

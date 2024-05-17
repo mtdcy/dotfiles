@@ -9,8 +9,8 @@ cd $(dirname "$0") || exit 1
 . bin/xlib.sh 
 
 [ -z "$MIRRORS" ] && 
-    curl -o /dev/null https://cache.mtdcy.top && 
-    MIRRORS=https://cache.mtdcy.top
+    curl -o /dev/null https://mirrors.mtdcy.top && 
+    MIRRORS=https://mirrors.mtdcy.top
 
 MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
 

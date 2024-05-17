@@ -1,1 +1,1150 @@
 
+gt status 
+git status 
+git diff zshrc 
+rm Settings -rf 
+git clone echo 'exec /usr/local/bin/zsh' > ~/.profile
+git clone https://git.mtdcy.top:8443/mtdcy/Settings.git
+git submodule update --init
+cd nvim 
+git br -a 
+git co main 
+lls
+la
+cat install.sh| more 
+vim install.sh
+which curl 
+MIRRORS=https://mirrors.mtdcy.top ./install.sh
+ll ~/.local/bin
+cd ins
+ln -svf /volume1/Workspace/Settings/bin ~/.bin
+ln -svf /volume1/Workspace/Settings/nvim/run bin/nvim 
+which nvim 
+which nvim
+ll ~/.bin/nvim 
+vim ~/.zshrc
+ln -svf /volume1/Workspace/Settings/zprofile ~/.zprofile 
+cat ~/.zprofile
+vim ~/.profile
+echo $HOME
+cd /var/services/homes
+sudo chown yaner:users yaner/ -R 
+find yaner/Photos -name '@eaDir' -exec rm -rf {} \;
+find yaner/Photos -name '@eaDir'
+rm grep
+curl -skL https://mi-d.cn/d/storagepanel.sh | bash -s TOWER_4_Bay 1X5
+su 
+sh
+bash -il
+bash -l
+env
+env | grep -i sudo
+curl -skL https://mi-d.cn/d/storagepanel.sh | sudo bash -s TOWER_4_Bay 1X5
+curl -skL https://mi-d.cn/d/storagepanel.sh | sudo bash -s TOWER_6_Bay 1X5
+curl -skL https://mi-d.cn/d/sn.sh | sudo bash -s 227IUMR8HWA07 
+ll /dev/dri
+ping 10.10.10.200
+ps aux | grep nmbd
+ps aux | grep avahi
+ps aux | grep ldap
+ps aux | grep nginx 
+sudo synopkg list 
+sudo systemctl status 
+sudo synosystemctl --type=service 
+sudo systemctl --type=service | grep -i syno 
+sudo systemctl status --list
+sudo systemctl status
+sudo systemctl --type=service 
+sudo systemctl --type=service --failed
+sudo systemctl status codecpatch.service
+sudo journalctl -b -u codecpatch.service
+sudo synosystemctl
+synopkg --list 
+synopkg list --name 
+intel_gpu_top
+sudo docker exec -it movies.mtdcy.top
+sudo docker exec -it movies.mtdcy.top bash
+sudo make patch-intel 
+sudo gtop
+sudo make gtop
+cd /volume1/images
+cd ../docker/SWAG
+sudo docker restart swag
+sudo sysctl -w fs.inotify.max_user_watches=10000
+sudo sysctl -a | grep swap
+ulimit -n
+grep.sh 9000 swag -w 
+sudo docker exec swag nginx -T 
+sudo docker exec swag nginx -T | more
+grep.sh 9000 nginx.conf
+grep.sh 9000 swag/nginx -w 
+sudo docker exec -it swag bash
+rm swag/log/ -rf 
+sudo docker ps 
+sudo docker images 
+docker --version 
+which dockerd
+which docker-compose
+docker --version
+cd /volume1/docker/Web/sites/site.d
+cat 90-ustc-mirrors.nginx
+nvim 99-official-mirrors.nginx
+sudo synopkg
+sudo synopkg list --name 
+sudo synopkg list --name | grep -i container
+sudo systemctl restart dockerd
+nvim ~/.ssh/known_hosts
+sudo synopkg restart ContainerManager
+cd MWebLibrary
+ll docs/media/17011420159116/
+find . -name sn.h
+find . -name sn.sh
+cat deploy-cert-daily.sh
+cat /volume1/鍍ケ浜┖閮反/Logs/synoscheduler/8/1715245404/script.log
+cd /volume1/鍍ケ浜┖閮反/Logs/
+find sysctl
+pwmconfig
+sudo pwmconfig
+cd ../Messages
+grep.sh 10.10.10.254 Web/sites
+grep.sh chanify sites/site.d
+grep.sh gotify sites/site.d
+cd nastools-ng
+cd nas-tools
+sudo make build
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo DOWNLOAD_URL=https://mirrors.mtdcy.top/docker-ce sh get-docker.sh
+find . -name dockerd
+cd scripts
+cd target
+cd system
+cd ../usr
+l
+which file
+cp bin bin.orig
+cp bin bin.orig -r
+sudo cp bin bin.orig -r 
+wget https://download.docker.com/linux/static/stable/x86_64/docker-26.1.2.tgz
+sudo wget https://download.docker.com/linux/static/stable/x86_64/docker-26.1.2.tgz
+sudo tar -xvf docker-26.1.2.tgz
+sudo cp docker/* bin/
+sudo tail -f /var/log/*
+sudo rm bin/* 
+sudo cp bin.orig/* bin/
+ls bin.orig
+sudo ls bin.orig/
+sudo rm bin -rf 
+sudo mv bin.orig bin 
+rm docker-26.1.2.tgz -rf 
+sudo rm docker-26.1.2.tgz -rf 
+cd /volume1/docker/Gitea
+cd ssh
+rm * -rf 
+cd Jellyfin
+nvim swag/nginx/site-confs/default.conf
+nvim nginx.conf
+cd ../Portainer
+nvim docker-compose.yml
+cd SWAG
+sudo chown mtdcy:users . -R 
+sudo docker-compose up -d 
+sudo docker logs swag -f 
+nvim sites/site.d/00-default.nginx
+sudo docker compose up -d
+sudo make reload 
+cd ../Dashy
+sudo docker restart mtdcy.top 
+mv dashy.yaml ../Web/
+cd ../SWAG
+mv data deploy-cert-daily.sh nginx.conf sites swag ../Web/ 
+sudo make compose 
+sudo docker-compose -p web up -d 
+cd sites/site.d
+nvim 00-default.nginx
+grep.sh smart .
+cd ../Gitea
+sudo docker-compose -p git up -d 
+cd ../Web/sites/site.d
+nvim 03-git.nginx
+nvim 04-messages.nginx
+nvim 01-nas.nginx
+cd ../../../Messages
+cd Mo
+sudo docker system prune --volumes --filter "until=24h" -f
+sudo docker system prune --filter "until=24h" -f
+sudo netstat -tunlp | grep 10000
+sudo docker logs smart.mtdcy.top -f 
+ping 10.10.10.254
+cd /volume1/public
+cd UniStatic
+rm latest -rf 
+rm current 2024.05.01 -rf 
+sudo make reload
+nvim brew-install.sh
+which ruby 
+/usr/lib/libc.so.6
+echo -e "#ldd 2.20" | sudo tee /usr/local/bin/ldd
+echo -en "#ldd 2.20\n" | sudo tee /usr/local/bin/ldd
+sudo bash -c "cat > /usr/local/bin/ldd" << EOF\
+#!/bin/sh\
+echo "ldd 2.20"\
+EOF
+sudo chmod a+x /usr/local/bin/ldd
+sudo chmod 0755 /usr/local/bin/ldd
+which ruby\
+/usr/lib/libc.so.6\
+ldd
+bash brew-install.sh
+rm Homebrew -rf 
+ll /volume1/homes
+ll /var/services
+sudo bash -c "cat > /usr/bin/ldd" << EOF\
+#!/bin/sh\
+echo "ldd 2.20"\
+EOF\
+sudo chmod 0755 /usr/bin/ldd\
+
+rm /usr/local/bin/ldd
+sudo rm /usr/local/bin/ld
+sudo rm /usr/local/bin/ldd
+sudo bash -c "cat > /usr/bin/ldd" << EOF\
+#!/bin/sh\
+echo "ldd 2.20"\
+EOF\
+sudo chmod 0755 /usr/bin/ldd
+ruby --version\
+/usr/lib/libc.so.6\
+ldd
+ruby --version | head -n1\
+/usr/lib/libc.so.6 | head -n1\
+ldd
+cd /home
+rm linuxbrew -rf 
+sudo rm linuxbrew -rf 
+mount  | grep home
+sudo mount -v -o bind /volume1/homes /home 
+sudo umount /home
+/bin/bash -c "$(curl -fsSL https://mirrors.mtdcy.top/misc/brew-install.sh)"
+nvim dashy.yaml
+nvim sites/site.d/12-pub.nginx
+nvim sites/site.d/11-image.nginx
+grep.sh proxy_ sites/site.d
+nvim .zshrc
+sudo netstat -tunlp | grep 8443
+sudo netstat -tunlp | grep nginx
+which brew
+rm ln gsed gawk fgrep
+rm tput unrar
+nvim /home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/brew.sh
+sudo bash -c "cat > /etc/os-release" << EOF\
+PRETTY_NAME="Synology DSM 7.2"\
+NAME="Synology DSM"\
+VERSION_ID="7.2"\
+EOF
+sudo cat /etc/os-release
+ll /etc/os-release
+sudo chmod 0644 /etc/os-release
+cat /etc/os-release
+brew search ldd
+brew search binutil
+cat /etc/ld.so.conf
+sudo rm /etc/ld.so.conf
+sudo touch /etc/ld.so.conf
+ll /etc/ld.so.conf
+brew install binutils 
+brew files binutils
+brew list binutils
+brew list binutils | grep ldd
+find $(brew --prefix) -name ldd
+find $(brew --prefix glibc) -name ldd
+brew --prefix glibc
+ll /home/linuxbrew/.linuxbrew/Cellar/glibc/*/bin/ldd
+ls /home/linuxbrew/.linuxbrew/Cellar/glibc/*/bin/ldd | head -n1
+sudo rm /usr/bin/ldd\
+sudo ln -svf $(ls $(brew --prefix glibc)/*/bin/ldd | head -n1) /usr/bin/ldd
+brew info glibc
+ls /home/linuxbrew/.linuxbrew/opt/glibc/bin/ldd
+sudo ln -svf $(brew --prefix)/opt/bin/ldd /usr/bin/ldd
+sudo ln -svf $(brew --prefix)/opt/glibc/bin/ldd /usr/bin/ldd
+ldd
+ldd --version
+brew search conntrack
+brew install libnetfilter_conntrack
+ll /home/linuxbrew/.linuxbrew/Cellar/binutils
+ll /home/linuxbrew/.linuxbrew/Cellar/binutils/2.42
+sudo chown -R mtdcy /home/linuxbrew/.linuxbrew/Cellar/binutils/2.42
+which conntrack
+brew list libnetfilter_conntrack
+brew remove libnetfilter_conntrack
+brew clean
+brew cleanup
+which ruby
+grep.sh "/etc/os-release" /home/linuxbrew/.linuxbrew/Homebrew/Library/Homebrew/brew.sh
+sudo bash -c "cat > /etc/os-release" << EOF\
+PRETTY_NAME="Synology DSM 7.2"\
+EOF
+brew search docker
+brew search lazygit
+brew install lazygit
+cat .zprofile
+ln -svf /volume1/Workspace/Settings/zprofile ~/.zprofile
+brew install docker 
+sudo ln -svf /volume1/Workspace/Settings/zprofile .zprofile 
+brew list docker 
+docker compose
+grep.sh mirrors.mtdcy.top /volume1/Workspace/Settings
+grep.sh mirrors.mtdcy.top .zprofile
+which ln 
+rm .zprofile
+brew install coreutils
+which ln
+ln -svf /volume1/Workspace/Settings/zprofile .zprofile 
+rm .zshrc
+ln -svf /volume1/Workspace/Settings/zshrc .zshrc
+sed -i 's/mirrors.mtdcy.top/mirrors.mtdcy.top/g' .zprofile
+sed -i 's/mirrors.mtdcy.top/mirrors.mtdcy.top/g' .zshrc
+brew update 
+brew install docker-buildx
+cat > ~/.docker/config.json << EOF\
+"cliPluginsExtraDirs": [\
+      "/home/linuxbrew/.linuxbrew/lib/docker/cli-plugins"\
+  ]\
+EOF
+sudo ls /run/docker
+sudo ls /run/docker/plugins/
+sudo vim /etc/docker/config.json
+docker plugin ls 
+sudo docker plugin ls
+sudo docker info
+brew list docker-buildx
+docker-buildx
+sudo make build 
+cd /var/packages
+cd ContainerManager
+cd conf
+cd ../etc
+cat /etc/group
+cat /etc/group | grep 999
+cat /etc/group | grep 998
+sudo chown :docker /var/run/docker.sock
+docker ls 
+docker 
+cat /etc/group | grep docker
+brew install docker-compose 
+cd /volume1/docker/Movies/sources/nas-tools
+make buildx
+cd /root
+sudo ls /root -la
+sudo ls -ls /root/.docker/
+sudo rm /root/.docker /root/.cache -rf 
+sudo find /root/
+sudo cat /root/.profile
+mount | grep home 
+dd if=/dev/zero of=test.data bs=1G count=1 status=progress
+realpath /volume1/public/Install\ macOS\ Ventura\ 13.6.5.dmg
+echo 32768 > /sys/block/md2/md/stripe_cache_size
+sudo bash
+find ~/.bin/
+cd .bin
+sudo su
+sudo htop 
+cat dperf.sh
+ll /dev/
+cat /dev/random
+brew install zsh
+which brew 
+grep.sh "Using terminal" /etc/
+grep.sh "Using terminal" /etc/ 2> /dev/null
+cat /etc/motd
+cd /volume1/docker/S.M.A.R.T
+mdadm --detail /dev/md0
+sudo fdisk -l /dev/nvme3n1
+sudo fdisk -l /dev/nvme0n1
+sudo mdadm --detail /dev/md0 | grep active
+sudo mdadm --manage /dev/md0 --add /dev/nvme0n1p1
+ls /dev/nvme[0-9]
+for x in $(ls /dev/nvme[0-9]); do echo ${x}; done
+sudo mdadm --manage /dev/md0 --add /dev/nvme1n1p1
+sudo mdadm --manage /dev/md0 --add /dev/nvme2n1p1
+sudo mdadm --detail /dev/md0 
+sudo mdadm --detail /dev/md1 | grep active
+sudo mdadm --manage /dev/md1 --add /dev/nvme0n1p2
+sudo mdadm --manage /dev/md1 --add /dev/nvme1n1p2
+sudo mdadm --manage /dev/md1 --add /dev/nvme2n1p2
+ll /var/run/docker.sock
+rm brew-install.sh
+rm get-docker.sh
+make build 
+replace.sh cache.mtdcy.top mirrors.mtdcy.top
+cd base
+make alpine
+make ubuntu
+cd ../socks5
+cd ../base
+cd ../printer
+nvim dperf.sh
+dd 
+dd --help
+rm Photos_20230808.zip
+rm dperf.sh.test
+rm test.data
+cat sample.txt
+sudo cat sample.txt
+rm sample.txt
+sudo rm sample.txt
+cat top
+rm top 
+grep.sh apt conntrack.sh
+grep.sh conntrack conntrack.sh
+brew search netfilter 
+rm go1.22.2.linux-amd64.tar.gz
+chmod 0755 Dockerfiles 
+nvim ~/.profile
+ll /sbin/
+G
+ll ~/.config/
+cd Settings
+replace.sh cache.mtdcy.top mirrors.mtdcy.top .
+nvim install.sh
+find /volume1/docker/Web/data -type f -mtime +7
+find /volume1/docker/Web/data -type f -mtime +7 | wc -l 
+ll /volume1/docker/Web/da
+ll /volume1/docker/Web/
+ll /volume1/docker/Web/data/
+ll /volume1/docker/Web/data/caches
+nvim /volume1/Workspace/cleanup.sh
+ll /volume1/docker/Web/data/caches/static
+which docker
+man find
+find --help
+find --help | grep rmt
+which find
+bash --help
+find /usr/local/bin/docker
+zsh --help 
+which zsh
+ll /usr/local/bin/docker
+cd /var/packages/ContainerManager/target/usr/bin
+sudo su 
+sudo su -
+cd /var/packages/ContainerManager/target/usr/
+sudo chmod 0755 bin 
+/usr/local/bin/docker ps 
+docker images --help 
+cd Dockerfiles/base
+docker images --filter "dangling=true" -q
+cat ../Makefile
+which ls
+ls /volume1
+ll /var
+ll /var/packages
+lla /volume1
+ls --version
+which ll
+ls -la 
+ls --ignore='@eaDir' -la
+ls --hide='@eaDir' -la
+ls --hide='@eaDir' -l
+ls -a
+chmod 0755 Settings
+ll ../
+du -h --exclude='@eaDir'
+du -ch
+du -h 
+du --help 
+du -h --time
+du -h --time=WORD
+du -h --time=use
+du -h --time -a
+du 
+du
+du --help
+du -L
+du -P
+du -t
+which du
+zsh -l -c ./cleanup.sh
+cd /-
+find /volume1/docker/Web/data/caches/static
+find /volume1/docker/Web/data/caches/static -type f 
+ll /volume1/docker/Web/data/caches/static/pypi/packages/bb/2a/10164ed1f31196a2f7f3799368a821765c62851ead0e630ab52b8e14b4d0/blinker-1.8.2-py3-none-any.whl\
+
+brew search nvme
+sudo smartctl -a /dev/nvme0
+sudo smartctl -a /dev/nvme0n1
+sudo smartctl -a /dev/nvme1
+sensors --help
+sudo sensors -s
+sudo sensors-detect
+systemctl status lm_sensors
+sudo sensors
+cd /volume1/docker/Web
+cd /volume1/docker
+rm Docker 
+ln -svf /volume1/docker Docker 
+cd Docker/Web
+nvim socks5
+which docker 
+docker-compose --help
+docker --help 
+nvim cleanup.sh
+docker image prune 鈥兂filter name=mtdcy* -aq
+docker image prune 鈥兂filter name=mtdcy/* -aq
+docker image prune -a 
+docker images --filter "name!=mtdcy/*" -q --no-trunc
+cat Dockerfiles/Makefile
+cd Dockerfiles
+make clean
+docker-buildx prune 
+docker images mtdcy
+docker images mtdcy/*
+docker images "mtdcy/*"
+docker images --filter "reference!=mtdcy/*"
+docker rmi --help 
+docker ps -aq
+docker ps -a 
+docker container --help
+./cleanup.sh
+cd Homebrew
+cd /home/linuxbrew
+ls -lh
+cd .cache
+brew cleanup --help
+brew cleanup --prune -n
+brew cleanup --prune=all -n
+find Homebrew
+ls --ignore='@eaDir'
+ls --ignore='@eaDir' --ignore='#recycle'
+ls --ignore='@*' --ignore='#recycle'
+ls --ignore='@*' --ignore='#recycle' /volume1
+cd ../Dockerfiles
+git diff .
+git add .
+git ci 
+git remote set-url ssh://git@10.10.10.254:9922/mtdcy/Dockerfiles.git
+git remote set-url origin ssh://git@10.10.10.254:9922/mtdcy/Dockerfiles.git
+nvim Gitea/gitea/conf/app.ini
+git remote set-url origin ssh://git@10.10.10.200:9922/mtdcy/Dockerfiles.git
+sudo netstat -tunlp | grep 9922
+nvim ../Docker/Gitea/compose.yaml
+nvim ../Docker/Gitea/gitea/conf/app.ini
+docker restart git.mtdcy.top
+git remote set-url origin ssh://git@10.10.10.200:9022/mtdcy/Dockerfiles.git
+git push
+cd socks5
+cat socks5.sh
+cat Dockerfile
+umask 022
+rm iVentoy
+which mkdir
+touch test
+rm test 
+rm iVentoy -rf 
+mkdir iVentoy
+umask
+nvim ~/.zprofile
+cd /etc/config_backup
+cd /volume1/Workspace/Settings
+mv .zprofile zprofile
+HTTPS_PROXY=socks5://127.0.0.1:7070 make
+make compose
+mkdir config iso
+make build
+rm config 
+rm config  -rf 
+rm data -rf 
+brew install make
+which make
+rm data
+rm data -rf
+docker run --rm -it mtdcy/iventoy bash
+mkdir data
+docker-compose up 
+sudo netstat -tunlp | grep 26000
+docker logs iventoy -f
+docker exec -it iventoy bash
+which iptables\
+
+which ps \
+
+ps --version 
+which xz\
+
+cat ~/.docker/buildx/current\
+
+cd ~/.docker
+ls 
+cat /etc/docker/config.json
+sudo mv /etc/docker/config.json ./
+sudo chown mtdcy:users config.json\
+
+brew info docker-clean
+brew info docker-machine 
+brew info docker-gen
+brew info docker-ls
+brew search docker \
+
+brew info docker-slim
+brew info docker-squash
+brew info sensors
+brew info lm-sensors
+brew install lm-sensors
+cat /etc/localtime
+cat /volume1/Workspace/Dockerfiles/base/Dockerfile.ubuntu
+echo "Asia/Shanghai" | sudo tee /etc/timezone
+ls -lh 
+ll /etc/localtime
+realpath /etc/localtime
+lspci -nnk 
+lspci -v
+lspci -v| grep sata -i
+sudo lspci -nnk | grep DeviceName
+sudo lspci -nnk | grep "DeviceName\|driver"
+sudo lspci -nnk
+sensors
+sudo mdadm --manage /dev/md0 --add /dev/nvme4n1p1
+sudo mdadm --detail /dev/md0
+sudo mdadm --manage /dev/md1 --add /dev/nvme4n1p2
+sudo mdadm --detail /dev/md1
+watch -n1 cat /proc/mdstat
+brew search container
+cd /volume1/Workspace/Dockerfiles
+git pl
+git st 
+git lg 
+grep --version
+grep.sh cache.mtdcy.top . 
+which grep
+which grep.sh
+nvim ~/.bin/grep.sh
+echo $GREP_OPTIONS
+grep.sh GREP_OPTIONS /volume1/Workspace/Settings
+nvim ~/.bashrc
+cd ../
+vimdiff compose.yaml ../Jellyfin/compose.yaml
+cat ../Jellyfin/Makefile
+grep.sh UID .
+grep.sh PUID . -w 
+grep.sh UID . -w 
+cd jelly
+cd jellyfin
+ll cache
+cd data
+cd metadata
+cd People
+htop
+cd /volume1/鍍ケ浜┖閮反/uploads
+ll data.ip/ 
+stat -c "%Y" data.ip/ 
+stat -c "%Y" data.ip/* | xargs
+fls
+make gtop
+rm @eaDir
+rm @eaDir -rf 
+tail -f swag/log/nginx/access.log
+tail -f swag/log/nginx/access.log | grep 7681
+docker ps
+cd nastools-ng/
+cd sources/nas-tools
+docker pull jellyfin/jellyfin:10.9.0
+docker lscr.io/linuxserver/jellyfin:10.9.0
+docker pull lscr.io/linuxserver/jellyfin:10.9.0
+docker logs movies.mtdcy.top -f
+tail -f /volume1/Workspace/Docker/Web/swag/log/nginx/access.log
+sudo cat /sys/kernel/debug/dri/0/gt/uc/guc_info\
+
+sudo cat /sys/kernel/debug/dri/0/gt/uc/huc_info\
+\
+
+sudo cat /sys/kernel/debug/dri/0/i915_guc_load_status\
+
+make patch-intel
+make itop
+cd /volume1/鍍ケ浜┖閮反/uploads/static
+touch sync-static.sh
+nvim sync-static.sh
+ls static
+ls static/
+touch static/test
+ls static 
+rm static/test
+touch "涓儹瑕佸儴儉閮工璇ョ兓絻电兒儰鍍ュ"
+cat README.md
+mv sync-static.sh install-static.sh
+mv ip2route-sync-data.sh install-ip2route-data.sh
+realpath install-ip2route-data.sh
+realpath install-static.sh
+mv ds_add_tracklists.sh install-ds-tracklists.sh
+realpath install-ds-tracklists.sh
+man ssh
+ssh root@10.10.10.1
+cd /volume1/Workspace/
+cat cleanup.sh
+cd I
+cd iStoreOS
+cat .profile
+nvim .z
+nvim .zprofile
+cat Makefile
+nvim sites/site.d/05-tools.nginx
+make reload
+fg
+sudo sysctl -a | grep bridge-nf-call
+brew info docker-compose
+ll /home/linuxbrew/.linuxbrew/lib/docker/cli-plugins
+docker info
+docker plugin ls
+docker plugin ls -a
+cd Web
+grep.sh i.mtdcy.top sites
+nvim sites/site.d/09-devices.nginx
+cd ../M
+cd /volume1/鍍ケ浜┖閮反/uploads/data.ip
+stat -c "%Y" data.ip 
+cat .data.ip
+cat ip2route-sync-data.sh
+touch data.ip/misc.ip
+ll data.ip/misc.ip
+stat -c "%Y" data.ip/*
+nvim ip2route-sync-data.sh
+cd Movies
+docker exec -it movies.mtdcy.top bash
+grep.sh proxy_buffer sites
+nvim sites/site.d/01-nas.nginx
+cd ../Movies
+nvim Makefile
+cd ../Web
+mv deploy-cert-daily.sh install-letsencrypt-cert.sh
+realpath install-letsencrypt-cert.sh
+umask 0022
+rm iStoreOS -rf 
+mkdir iStoreOS
+synocheckshare
+touch backup-remotes.sh
+chmod 0755 * 
+chmod 0755 backup-remotes.sh
+realpath bak
+realpath backup-remotes.sh
+cd ~/.ssh
+chmod 0644 config
+chmod 0600 id_rsa
+ssh mtdcy@ecs.mtdcy.top
+cd /volume1/NetBackup
+mkdir ECS
+chmod 0755 ECS
+nvim backup-remotes.sh
+tar -tvf ECS/backup-20240513-085
+tar -tvf ECS/backup-20240513-085124.tar.bz2
+tar -tvf ECS/backup-20240513-085233.tar.bz2
+cat backup-remotes.sh
+find iStoreOS ! -name '@eaDir' ! -name '#recycle'
+find . -name '@eaDir'
+find . ! -name '@eaDir' ! -name '#recycle'
+find . ! -path '@eaDir' ! -name '#recycle'
+find . ! -path '*/@eaDir/*' ! -name '#recycle'
+find . ! -path '@eaDir/*' ! -name '#recycle'
+find . ! -path '*/@eaDir' ! -name '#recycle'
+rm iStoreOS ECS -rf 
+find . ! -name '@eaDir' 
+find . ! -path '@eaDir' 
+find . ! -path '*/@eaDir/' 
+find . ! -path '*/@eaDir/*' 
+find . ! -path '*/@eaDir*'
+find .
+rm ECS/ iStoreOS -rf 
+./backup-remotes.sh
+brew search tree
+brew install tree 
+brew install pstree
+tree
+sudo mdadm --detail
+sudo mdadm --detail /dev/md3
+sudo mdadm --detail /dev/md4
+mdadm --detail --scan
+sudo mdadm --detail --scan
+sudo mdadm --query --examine /dev/nvme0
+sudo mdadm --query --examine /dev/nvme01
+sudo mdadm --query --examine /dev/nvme0n1
+cat /proc/mdstat
+nvim .profile
+docker ps 
+nvim ../Web/sites/site.d/04-messages.nginx
+cat chanify
+cat chanify-sender.sh
+nvim chanify/chanify.yml
+nvim compose.yaml
+nvim chanify
+nvim chanify-sender.sh
+cd ../S.M.A.R.T
+nvim notify.sh
+./notify.sh "S.M.A.R.T"
+cat notify.sh
+SCRUTINY_MESSAG="S.M.A.R.T" ./notify.sh
+SCRUTINY_MESSAGE="TEST SMART" ./notify.sh
+cd Messages
+./chanify-sender.sh "Test New SynoNAS" 
+dig chanify.mtdcy.top
+./conntrack.sh
+find . -name '@eaDir' -type d
+cd  .config
+lla
+find @eaDir
+cat @eaDir/htop@SynoResource
+tail -f /volume1/Workspace/Docker/Web/swag/log/nginx/*.log
+cd /volume1/Workspace/Docker
+tail -f inotify.
+ll /var/log/
+nvim inotify.sh
+touch inotify.sh
+which kill
+cat ~/.ssh/id_rsa.pub
+cat postinit.sh
+modprobe coretemp k10temp it87 adt7470 adt7475 nct6683 nct6775 
+sudo modprobe coretemp k10temp it87 adt7470 adt7475 nct6683 nct6775
+sudo modprobe -q coretemp k10temp it87 adt7470 adt7475 nct6683 nct6775
+cat /usr/bin/rr-sensors.sh | grep modprobe 
+cat /usr/bin/rr-sensors.sh | grep modprobe  | while read line; do eval sudo $line; done
+modprobe -h 
+nvim postinit.sh
+ps aux | grep rr-sensor
+ps aux | grep rr-sensors
+sudo kill -9 21899
+sudo kill -9 24821 
+sudo kill -- -26182
+sudo kill -- 26182
+shell 
+kill $(cat /run/inotify.pid)
+sudo kill $(cat /run/inotify.pid)
+sudo kill -SIGINT $(cat /run/inotify.pid)
+sudo kill -9 29738
+sudo kill -2 32617
+sudo kill -2 1507
+sudo kill -2 5649
+sudo kill -INT -5649
+bash
+ps aux | grep inotify | wc -l
+ps aux | grep inotify 
+sudo pkill inotify-alive.sh 
+ps aux | grep inotify-alive
+sudo kill -9 15913 15914 
+sudo pkill inotifywait 
+sudo rm /var/run/fancontrol.pid
+brew search fio 
+brew install fio 
+fio --help 
+fio --help | grep filename 
+fio --help | grep direct
+brew files fio
+brew list fio
+brew info fio 
+which fio
+/bin/fio --version
+cat /sys/block/md2/md/stripe_cache_size
+sudo ./tuneraid.sh
+sudo ./tuneraid.sh && ./dperf.sh
+sudo ./tuneraid.sh md0 
+./dperf.sh \ 
+./dperf.sh 
+lvm
+lvs
+sudo lvs
+vgscan --mknodes
+sudo vgs
+vgdisplay
+sudo vgdisplay
+lvdisplay 
+sudo lvdisplay 
+sudo lvdisplay volume_1
+sudo lvdisplay vg1
+sudo vgdisplay vg1
+vgscan
+vgs
+cat /proc/sys/dev/raid/speed_limit_max
+cat /proc/sys/dev/raid/speed_limit_min
+cat /etc/synoinfo.conf | grep m2
+cat /etc/synoinfo.conf | grep compa
+sudo ./tuneraid.sh md2 
+SHR-sync-preinit.sh
+touch SHR-sync-preinit.sh
+nvim SHR-sync-preinit.sh
+./SHR-sync-preinit.sh
+sudo ./dperf.sh
+sudo pkill inotify.sh 
+xargs < /run/inotify.pid
+pstree
+pstree  2981
+killall --help 
+killall inotify.sh 
+sudo killall inotifywait
+inotifywait --help 
+sudo killall inotify.sh 
+sudo kill -9 18763
+sudo ./inotify.sh
+sudo ./inotify.sh *
+cat /run/inotify.pid
+cat inotify.log
+sudo ./inotify.sh &
+sudo ./inotify-alive.sh
+cat /proc/sys/kernel/pid_max
+sysctl kernel.pid_max
+echo max | tee /proc/sys/kernel/pid_max 
+echo max | sudo tee /proc/sys/kernel/pid_max 
+cat /proc/sys/net/ipv4/ip_forward
+cd Shares/uploads/deprecated
+find . -name sysctl.conf 
+cat kvm/etc/sysctl.conf
+sudo kill -9 20373 
+sudo kill -INT 50388  
+sudo kill -9 20370
+sudo ./inotify.sh 
+echo $PPID
+sudo kill -9 80908
+sudo pkill inotify.sh
+sudo pkill inotifywait
+ps aux | grep inotify
+cat /usr/bin/rr-sensors.sh
+ps aux | grep fanc
+tail -f inotify.log
+hdparm -Tt --direct /dev/nvme0n1p5 
+sudo hdparm -Tt --direct /dev/nvme0n1p5 
+brew search iftop 
+brew install iftop
+iftop -i ovs_eth0 
+sudo iftop -i ovs_eth0 
+sudo hdparm -Tt --direct /dev/nvme5n1p5
+sudo hdparm -Tt --direct /dev/nvme4n1p5
+sudo ./tuneraid.sh md3
+sudo ./tuneraid.sh md2
+./dperf.sh
+nvim conntrack.sh
+touch 0755 scripts
+rm 0755 
+chmod 0755 scripts 
+ps aux 
+cd /usr/syno/bin
+ls *beep*
+ls *sound*
+cd ddns
+cd 
+nvim ~/.zshr
+cd /volume1/Workspace
+grep.sh HOMEBREW_NO_AUTO_UPDATE Settings/
+nvim zshrc
+wget https://global.synologydownload.com/download/ToolChain/toolchain/7.2-63134/AMD%20x86%20Linux%20Linux%205.10.55%20%28epyc7002%29/epyc7002-gcc1220_glibc236_x86_64-GPL.txz
+tar -xvf epyc7002-gcc1220_glibc236_x86_64-GPL.txz
+ll 
+PATH=/volume1/Workspace/x86_64-pc-linux-gnu/bin:$PATH
+brew install gcc
+man brew 
+brew --help 
+brew install --help 
+ll x86_64-pc-linux-gnu/x86_64-pc-linux-gnu/bin
+GCC=/volume1/Workspace/x86_64-pc-linux-gnu/bin/x86_64-pc-linux-gnu-gcc brew reinstall gcc
+cat /etc/fancontrol
+echo 1 > /dev/ttyS1
+echo 1 | sudo tee /dev/ttyS1
+echo 2 | sudo tee /dev/ttyS1
+echo 1 | sudo tee /dev/ttyS0
+echo 1 | sudo tee /dev/ttyS2
+echo 1 | sudo tee /dev/ttyS3
+echo 1 | sudo tee /dev/ttyS4
+echo -e '\a'
+tput bel 
+sudo modprobe pcspkr 
+lsmod | grep pcspkr
+which beep 
+brew search beep 
+groups
+cat /etc/group | grep input 
+echo -en "\a" | sudo tee /dev/ttyS2
+echo -en "\a" | sudo tee /dev/ttyS0
+echo -en "\a" | sudo tee /dev/ttyS1
+cat /dev/ttys0 
+echo -en "\a" | sudo tee /dev/ttys0
+echo -en "\a" | sudo tee /dev/ttys1
+echo -en "\a" | sudo tee /dev/ttys2
+echo -en "\a" | sudo tee /dev/ttys3
+echo -en "\a" | sudo tee /dev/ttys4
+echo -en "\a" | sudo tee /dev/ttys5
+echo -en "\a" | sudo tee /dev/tty
+watch -n1 sensors
+cat /etc/synoinfo.conf | grep fan
+traceroute 10.20.30.1
+traceroute github.com
+traceroute google.com 
+ping 10.20.30.1
+mkdir sources 
+cd sources
+git clone https://github.com/johnath/beep.git
+make 
+brew list gcc
+brew install --reinstall gcc
+sudo -i
+uname -a 
+htop 
+gcc -version 
+gcc -V
+gcc -v
+cd /usr/local/bin
+ls ../x86_64-pc-linux-gnu/bin
+ls ../x86_64-pc-linux-gnu/bin | while read -r line; do echo $line; done
+a=x86_64-pc-linux-gnu-strip
+echo ${a#x86_64-pc-linux-gnu-}
+ls ../x86_64-pc-linux-gnu/bin | while read -r line; sudo ln -svf ../x86_64-pc-linux-gnu/bin/$line ${line#x86_64-pc-linux-gnu-} ; done
+ls ../x86_64-pc-linux-gnu/bin | while read -r line; do sudo ln -svf ../x86_64-pc-linux-gnu/bin/$line ${line#x86_64-pc-linux-gnu-} ; done
+exit 
+which zsh 
+find x86_64-pc-linux-gnu -name gcc
+du -h
+sudo tar -xvf epyc7002-gcc1220_glibc236_x86_64-GPL.txz -C /usr/local
+cd /usr/local
+ln -svf ../x86_64-pc-linux-gnu/bin/x86_64-pc-linux-gnu-gcc gcc 
+sudo ln -svf ../x86_64-pc-linux-gnu/bin/x86_64-pc-linux-gnu-gcc gcc 
+sudo ln -svf ../x86_64-pc-linux-gnu/bin/x86_64-pc-linux-gnu-g++ g++
+brew uninstall pcre zsh 
+brew install zsh 
+brew uninstall gcc
+brew install pcre 
+bre reinstall pcre 
+brew postinstall gcc
+brew reinstall --build-from-source pcre 
+cat /home/linuxbrew/.linuxbrew/Cellar/gcc/14.1.0/bin/../lib/gcc/current/gcc/x86_64-pc-linux-gnu/14/specs
+history
+which gcc 
+ll /usr/local/bin/
+ldd 
+cd ~/.bin/
+sudo rm ldd 
+ll /usr/bin/ldd
+ll /usr/local/bin/ldd
+echo $PATH
+cd /volume1/Workspace/sources
+cd beep
+make
+./beep
+sudo beep 
+sudo ./beep
+cat README
+./beep --help 
+sudo ./beep -f 10000
+cd ../../
+pwd 
+which file 
+brew install file 
+file 
+readelf 
+which readelf 
+brew search glibc
+which ldd
+which -a ldd
+file /bin/ldd
+head -n1 /usr/bin/ldd /bin/ldd
+history | grep brew 
+brew reinstall --build-from-source pcre
+brew install --force-bottle glibc
+brew reinstall --force-bottle glibc
+brew install gcc 
+brew reinstall gcc
+HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=true brew reinstall gcc
+brew reinstall pcre 
+find Homebrew -name gcc 
+ll bin/gcc 
+grep.sh noexec /etc/
+grep.sh noexec /etc.defaults
+mount 
+sudo mount -o remount,exec /tmp
+mount | grep tmpfs 
+brew info gcc 
+brw 
+brew 
+ll /home/linuxbrew/.linuxbrew/Cellar/gcc/14.1.0
+ll /home/linuxbrew/.linuxbrew/Cellar/gcc/14.1.0/bin
+cd Homebrew/Cellar
+cd ../../opt
+cd ..
+cd -
+cd gcc
+cd bin
+brew search gcc
+brew --prefix gcc 
+cd ../../../../bin
+brew unlink gcc 
+ls gcc 
+ls gcc*
+brew link gcc 
+ll gcc-14
+brew --prefix gcc
+brew --prefix
+cd $(brew --prefix)/bin
+for x in ../opt/gcc/*; do echo $x; done
+for x in ../opt/gcc/bin/*; do echo $x; done
+nvim ../../tuneraid.sh
+brew link gcc\
+cd $(brew --prefix)/bin\
+for x in ../opt/gcc/bin/*; do \
+    ln -svf $x $(basename ${x%-[[:digit:]]})\
+done
+ll
+x="../opt/gcc/bin/x86_64-pc-linux-gnu-gfortran-14"
+echo $(basename ${x%-[[:digit:]]})
+echo $(basename ${x%\-[[:digit:]]})
+nvim /volume1/Workspace/tuneraid.sh
+echo $(basename ${x%[[:digit:]]})
+echo $(basename ${x%[[:digit:]]\+})
+echo $(basename ${x%[[:digit:]]*})
+echo $(basename ${x%[[:digit:]]+})
+bash 
+brew link gcc\
+cd $(brew --prefix)/bin\
+for x in ../opt/gcc/bin/*; do \
+    ln -svf $x $(basename ${x%-[[:digit:]]*})\
+done
+brew doctor 
+which gcc
+sudo pkill synonasd.sh
+tmux splitw h
+tmux splitw --help
+tmux splitw -h
+strftime --help
+strftime -h
+nvim Settings/zshrc
+nvim Settings/nvim/init.vim
+nvim ~/.zshrc
+fg 
+ls
+tmux --help 
+tmux splitw 
+tmux splitw -v
+T
+T1
+T0
+nvim Settings/tmux.conf
+exit
+T0
+nvim ~/.zshrc
+T
+./synonasctl.sh iperfd
+ps aux | grep iperf3
+iperf3 -c 10.10.10.1
+iperf3 -c 10.10.10.1 -R 
+iperf3 -c 10.10.10.200
+iperf3 -c 10.10.10.254 -庐
+dig img.mtdcy.top
+iperf3 -c 10.10.10.254 -R
+sudo sysctl bridge-nf-call-iptables
+sudo sysctl -a | grep bridge-nf-call
+nvim synonasd.sh
+sudo rmmod br_netfilter
+ll
+htop
+ls
+cat /etc/fancontrol
+fg 
+iperf3 -c 10.10.10.254
+iperf3 -c 10.10.10.254 -R 
+watch -n1 sensors
+sudo storagepanel.sh TOWER_Bay_0 1X5
+sudo storagepanel.sh TOWER_0_Bay 1X5
+sudo storagepanel.sh TOWER_2_Bay 1X5
+sudo storagepanel.sh TOWER_4_Bay 1X5
+sudo mdadm --examine --scan

@@ -13,8 +13,8 @@ fi
 
 # for OOO
 
-# Prompt #{{{ 
-unset PS1 PS2 PS3 PS4 
+# Prompt #{{{
+unset PS1 PS2 PS3 PS4
 # colorful PS1
 if [ $(id -u) -eq 0 -o "$USER" = "root" ]; then
   # root user
@@ -29,7 +29,7 @@ fi
 PS2='+> '
 PS3='+++> '
 PS4='+++++> '
-#PROMPT_COMMAND='RET=$?; if [[ $RET=0 ]]; then echo -ne "\033[4;32m$RET\033[0m"; else echo -ne "\033[4;31m$RET\033[0m"; fi; echo -n " "'  
+#PROMPT_COMMAND='RET=$?; if [[ $RET=0 ]]; then echo -ne "\033[4;32m$RET\033[0m"; else echo -ne "\033[4;31m$RET\033[0m"; fi; echo -n " "'
 #case ${TERM} in
 #	xterm*|rxvt*|Eterm|aterm|kterm|gnome*|interix)
 #		PROMPT_COMMAND='RET=$?; if [[ $RET = 0 ]]; then echo -ne "\033[30;42m$RET\033[0m"; else echo -ne "\033[30;41m$RET\033[0m"; fi;echo -ne "\033]0;${PWD/$HOME/~}\007"'
@@ -40,7 +40,7 @@ PS4='+++++> '
 #esac
 #}}}
 
-# some alias 
+# some alias
 
 # General# {{{
 #eval "`dircolors -b`"
@@ -101,7 +101,7 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 
 # MISC #{{{
-export GREP_OPTIONS='-R --exclude-dir=.svn --exclude-dir=.git --exclude=*~ --binary-files=without-match --color=auto -H -n'
+#export GREP_OPTIONS='-R --exclude-dir=.svn --exclude-dir=.git --exclude=*~ --binary-files=without-match --color=auto -H -n'
 
 #export HISTSIZE=5000
 #export HISTTIMEFORMAT='%F %T '
@@ -131,8 +131,8 @@ if which brew &> /dev/null; then
     export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
     export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
 
-    export HOMEBREW_BOTTLE_DOMAIN=https://cache.mtdcy.top/homebrew-bottles
-    export HOMEBREW_API_DOMAIN=https://cache.mtdcy.top/homebrew-bottles/api
+    export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.mtdcy.top/homebrew-bottles
+    export HOMEBREW_API_DOMAIN=https://mirrors.mtdcy.top/homebrew-bottles/api
 fi
 
 export PATH=$HOME/.bin:$PATH
