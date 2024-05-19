@@ -16,6 +16,10 @@ MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
 
 CMDLETS=${CMDLETS:-https://git.mtdcy.top:8443/mtdcy/UniStatic/raw/branch/main/cmdlets.sh}
 
+export HOMEBREW_BREW_GIT_REMOTE="$MIRRORS/brew.git"
+export HOMEBREW_BOTTLE_DOMAIN="$MIRRORS/homebrew-bottles"
+export HOMEBREW_API_DOMAIN="$MIRRORS/homebrew-bottles/api"
+
 # gnu utils
 utils=(sed grep awk ln)
 
@@ -25,7 +29,7 @@ curl -o bin/cmdlets.sh "$CMDLETS" || xlog error "failed to get $CMDLETS"
 # create synlinks for utils
 for x in "${utils[@]}"; do
     ln -sfv cmdlets.sh "bin/$x"
-    eval export "${x^^}=$x"
+    eval export "$(tr 'a-z' 'A-Z' <<< "$x")=$PWD/bin/$x"
 done
 #<< its safe to use gnu tools from now on ##
 
@@ -70,8 +74,9 @@ fi
 eval -- "$pm zsh vim git wget tree tmux htop lazygit"
 
 # special packages
-if which brew &> /dev/null; then
-    brew install -q go || true
+#if which brew &> /dev/null; then
+if [ "$(uname)" = "Darwin" ]; then
+    eval $pm coreutils findutils go
 elif which apt  &> /dev/null; then
     sudo apt install -y golang || true
 fi
