@@ -71,12 +71,12 @@ fi
 
 [ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
 
-eval -- "$pm zsh vim git wget tree tmux htop lazygit"
+eval -- "$pm zsh vim git wget tree tmux htop"
 
 # special packages
 #if which brew &> /dev/null; then
 if [ "$(uname)" = "Darwin" ]; then
-    eval $pm coreutils findutils go
+    eval $pm coreutils findutils go lazygit
 elif which apt  &> /dev/null; then
     sudo apt install -y golang || true
 fi
