@@ -213,11 +213,11 @@ which lazygit &> /dev/null && alias G='lazygit' || true
 timezsh() { /usr/bin/time $SHELL -i -c exit; }
 #zprof
 
-if [ "$(uname -o)" != Darwin ]; then
-    sed -e 's/cpu_temp=.*$/cpu_temp="C"/' \
-        -e 's/memory_unit=.*$/memory_unit=gib/' \
-        -e 's/speed_shorthand=.*$/speed_shorthand=on/' \
-        -i $HOME/.config/neofetch/config.conf &> /dev/null || true
-
-    neofetch 2> /dev/null
-fi
+#if [ "$(uname -o)" != Darwin ]; then
+#    sed -e 's/cpu_temp=.*$/cpu_temp="C"/' \
+#        -e 's/memory_unit=.*$/memory_unit=gib/' \
+#        -e 's/speed_shorthand=.*$/speed_shorthand=on/' \
+#        -i $HOME/.config/neofetch/config.conf &> /dev/null || true
+#
+#    neofetch 2> /dev/null
+#fi
