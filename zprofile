@@ -32,3 +32,6 @@ export GOPATH="$HOME/.go"
 
 # user PATH: shoud export after other PATH
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8

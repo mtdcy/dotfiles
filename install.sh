@@ -39,6 +39,7 @@ for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
     $LN -svfT "$PWD/$i" "$HOME/.$i"
 done
 
+mkdir -pv "$HOME/.config"
 for i in lazygit nvim; do
     $LN -svfT "$PWD/$i" "$HOME/.config/$i"
 done
