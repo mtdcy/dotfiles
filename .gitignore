@@ -14,3 +14,4 @@ bin/nvim
 bin/sed
 bin/tput
 bin/unrar
+zsh/history
