@@ -149,9 +149,20 @@ function tmux_attach_or_new() {
     # detach if inside tmux
     [ -n "$TMUX" ] && tmux detach && return
     # attach or new
-    local T="$(basename $PWD)"
-    tmux has-session -t "$T" &> /dev/null &&
-    tmux attach-session -t "$T" || tmux new -t "$T"
+    local ses=($(tmux list-sessions | awk -F: '{print $1}' | xargs))
+    if [ $#ses -gt 0 ]; then
+        echo -en "Current sessions:\n"
+        for ((i=1; i < ($#ses + 1); i++)) echo " $i) ${ses[$i]}"
+        echo -en "\nPlease select session (Enter to start new session): "
+        read ans
+        if [ -z "$ans" ] || [ "$ans" -gt $#ses ]; then
+            tmux new -t "$(basename "$PWD")"
+        else
+            tmux attach -t "${ses[$ans]}"
+        fi
+    else
+        tmux new -t "$(basename "$PWD")"
+    fi
 }
 
 # COLORS
