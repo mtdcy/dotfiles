@@ -178,10 +178,10 @@ export SYSTEMD_EDITOR=vim
 
 # alias
 hidden="--hide='@*' --hide='#recycle'"
-if which gls &> /dev/null; then
+if ls --version 2>/dev/null | grep -F "GNU coreutils" &> /dev/null; then
+    alias ls="ls --color=auto $hidden"
+elif which gls &> /dev/null; then
     alias ls="gls --color=auto $hidden"
-elif ls --version 2>/dev/null | grep coreutils > /dev/null; then
-    alias ls="ls --color=auto $hidden" # GNU coreutils
 else
     alias ls='ls -G' # macOS ls, no hide
 fi
