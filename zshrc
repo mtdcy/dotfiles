@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Copyright (c) 2014, Chen Fang mtdcy.chen@gmail.com
 
 #zmodload zsh/zprof
@@ -79,22 +86,32 @@ if [ -d ~/.zsh/powerlevel10k ]; then
     [[ -e ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
     # override default settings: must after .p10k.zsh
-    # move context to left prompt
-    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(term os_icon_joined context reporoot vcs_joined repodir_joined newline prompt_char)
+    # set left prompt
+    POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(term os_icon_joined reporoot vcs_joined repodir_joined newline prompt_char)
     # alter right prompt
-    POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
+    #POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS[@]/context})
     POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=( remote_host )
     # always show context
-    unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
+    #unset POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION
     # show background jobs count
     POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=true
     POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE_ALWAYS=true
     POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='≡'
     # date & time
-    POWERLEVEL9K_TIME_FORMAT='%D{%m-%d %H:%M:%S}'
+    #POWERLEVEL9K_TIME_FORMAT='%D{%m-%d %H:%M:%S}'
+    POWERLEVEL9K_TIME_FORMAT='%D{%H:%M:%S}'
 
     # load the theme at last
     source ~/.zsh/powerlevel10k/powerlevel10k.zsh-theme
+    # override colors
+    POWERLEVEL9K_DIR_FOREGROUND='skyblue1'
+
+    POWERLEVEL9K_CONTEXT_FOREGROUND='yellow'
+    POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND='red'
+    POWERLEVEL9K_CONTEXT_REMOTE_FOREGROUND='yellow'
+    POWERLEVEL9K_CONTEXT_REMOTE_SUDO_FOREGROUND='red'
+    unset POWERLEVEL9K_CONTEXT_BACKGROUND
+    unset POWERLEVEL9K_CONTEXT_{ROOT,REMOTE,REMOTE_SUDO}_BACKGROUND
 fi
 
 # show relative path to $HOME
@@ -108,7 +125,10 @@ fi
 
 # help: search prompt_example in '.p10k.zsh'
 function prompt_term() {
-    [ -z "$TMUX" ] || p10k segment -f "$POWERLEVEL9K_OS_ICON_FOREGROUND" -t '⧉' #'⌨'
+    [ -z "$TMUX" ] || p10k segment \
+        -f "$POWERLEVEL9K_OS_ICON_FOREGROUND" \
+        -b "$POWERLEVEL9K_OS_ICON_BACKGROUND" \
+        -t '⧉' #'⌨'
 }
 
 function prompt_reporoot() {
@@ -117,7 +137,10 @@ function prompt_reporoot() {
 
     if [ "$d" != '/' ]; then
         typeset -g REPOROOT="$d"
-        p10k segment -f skyblue1 -t "$(basename $REPOROOT)"
+        p10k segment \
+            -f "$POWERLEVEL9K_DIR_FOREGROUND" \
+            -b "$POWERLEVEL9K_DIR_BACKGROUND" \
+            -t "$(basename $REPOROOT)"
     elif [ ! -z "$REPOROOT" ]; then
         unset REPOROOT
     fi
@@ -125,9 +148,15 @@ function prompt_reporoot() {
 
 function prompt_repodir() {
     if [ -z "$REPOROOT" ]; then
-        p10k segment -f skyblue1 -t '%~'
+        p10k segment \
+            -f "$POWERLEVEL9K_DIR_FOREGROUND" \
+            -b "$POWERLEVEL9K_DIR_BACKGROUND" \
+            -t '%~'
     else
-        p10k segment -f skyblue1 -t "$(realpath --relative-base=$REPOROOT $PWD)"
+        p10k segment \
+            -f "$POWERLEVEL9K_DIR_FOREGROUND" \
+            -b "$POWERLEVEL9K_DIR_BACKGROUND" \
+            -t "$(realpath --relative-base=$REPOROOT $PWD)"
     fi
 }
 
@@ -194,7 +223,7 @@ alias grep='grep --color=auto'
 export PAGER=less
 export LESS=-R
 export LANG=en_US.UTF-8
-export EDITOR='vim'
+#export EDITOR='vim' # => will enable vi mode for zsh
 
 # extract
 alias -s zip="unzip"
