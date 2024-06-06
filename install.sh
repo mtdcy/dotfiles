@@ -1,20 +1,20 @@
-#!/bin/bash 
-# 
+#!/bin/bash
+#
 # vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
 set -e
 LANG=C.UTF-8
 LC_ALL=$LANG
 
 cd $(dirname "$0") || exit 1
-. bin/xlib.sh 
+. bin/xlib.sh
 
-[ -z "$MIRRORS" ] && 
-    curl -o /dev/null https://mirrors.mtdcy.top && 
+[ -z "$MIRRORS" ] &&
+    curl -o /dev/null https://mirrors.mtdcy.top &&
     MIRRORS=https://mirrors.mtdcy.top
 
 MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
 
-CMDLETS=${CMDLETS:-https://git.mtdcy.top:8443/mtdcy/UniStatic/raw/branch/main/cmdlets.sh}
+CMDLETS=${CMDLETS:-https://git.mtdcy.top:8443/mtdcy/cmdlets/raw/branch/main/cmdlets.sh}
 
 export HOMEBREW_BREW_GIT_REMOTE="$MIRRORS/brew.git"
 export HOMEBREW_BOTTLE_DOMAIN="$MIRRORS/homebrew-bottles"
@@ -34,7 +34,8 @@ done
 #<< its safe to use gnu tools from now on ##
 
 #>> install dotfiles
-git update-index --assume-unchanged zsh/history 
+# 'fatal: Unable to mark file zsh/history'
+git update-index --assume-unchanged zsh/history || true
 for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
     $LN -svfT "$PWD/$i" "$HOME/.$i"
 done
@@ -46,7 +47,7 @@ done
 
 # install fonts instead of create symlinks.
 if [ "$(uname)" = "Darwin" ]; then
-    mkdir -pv ~/Library/Fonts 
+    mkdir -pv ~/Library/Fonts
     cp -fv fonts/* ~/Library/Fonts/
 else
     mkdir -pv ~/.local/share/fonts
@@ -57,7 +58,7 @@ fi
 #<<
 
 #>> install programs
-if which brew; then # prefer 
+if which brew; then # prefer
     pm='NONINTERACTIVE=1 brew install -q'
 elif [ -f /etc/apt/sources.list ]; then
     #sudo apt install auto-apt-proxy
@@ -81,7 +82,7 @@ if [ "$(uname)" = "Darwin" ]; then
 elif which apt  &> /dev/null; then
     sudo apt install -y golang || true
 fi
-#<< 
+#<<
 
 #>> default settings
 $SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
@@ -110,11 +111,11 @@ git config --global --replace-all merge.conflictstyle diff3
 git config --global --replace-all core.excludesfile '*.swp'
 
 git config --global --replace-all alias.pl      "pull --rebase --recurse-submodules"
-git config --global --replace-all alias.st      status 
+git config --global --replace-all alias.st      status
 git config --global --replace-all alias.co      checkout
 git config --global --replace-all alias.ci      commit
-git config --global --replace-all alias.br      branch 
-git config --global --replace-all alias.cp      "cherry-pick --no-ff -x" 
+git config --global --replace-all alias.br      branch
+git config --global --replace-all alias.cp      "cherry-pick --no-ff -x"
 git config --global --replace-all alias.lg      "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %ci)'"
 git config --global --replace-all alias.lg1     "log -n 1 --color --name-status --parents"
 git config --global --replace-all alias.lga     "log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %cr)'"
@@ -123,12 +124,12 @@ git config --global --get user.name     || git config --global --replace-all use
 git config --global --get user.email    || git config --global --replace-all user.email "$(read -r -p 'user.email: '; echo "$REPLY")"
 #<<
 
-#>> submodules: 
+#>> submodules:
 git submodule update --init --recursive || true
 git submodule update --remote --merge || true
 
-# install nvim 
-[ "$1" = "all" ] && MIRRORS=$MIRRORS ./nvim/install.sh 
+# install nvim
+[ "$1" = "all" ] && MIRRORS=$MIRRORS ./nvim/install.sh
 #<<
 
 #>> applications:
