@@ -52,6 +52,7 @@ if [ "$(uname)" = "Darwin" ]; then
 else
     mkdir -pv ~/.local/share/fonts
     cp -fv fonts/* ~/.local/share/fonts/
+    fc-cache -fv
 fi
 
 . bashrc
