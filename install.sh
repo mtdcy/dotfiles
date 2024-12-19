@@ -1,101 +1,116 @@
 #!/bin/bash
-#
-# vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
-set -e
-LANG=C.UTF-8
-LC_ALL=$LANG
+set -eo pipefail
 
-cd $(dirname "$0") || exit 1
-. bin/xlib.sh
+LANG=en_US.UTF-8
 
-[ -z "$MIRRORS" ] &&
-    curl -o /dev/null https://mirrors.mtdcy.top &&
-    MIRRORS=https://mirrors.mtdcy.top
+pushd "$(dirname "$0")"
 
-MIRRORS=${MIRRORS:-https://mirrors.ustc.edu.cn}
+error() { echo -e "\\033[31m$*\\033[39m"; }
+info()  { echo -e "\\033[32m$*\\033[39m"; }
+warn()  { echo -e "\\033[33m$*\\033[39m"; }
 
-CMDLETS=${CMDLETS:-https://git.mtdcy.top:8443/mtdcy/cmdlets/raw/branch/main/cmdlets.sh}
-
-export HOMEBREW_BREW_GIT_REMOTE="$MIRRORS/brew.git"
-export HOMEBREW_BOTTLE_DOMAIN="$MIRRORS/homebrew-bottles"
-export HOMEBREW_API_DOMAIN="$MIRRORS/homebrew-bottles/api"
-
-# gnu utils
-utils=(sed grep awk ln)
+locally=0
+if curl --fail -sIL -o /dev/null https://mtdcy.top/; then
+    locally=1
+    MIRRORS=mirrors.mtdcy.top
+fi
 
 #>> Install cmdlets.sh and GNU utils
-curl -o bin/cmdlets.sh "$CMDLETS" || xlog error "failed to get $CMDLETS"
+info "install cmdlets.sh"
+if [ $locally -eq 1 ]; then
+    curl -o bin/cmdlets.sh -sL https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
+else
+    curl -o bin/cmdlets.sh -sL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
+fi
 
-# create synlinks for utils
+utils=(sed grep awk ln)
 for x in "${utils[@]}"; do
-    ln -sfv cmdlets.sh "bin/$x"
-    eval export "$(tr 'a-z' 'A-Z' <<< "$x")=$PWD/bin/$x"
+    "$x" --version | grep -qFw GNU || {
+        info "install gnu $x"
+        bash bin/cmdlets.sh install "$x"
+    }
 done
+LN='ln -svfT'
 #<< its safe to use gnu tools from now on ##
 
 #>> install dotfiles
 # 'fatal: Unable to mark file zsh/history'
 git update-index --assume-unchanged zsh/history || true
-for i in bin bashrc zsh zshrc zprofile vim vimrc tmux.conf; do
-    $LN -svfT "$PWD/$i" "$HOME/.$i"
-done
-
-mkdir -pv "$HOME/.config"
-for i in lazygit nvim; do
-    $LN -svfT "$PWD/$i" "$HOME/.config/$i"
+files=(bin bashrc zsh zshrc zprofile vim vimrc tmux.conf)
+for x in "${files[@]}"; do
+    info "install symbolic .$x"
+    $LN "$(pwd -P)/$x" "$HOME/.$x"
 done
 
 # install fonts instead of create symlinks.
+info "install fonts"
 if [ "$(uname)" = "Darwin" ]; then
     mkdir -pv ~/Library/Fonts
     cp -fv fonts/* ~/Library/Fonts/
 else
     mkdir -pv ~/.local/share/fonts
     cp -fv fonts/* ~/.local/share/fonts/
-    fc-cache -fv
+    fc-cache -fv || true
 fi
-
-. bashrc
 #<<
 
 #>> install programs
+info "install programs"
 if which brew; then # prefer
-    pm='NONINTERACTIVE=1 brew install -q'
+    PM='NONINTERACTIVE=1 brew install -q'
 elif [ -f /etc/apt/sources.list ]; then
-    #sudo apt install auto-apt-proxy
-    #auto-apt-proxy ||
-    #sudo sed \
-    #    -e "/^deb/ s|http[s]*://[a-z\.]*/|$MIRRORS/|g" \
-    #    -i /etc/apt/sources.list
+    if [ -n "$MIRRORS" ]; then
+        sudo sed -e "s|archive.ubuntu.com|$MIRRORS|g" \
+                 -e "s|security.ubuntu.com|$MIRRORS|g" \
+                 -i /etc/apt/sources.list \
+                 -i /etc/apt/sources.list.d/* || true
+    fi
     sudo apt update
-
-    pm='sudo apt install -y'
+    PM='sudo apt install -y'
+else
+    error "Please set package manager first."
+    exit 1
 fi
 
-[ -z "$pm" ] && { xlog error "Please set package manager first."; exit 1; }
-
-eval -- "$pm zsh vim git wget tree tmux htop"
+$PM zsh vim git wget curl tree tmux htop
 
 # special packages
 #if which brew &> /dev/null; then
 if [ "$(uname)" = "Darwin" ]; then
-    eval $pm coreutils findutils go lazygit
-elif which apt  &> /dev/null; then
-    sudo apt install -y golang || true
+    $PM coreutils findutils go lazygit
+else
+    $PM golang || true
+fi
+
+info "install nvim"
+if [ $locally -eq 1 ]; then
+    bash -c "$(curl -fsSL http://git.mtdcy.top/mtdcy/pretty.nvim/raw/branch/main/install.sh)" install
+else
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/pretty.nvim/main/install.sh)" install
 fi
 #<<
 
 #>> default settings
-$SHELL --version | grep 'zsh 5' || chsh -s "$(which zsh)"
+info "apply default settings"
+$SHELL --version | grep -qFw 'zsh 5' || {
+    info "apply zsh shell"
+    chsh -s "$(which zsh)"
+}
 
 EDITOR="$(which vim)"
 if which update-alternatives && which editor; then
     sudo update-alternatives --install "$(which editor)" editor "$(readlink -f $EDITOR)" 100
     sudo update-alternatives --set editor "$(readlink -f $EDITOR)"
 fi
+
+if [ "$(uname)" = "Darwin" ]; then
+    info "apply iterm2 settings"
+    defaults import com.googlecode.iterm2 iterm2/com.googlecode.iterm2.plist
+fi
 #<<
 
 #>> git:
+info "apply git settings"
 which less &&
 git config --global --replace-all core.pager    "less -F -X" ||
 git config --global --replace-all core.pager    "more"
@@ -125,16 +140,4 @@ git config --global --get user.name     || git config --global --replace-all use
 git config --global --get user.email    || git config --global --replace-all user.email "$(read -r -p 'user.email: '; echo "$REPLY")"
 #<<
 
-#>> submodules:
-git submodule update --init --recursive || true
-git submodule update --remote --merge || true
-
-# install nvim
-[ "$1" = "all" ] && MIRRORS=$MIRRORS ./nvim/install.sh
-#<<
-
-#>> applications:
-if [ "$(uname)" = "Darwin" ]; then
-    defaults import com.googlecode.iterm2 iterm2/com.googlecode.iterm2.plist
-fi
-#<<
+# vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<

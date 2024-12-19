@@ -1,122 +1,143 @@
 #!/bin/bash
 
 set -eo pipefail
-export LANG=C LC_CTYPE=UTF-8
 
-#ROOT="$(dirname "$(realpath "$0")")"
-ROOT="$(dirname "$0")"
-# => no realpath on macOS by default
+export LANG="${LANG:-en_US.UTF-8}"
 
-BASE=https://git.mtdcy.top:8443/mtdcy/UniStatic/raw/branch/main/cmdlets.sh
-REPO=https://pub.mtdcy.top:8443/UniStatic/current
+export STRIP="${CMDLETS_STRIP:-1}"
 
-case "$OSTYPE" in
-    darwin*)    ARCH="$(uname -m)-apple-darwin" ;;
-    *)          ARCH="$(uname -m)-$OSTYPE"      ;;
-esac
-ARCH=${CMDLETS_ARCH:-$ARCH}     # accept ENV:CMDLETS_ARCH
-
-usage() {
-    cat << EOF
-$(basename "$BASE") action [parameter(s)]
-
-Supported actions:
-    upgrade             - self update.
-    install <cmdlet>    - install cmdlet.
-    update  <cmdlet>    - update cmdlet.
-EOF
-}
+REPO=https://pub.mtdcy.top/cmdlets/latest
+BASE=https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
 
 error() { echo -ne "\\033[31m$*\\033[39m"; }
 info()  { echo -ne "\\033[32m$*\\033[39m"; }
 warn()  { echo -ne "\\033[33m$*\\033[39m"; }
 
+case "$OSTYPE" in
+    darwin*)
+        ARCH="$(uname -m)-apple-darwin"
+        ;;
+    linux*) # OSTYPE cann't be trusted
+        if find /lib*/ld-musl-* &>/dev/null; then
+            ARCH="$(uname -m)-linux-musl"
+        else
+            ARCH="$(uname -m)-linux-gnu"
+        fi
+        ;;
+    *)
+        ARCH="$(uname -m)-$OSTYPE"
+        ;;
+esac
+
+usage() {
+    cat << EOF
+Copyright (c) 2024, mtdcy.chen@gmail.com
+
+cmdlets.sh action [parameter(s)]
+
+Supported actions:
+    install <cmdlet>    - install cmdlet.
+    library <libname>   - install library to current directory.
+EOF
+}
+
 # pull cmdlet from server
 pull() {
-    # cmdlet? 
-    #  => prefer cmdlet instead of applet.
-    local dest="prebuilts/$ARCH/bin/$1"
-    if curl --fail -s -o /dev/null -I "$REPO/$dest"; then
-        dest="prebuilts/$ARCH/bin/$1"
-        
-        info "Pull $1 => $dest\n"
+    # accept ENV:CMDLETS_ARCH
+    local arch="${CMDLETS_ARCH:-$ARCH}"
+    local dest="$arch/app/$1"
+    if curl --fail -s -o "/tmp/$1-revision" "$REPO/$dest/$1-revision"; then
+        info "Pull applet $1 => $dest\n"
+
+        local sha pkgname
+        IFS=' ' read -r sha pkgname _ <<< "$(tail -n1 /tmp/$1-revision)"
+
+        mkdir -p "$ROOT/$dest"
+        curl --fail -# "$REPO/$dest/$pkgname" | tar -C "$ROOT/$dest" -xz
+        if [ "$STRIP" -ne 0 ] && which strip &>/dev/null; then
+            find "$ROOT/$dest" -type f -exec strip -s {} \; 2>/dev/null
+        fi
+
+        chmod a+x "$ROOT/$dest/$1"
+    elif curl --fail -s -o /dev/null -I "$REPO/$arch/bin/$1"; then
+        dest="$arch/bin/$1"
+        info "Pull cmdlet $1 => $dest\n"
 
         mkdir -p "$(dirname "$ROOT/$dest")"
-
-        [ -e "$ROOT/$dest" ] &&
-        curl --fail -# -z "$ROOT/$dest" -o "$ROOT/$dest" "$REPO/$dest" ||
         curl --fail -# -o "$ROOT/$dest" "$REPO/$dest"
+        if [ "$STRIP" -ne 0 ] && which strip &>/dev/null; then
+            strip -s "$ROOT/$dest"
+        fi
 
         chmod a+x "$ROOT/$dest"
-        return
     else
-        # cmdlet => applet?
-        rm -f "$ROOT/$dest"
-    fi
-
-    # applet?
-    local dest="prebuilts/$ARCH/app/$1"
-    if curl --fail -s -o /dev/null -I "$REPO/$dest/$1.tar.gz"; then
-        # get app.tar.gz
-        info "Pull $1 => $dest\n"
-        curl --fail -# -o "/tmp/$$_$1.tar.gz" "$REPO/$dest/$1.tar.gz"
-        mkdir -p "$ROOT/$dest"
-        tar -C "$ROOT/$dest" -xf /tmp/$$_$1.tar.gz
-        rm /tmp/$$_$1.tar.gz
-    elif curl --fail -s -o "/tmp/$$_$1.lst" "$REPO/$dest/$1.lst"; then
-        # get app.lst
-        mkdir -p "$ROOT/$dest" && 
-        mv "/tmp/$$_$1.lst" "$ROOT/$dest/$1.lst" &&
-
-        tput hpa 0 el 
-        local message="Pull $1 => $dest"
-
-        local w="${#message}"
-        info "$message"
-
-        # get files
-        local i=0
-        local n="$(wc -l < "$ROOT/$dest/$1.lst")"
-        while read -r line; do
-            i=$((i + 1))
-            IFS=' ' read -r a b <<< "$line"
-
-            tput hpa "$w" el 
-            echo -en " ... $i/$n"
-
-            [ -e "$ROOT/$dest/$a" ] &&
-            curl --fail -s --create-dirs -z "$ROOT/$dest/$a" -o "$ROOT/$dest/$a" "$REPO/$dest/$a" ||
-            curl --fail -s --create-dirs -o "$ROOT/$dest/$a" "$REPO/$dest/$a"
-
-            # permission
-            [ -z "$b" ] || chmod "$b" "$ROOT/$dest/$a"
-        done < "$ROOT/$dest/$1.lst"
-
-        echo "" # new line
-        rm /tmp/$$_$1.lst
-    else
-        error "Error: failed to get cmdlet $1.\n"
+        error "Pull $1 failed\n"
         return 1
     fi
 }
 
-name="$(basename "$0")"
+# pull library to current directory
+pull-library() {
+    local arch="${CMDLETS_ARCH:-$ARCH}"
 
-# update cmdlets.sh
-if [ "$name" = "$(basename "$BASE")" ]; then
+    if ! curl --fail -s -o "/tmp/$1-revision" "$REPO/$arch/$1-revision"; then
+        info "Pull library $1 failed\n"
+        return 1
+    fi
+
+    local sha libname
+    IFS=' ' read -r sha libname _ <<< "$(tail -n1 /tmp/$1-revision)"
+    curl --fail -# "$REPO/$arch/$libname" | tar -xz
+
+    # update pkgconfig .pc
+    find lib/pkgconfig -name "*.pc" -exec sed -e "s:^prefix=.*$:prefix=$PWD:" -i {} \;
+}
+
+install() {
+    local dest tmpfile
+
+    if curl --fail -sIL -o /dev/null https://git.mtdcy.top/mtdcy/cmdlets/; then
+        BASE=https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
+    fi
+
+    if which cmdlets.sh &>/dev/null; then
+        dest="$(dirname "$(which cmdlets.sh)")"
+    elif [[ "$PATH" =~ $HOME/.bin ]]; then
+        dest="$HOME/.bin"
+    else
+        dest="/usr/local/bin"
+    fi
+
+    info "Install cmdlets => $dest\n"
+    tmpfile="/tmp/$$-cmdlets.sh"
+    curl --fail -# -o "$tmpfile" "$BASE"
+    chmod a+x "$tmpfile"
+    if [ -w "$dest" ]; then
+        mv -f "$tmpfile" "$dest/cmdlets.sh"
+    else
+        sudo mv -f "$tmpfile" "$dest/cmdlets.sh"
+    fi
+}
+
+name="$(basename "$0")"
+if [ "$name" = "install" ] && [ $# -eq 0 ]; then
+    install
+    exit
+elif [ "$name" = "fetch" ] && [ $# -eq 1 ]; then
+    pull "$1"
+    exit
+elif [ "$name" = "cmdlets.sh" ]; then
     case "$1" in
-        upgrade)
-            info "Update $name => $ROOT/cmdlets.sh\n"
-            # use tmpfile to avoid partial writes.
-            tmpfile="/tmp/$$-cmdlets.sh"
-            curl --fail -# -o "$tmpfile" "$BASE"
-            chmod a+x "$tmpfile"
-            exec mv -f "$tmpfile" "$ROOT/cmdlets.sh"
+        install)
+            if [ -n "$2" ]; then # install cmdlets
+                pull "$2"
+                ln -sfv "$name" "$(dirname "$0")/$2"
+            else
+                install
+            fi
             ;;
-        install|update)
-            [ -n "$2" ] || { usage; exit; }
-            pull "$2"
-            ln -sf "$name" "$ROOT/$2"
+        library) # fetch libs
+            pull-library "$2"
             ;;
         help|*)
             usage
@@ -125,14 +146,17 @@ if [ "$name" = "$(basename "$BASE")" ]; then
     exit
 fi
 
+# never resolve symbolic here
+ROOT="$(cd "$(dirname "$0")"; pwd)/prebuilts"
+
 # preapre cmdlet
-cmdlet="$ROOT/prebuilts/$ARCH/app/$name/$name"
-[ -x "$cmdlet" ] || cmdlet="$ROOT/prebuilts/$ARCH/bin/$name"
+cmdlet="$ROOT/$ARCH/app/$name/$name"
+[ -x "$cmdlet" ] || cmdlet="$ROOT/$ARCH/bin/$name"
 [ -x "$cmdlet" ] || pull "$name"
 
 # exec cmdlet
-cmdlet="$ROOT/prebuilts/$ARCH/app/$name/$name"
-[ -x "$cmdlet" ] || cmdlet="$ROOT/prebuilts/$ARCH/bin/$name"
+cmdlet="$ROOT/$ARCH/app/$name/$name"
+[ -x "$cmdlet" ] || cmdlet="$ROOT/$ARCH/bin/$name"
 [ -x "$cmdlet" ] || error "no cmdlet $name found.\n"
 
 exec "$cmdlet" "$@"
