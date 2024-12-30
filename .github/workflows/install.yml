@@ -12,18 +12,10 @@ jobs:
   check-install.sh:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (main)
-        uses: https://git.mtdcy.top/actions/checkout@v3
-        with:
-          fetch-depth: 1
-          show-progress: false
-
       - name: Check install.sh
         shell: bash
         run: |
-          set -x
-
-          ./install.sh
+          bash -x -c "$(curl -fsSL https://git.mtdcy.top/mtdcy/dotfiles/raw/branch/main/install.sh)" install
 
           # check
           ls -lh ~/.zsh

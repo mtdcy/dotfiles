@@ -9,15 +9,27 @@ error() { echo -e "\\033[31m$*\\033[39m"; }
 info()  { echo -e "\\033[32m$*\\033[39m"; }
 warn()  { echo -e "\\033[33m$*\\033[39m"; }
 
-locally=0
-if curl --fail -sIL -o /dev/null https://mtdcy.top/; then
-    locally=1
-    MIRRORS=mirrors.mtdcy.top
+
+check() {
+    case "$1" in
+        http://*|https://*)
+            curl --fail -sIL -o /dev/null "$1"
+            ;;
+    esac
+}
+
+if [ "$0" = install ] || [ "$1" = install ]; then
+    if [ -d "$HOME/.files" ]; then
+        git -C "$HOME/.files" pull --rebase
+    else
+        git clone https://git.mtdcy.top/mtdcy/dotfiles.git "$HOME/.files"
+    fi
+    exec "$HOME/.files/install.sh"
 fi
 
 #>> Install cmdlets.sh and GNU utils
 info "install cmdlets.sh"
-if [ $locally -eq 1 ]; then
+if check https://git.mtdcy.top/mtdcy/cmdlets; then
     curl -o bin/cmdlets.sh -sL https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
 else
     curl -o bin/cmdlets.sh -sL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
@@ -59,9 +71,9 @@ info "install programs"
 if which brew; then # prefer
     PM='NONINTERACTIVE=1 brew install -q'
 elif [ -f /etc/apt/sources.list ]; then
-    if [ -n "$MIRRORS" ]; then
-        sudo sed -e "s|archive.ubuntu.com|$MIRRORS|g" \
-                 -e "s|security.ubuntu.com|$MIRRORS|g" \
+    if check http://mirrors.mtdcy.top; then
+        sudo sed -e "s|archive.ubuntu.com|mirrors.mtdcy.top|g" \
+                 -e "s|security.ubuntu.com|mirrors.mtdcy.top|g" \
                  -i /etc/apt/sources.list \
                  -i /etc/apt/sources.list.d/* || true
     fi
@@ -83,8 +95,8 @@ else
 fi
 
 info "install nvim"
-if [ $locally -eq 1 ]; then
-    bash -c "$(curl -fsSL http://git.mtdcy.top/mtdcy/pretty.nvim/raw/branch/main/install.sh)" install
+if check https://git.mtdcy.top/mtdcy/pretty.nvim; then
+    bash -c "$(curl -fsSL https://git.mtdcy.top/mtdcy/pretty.nvim/raw/branch/main/install.sh)" install
 else
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/pretty.nvim/main/install.sh)" install
 fi
