@@ -1,6 +1,4 @@
 #!/bin/bash
-set -eo pipefail
-
 LANG=en_US.UTF-8
 
 pushd "$(dirname "$0")"
@@ -42,7 +40,9 @@ for x in "${utils[@]}"; do
         bash bin/cmdlets.sh install "$x"
     }
 done
-LN='ln -svfT'
+
+# always copy in msys2
+[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='ln -svfT'
 #<< its safe to use gnu tools from now on ##
 
 #>> install dotfiles
@@ -67,8 +67,9 @@ fi
 #<<
 
 #>> install programs
+progs=( zsh vim git wget curl tree tmux htop )
 info "install programs"
-if which brew; then # prefer
+if which brew &>/dev/null; then # prefer
     PM='NONINTERACTIVE=1 brew install -q'
 elif [ -f /etc/apt/sources.list ]; then
     if check http://mirrors.mtdcy.top; then
@@ -79,12 +80,21 @@ elif [ -f /etc/apt/sources.list ]; then
     fi
     sudo apt update
     PM='sudo apt install -y'
+elif which pacman &>/dev/null; then
+    if check http://mirrors.mtdcy.top; then
+        sed -e "s|mirror.msys2.org|mirrors.mtdcy.top/msys2|g" \
+            -i /etc/pacman.d/mirrorlist*
+    fi
+    pacman -Sy
+    PM='pacman -Sq --noconfirm'
 else
     error "Please set package manager first."
     exit 1
 fi
 
-$PM zsh vim git wget curl tree tmux htop
+for x in "${progs[@]}"; do
+    eval -- "$PM" "$x" || true
+done
 
 # special packages
 #if which brew &> /dev/null; then
