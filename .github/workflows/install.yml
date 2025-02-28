@@ -20,7 +20,6 @@ jobs:
           # check
           ls -lh ~/.zsh
           ls -lh ~/.zshrc
-          which nvim
 
       - name: Notify on failure
         if: failure()
