@@ -23,12 +23,22 @@ if which brew &> /dev/null; then
 fi
 
 # rust & cargo
-[ -d "$HOME/.cargo" ] && source "$HOME/.cargo/env"
+if [ -d "$HOME/.cargo" ]; then
+    export RUSTUP_DIST_SERVER=https://mirrors.mtdcy.top/rust-static
+    export RUSTUP_UPDATE_ROOT=https://mirrors.mtdcy.top/rust-static/rustup
+    . "$HOME/.cargo/env"
+fi
 
 # go
 export GOPATH="$HOME/.go"
 [ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
 [ -d "$GOPATH" ]     && export PATH=$GOPATH/bin:$PATH
+
+# luarocks
+[ -d "$HOME/.luarocks" ] && export PATH=$HOME/.luarocks/bin:$PATH
+
+# deno
+[ -d "$HOME/.deno" ] && source "$HOME/.deno/env"
 
 # user PATH: shoud export after other PATH
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH

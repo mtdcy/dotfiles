@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $0 <old> <new> <path> 
+# $0 <old> <new> <path>
 
 OPTS=("")
 PARS=()
@@ -16,7 +16,7 @@ OLD=${PARS[0]}
 NEW=${PARS[1]}
 TGT=${PARS[@]:2}
 
-CMD="grep.sh -l $OPTS '${OLD[@]}' ${TGT[@]} | xargs sed -i "
+CMD="grep.sh -l $OPTS '${OLD[@]}' ${TGT[@]} | sed 's| |\\ |g' | xargs sed -i "
 if [[ ${OPTS[@]} =~ "-w" ]]; then
     CMD+=" 's%\<${OLD[@]}\>%${NEW[@]}%g'"
 else

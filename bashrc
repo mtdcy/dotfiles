@@ -136,3 +136,5 @@ if which brew &> /dev/null; then
 fi
 
 export PATH=$HOME/.bin:$PATH
+. "$HOME/.cargo/env"
+. "/home/mtdcy/.deno/env"

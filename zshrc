@@ -225,6 +225,9 @@ export LESS=-R
 export LANG=en_US.UTF-8
 #export EDITOR='vim' # => will enable vi mode for zsh
 
+# for Tabby
+export PROMPT_COMMAND='echo -ne "\033]0;${PWD}\007"'
+
 # extract
 alias -s zip="unzip"
 alias -s gz="tar -xzvf"

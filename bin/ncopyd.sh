@@ -1,1 +1,1 @@
-/home/mtdcy/.nvim/scripts/ncopyd.sh
+/home/mtdcy/pretty.nvim/scripts/ncopyd.sh
