@@ -15,3 +15,5 @@ bin/sed
 bin/tput
 bin/unrar
 zsh/history
+bin/ncopyc.sh
+bin/ncopyd.sh

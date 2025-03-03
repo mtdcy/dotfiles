@@ -1,1 +1,0 @@
-/home/mtdcy/pretty.nvim/scripts/ncopyd.sh
