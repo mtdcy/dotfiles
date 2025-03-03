@@ -67,10 +67,15 @@ fi
 #<<
 
 #>> install programs
-progs=( zsh vim git wget curl tree tmux htop )
 info "install programs"
 if which brew &>/dev/null; then # prefer
-    PM='NONINTERACTIVE=1 brew install -q'
+    NONINTERACTIVE=1 brew install -q \
+        zsh vim git wget curl tree tmux htop \
+        python3 npm
+    if [ "$(uname)" = "Darwin" ]; then
+        NONINTERACTIVE=1 brew install -q \
+            coreutils findutils go lazygit
+    fi
 elif [ -f /etc/apt/sources.list ]; then
     if check http://mirrors.mtdcy.top; then
         sudo sed -e "s|archive.ubuntu.com|mirrors.mtdcy.top|g" \
@@ -79,29 +84,22 @@ elif [ -f /etc/apt/sources.list ]; then
                  -i /etc/apt/sources.list.d/* || true
     fi
     sudo apt update
-    PM='sudo apt install -y'
+    sudo apt install -y \
+        zsh vim git wget curl tree tmux htop  \
+        python3 python3-venv npm golang \
+        fontconfig
 elif which pacman &>/dev/null; then
     if check http://mirrors.mtdcy.top; then
         sed -e "s|mirror.msys2.org|mirrors.mtdcy.top/msys2|g" \
             -i /etc/pacman.d/mirrorlist*
     fi
     pacman -Sy
-    PM='pacman -Sq --noconfirm'
+    pacman -Sq --noconfirm \
+        zsh vim git wget curl tree tmux htop  \
+        python3 npm go
 else
     error "Please set package manager first."
     exit 1
-fi
-
-for x in "${progs[@]}"; do
-    eval -- "$PM" "$x" || true
-done
-
-# special packages
-#if which brew &> /dev/null; then
-if [ "$(uname)" = "Darwin" ]; then
-    $PM coreutils findutils go lazygit
-else
-    $PM golang || true
 fi
 
 info "install nvim"
