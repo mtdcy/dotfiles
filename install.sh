@@ -58,10 +58,10 @@ done
 info "install fonts"
 if [ "$(uname)" = "Darwin" ]; then
     mkdir -pv ~/Library/Fonts
-    cp -fv fonts/* ~/Library/Fonts/
+    cp -rfv fonts/* ~/Library/Fonts/
 else
     mkdir -pv ~/.local/share/fonts
-    cp -fv fonts/* ~/.local/share/fonts/
+    cp -rfv fonts/* ~/.local/share/fonts/
     fc-cache -fv || true
 fi
 #<<
