@@ -2,7 +2,7 @@
 
 MIRROR="${MIRROR:-https://mirrors.mtdcy.top}"
 
-if curl --fail -sL "$MIRROR"; then
+if curl --fail -sL -o /dev/null "$MIRROR"; then
 	export DOWNLOAD_URL="$MIRROR/docker-ce"
 fi
 
