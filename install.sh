@@ -16,34 +16,33 @@ check() {
     esac
 }
 
-if [ "$0" = install ] || [ "$1" = install ]; then
-    if [ -d "$HOME/.files" ]; then
-        git -C "$HOME/.files" pull --rebase
+if [ -z "$1" ] || [ "$1" = "install" ]; then
+    if [ -d "$(dirname "$0")/.git" ]; then
+        cd "$(dirname "$0")" || exit
+        git pull --rebase --force
     else
-        git clone https://git.mtdcy.top/mtdcy/dotfiles.git "$HOME/.files"
+        git clone --depth=1 https://git.mtdcy.top/mtdcy/dotfiles.git "$HOME/.files"
+        cd "$HOME/.files" || exit
     fi
-    exec "$HOME/.files/install.sh"
-fi
 
-#>> Install cmdlets.sh and GNU utils
-info "install cmdlets.sh"
-if check https://git.mtdcy.top/mtdcy/cmdlets; then
-    curl -o bin/cmdlets.sh -sL https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
-else
-    curl -o bin/cmdlets.sh -sL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
-fi
+    info "install cmdlets.sh"
+    if check https://git.mtdcy.top/mtdcy/cmdlets; then
+        curl -o bin/cmdlets.sh -sL https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
+    else
+        curl -o bin/cmdlets.sh -sL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
+    fi
 
-utils=(sed grep awk ln)
-for x in "${utils[@]}"; do
-    "$x" --version | grep -qFw GNU || {
-        info "install gnu $x"
+    utils=(sed grep awk ln)
+    for x in "${utils[@]}"; do
         bash bin/cmdlets.sh install "$x"
-    }
-done
+    done
+    #<< its safe to use gnu tools from now on ##
+
+    exec ./install.sh --no-update
+fi
 
 # always copy in msys2
-[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='ln -svfT'
-#<< its safe to use gnu tools from now on ##
+[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='./bin/ln -svfT'
 
 #>> install dotfiles
 # 'fatal: Unable to mark file zsh/history'
