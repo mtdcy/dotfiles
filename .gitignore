@@ -17,3 +17,4 @@ bin/unrar
 zsh/history
 bin/ncopyc.sh
 bin/ncopyd.sh
+zsh/powerlevel10k/gitstatus/usrbin

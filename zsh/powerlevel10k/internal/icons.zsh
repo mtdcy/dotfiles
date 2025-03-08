@@ -74,7 +74,9 @@ function _p9k_init_icons() {
         LINUX_AMZN_ICON                '\uE271'$s             # 
         LINUX_ENDEAVOUROS_ICON         '\uE271'$s             # 
         LINUX_ROCKY_ICON               '\uE271'$s             # 
+        LINUX_ALMALINUX_ICON           '\uE271'$s             # 
         LINUX_GUIX_ICON                '\uE271'$s             # 
+        LINUX_NEON_ICON                '\uE271'$s             # 
         SUNOS_ICON                     '\U1F31E'$q            # 🌞
         HOME_ICON                      '\uE12C'$s             # 
         HOME_SUB_ICON                  '\uE18D'$s             # 
@@ -138,6 +140,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      '\U2615'               # ☕︎
         LARAVEL_ICON                   ''
         RANGER_ICON                    '\u2B50'               # ⭐
+        YAZI_ICON                      '\u2B50'               # ⭐
         MIDNIGHT_COMMANDER_ICON        'mc'
         VIM_ICON                       'vim'
         TERRAFORM_ICON                 'tf'
@@ -230,7 +233,9 @@ function _p9k_init_icons() {
         LINUX_AMZN_ICON                '\uF17C'$s             # 
         LINUX_ENDEAVOUROS_ICON         '\uF17C'$s             # 
         LINUX_ROCKY_ICON               '\uF17C'$s             # 
+        LINUX_ALMALINUX_ICON           '\uF17C'$s             # 
         LINUX_GUIX_ICON                '\uF17C'$s             # 
+        LINUX_NEON_ICON                '\uF17C'$s             # 
         SUNOS_ICON                     '\uF185 '              # 
         HOME_ICON                      '\uF015'$s             # 
         HOME_SUB_ICON                  '\uF07C'$s             # 
@@ -290,6 +295,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      '\U2615'               # ☕︎
         LARAVEL_ICON                   ''
         RANGER_ICON                    '\u2B50'               # ⭐
+        YAZI_ICON                      '\u2B50'               # ⭐
         MIDNIGHT_COMMANDER_ICON        'mc'
         VIM_ICON                       'vim'
         TERRAFORM_ICON                 'tf'
@@ -387,7 +393,9 @@ function _p9k_init_icons() {
         LINUX_AMZN_ICON                "${CODEPOINT_OF_AWESOME_LINUX:+\\u$CODEPOINT_OF_AWESOME_LINUX$s}"
         LINUX_ENDEAVOUROS_ICON         "${CODEPOINT_OF_AWESOME_LINUX:+\\u$CODEPOINT_OF_AWESOME_LINUX$s}"
         LINUX_ROCKY_ICON               "${CODEPOINT_OF_AWESOME_LINUX:+\\u$CODEPOINT_OF_AWESOME_LINUX$s}"
+        LINUX_ALMALINUX_ICON           "${CODEPOINT_OF_AWESOME_LINUX:+\\u$CODEPOINT_OF_AWESOME_LINUX$s}"
         LINUX_GUIX_ICON                "${CODEPOINT_OF_AWESOME_LINUX:+\\u$CODEPOINT_OF_AWESOME_LINUX$s}"
+        LINUX_NEON_ICON                "${CODEPOINT_OF_AWESOME_LINUX:+\\u$CODEPOINT_OF_AWESOME_LINUX$s}"
         SUNOS_ICON                     "${CODEPOINT_OF_AWESOME_SUN_O:+\\u$CODEPOINT_OF_AWESOME_SUN_O }"
         HOME_ICON                      "${CODEPOINT_OF_AWESOME_HOME:+\\u$CODEPOINT_OF_AWESOME_HOME$s}"
         HOME_SUB_ICON                  "${CODEPOINT_OF_AWESOME_FOLDER_OPEN:+\\u$CODEPOINT_OF_AWESOME_FOLDER_OPEN$s}"
@@ -445,6 +453,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      '\U2615'                                       # ☕︎
         LARAVEL_ICON                   ''
         RANGER_ICON                    '\u2B50'                                       # ⭐
+        YAZI_ICON                      '\u2B50'                                       # ⭐
         MIDNIGHT_COMMANDER_ICON        'mc'
         VIM_ICON                       'vim'
         TERRAFORM_ICON                 'tf'
@@ -533,11 +542,13 @@ function _p9k_init_icons() {
         LINUX_ARTIX_ICON               '\UF31F'$s             # 
         LINUX_UBUNTU_ICON              '\uF31b'$s             # 
         LINUX_KALI_ICON                '\uF327'$s             # 
-        LINUX_RHEL_ICON                '\uF316'$s             # 
+        LINUX_RHEL_ICON                '\UF111B'$s            # 󱄛
         LINUX_AMZN_ICON                '\uF270'$s             # 
         LINUX_ENDEAVOUROS_ICON         '\UF322'$s             # 
         LINUX_ROCKY_ICON               '\UF32B'$s             # 
+        LINUX_ALMALINUX_ICON           '\UF31D'$s             # 
         LINUX_GUIX_ICON                '\UF325'$s             # 
+        LINUX_NEON_ICON                '\uF17C'               # 
         LINUX_ICON                     '\uF17C'               # 
         SUNOS_ICON                     '\uF185 '              # 
         HOME_ICON                      '\uF015'$s             # 
@@ -603,6 +614,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      '\uE738'               # 
         LARAVEL_ICON                   '\ue73f'$q             # 
         RANGER_ICON                    '\uF00b '              # 
+        YAZI_ICON                      '\uF00b '              # 
         MIDNIGHT_COMMANDER_ICON        'mc'                   # mc
         VIM_ICON                       '\uE62B'               # 
         TERRAFORM_ICON                 '\uF1BB '              # 
@@ -695,7 +707,9 @@ function _p9k_init_icons() {
         LINUX_AMZN_ICON                '\uF270'$s             # 
         LINUX_ENDEAVOUROS_ICON         '\uF17C'               # 
         LINUX_ROCKY_ICON               '\uF17C'               # 
+        LINUX_ALMALINUX_ICON           '\uF17C'               # 
         LINUX_GUIX_ICON                '\uF325'$s             # 
+        LINUX_NEON_ICON                '\uF17C'               # 
         LINUX_ICON                     '\uF17C'               # 
         SUNOS_ICON                     '\uF185 '              # 
         HOME_ICON                      '\uF015'$s             # 
@@ -756,6 +770,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      '\uE738'               # 
         LARAVEL_ICON                   '\ue73f'$q             # 
         RANGER_ICON                    '\uF00b '              # 
+        YAZI_ICON                      '\uF00b '              # 
         MIDNIGHT_COMMANDER_ICON        'mc'
         VIM_ICON                       '\uE62B'               # 
         TERRAFORM_ICON                 '\uF1BB '              # 
@@ -846,7 +861,9 @@ function _p9k_init_icons() {
         LINUX_AMZN_ICON                'amzn'
         LINUX_ENDEAVOUROS_ICON         'edvos'
         LINUX_ROCKY_ICON               'rocky'
+        LINUX_ALMALINUX_ICON           'alma'
         LINUX_GUIX_ICON                'guix'
+        LINUX_NEON_ICON                'neon'
         SUNOS_ICON                     'sunos'
         HOME_ICON                      ''
         HOME_SUB_ICON                  ''
@@ -906,6 +923,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      'java'
         LARAVEL_ICON                   ''
         RANGER_ICON                    'ranger'
+        YAZI_ICON                      'yazi'
         MIDNIGHT_COMMANDER_ICON        'mc'
         VIM_ICON                       'vim'
         TERRAFORM_ICON                 'tf'
@@ -998,7 +1016,9 @@ function _p9k_init_icons() {
         LINUX_AMZN_ICON                'Amzn'
         LINUX_ENDEAVOUROS_ICON         'Edv'
         LINUX_ROCKY_ICON               'Roc'
+        LINUX_ALMALINUX_ICON           'Alma'
         LINUX_GUIX_ICON                'Guix'
+        LINUX_NEON_ICON                'Neon'
         SUNOS_ICON                     'Sun'
         HOME_ICON                      ''
         HOME_SUB_ICON                  ''
@@ -1058,6 +1078,7 @@ function _p9k_init_icons() {
         JAVA_ICON                      '\U2615'               # ☕︎
         LARAVEL_ICON                   ''
         RANGER_ICON                    '\u2B50'               # ⭐
+        YAZI_ICON                      '\u2B50'               # ⭐
         MIDNIGHT_COMMANDER_ICON        'mc'
         VIM_ICON                       'vim'
         TERRAFORM_ICON                 'tf'
