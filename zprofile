@@ -40,6 +40,14 @@ export GOPATH="$HOME/.go"
 # deno
 [ -d "$HOME/.deno" ] && source "$HOME/.deno/env"
 
+if [ -d "$HOME/.Miniconda3" ]; then
+    if [ -f "$HOME/.Miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/.Miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="$HOME/.Miniconda3/bin:$PATH"
+    fi
+fi
+
 # user PATH: shoud export after other PATH
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 

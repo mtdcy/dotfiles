@@ -36,6 +36,10 @@ zstyle ':completion:*' max-errors 3 numeric
 zstyle ':completion:*' word true
 zstyle :compinstall filename "$HOME/.zshrc"
 
+# plugins
+[ -d "$HOME/.zsh/zfunc" ] && fpath+=("$HOME/.zsh/zfunc")
+[ -d "$HOME/.docker/completions" ] && fpath+=("$HOME/.docker/completions")
+
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
@@ -48,9 +52,6 @@ else
 fi
 # $?, n jobs, date
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
-
-# plugins
-[ -d "$HOME/.zsh/zfunc" ] && fpath+=("$HOME/.zsh/zfunc")
 
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 #ZSH_AUTOSUGGEST_MANUAL_REBIND=1    # how to rebind?
