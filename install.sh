@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -e
+
 LANG=en_US.UTF-8
 
 pushd "$(dirname "$0")"
@@ -26,11 +27,13 @@ if [ -z "$1" ] || [ "$1" = "install" ]; then
     fi
 
     info "install cmdlets.sh"
+    mkdir -pv bin
     if check https://git.mtdcy.top/mtdcy/cmdlets; then
         curl -o bin/cmdlets.sh -sL https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
     else
         curl -o bin/cmdlets.sh -sL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
     fi
+    chmod a+x bin/cmdlets.sh
 
     utils=(sed grep awk ln)
     for x in "${utils[@]}"; do
