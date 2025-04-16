@@ -51,5 +51,11 @@ fi
 # user PATH: shoud export after other PATH
 export PATH=$HOME/.bin:$HOME/.local/bin:$PATH
 
+# custom data path
+if test -e "$HOME/Data"; then
+    export OLLAMA_MODELS="$HOME/Data/ollama"
+fi
+
+# default locales
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
