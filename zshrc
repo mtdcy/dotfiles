@@ -220,6 +220,18 @@ alias lla='ls -lha'
 alias du="du -ah --time --max-depth=1 --exclude='@eaDir' 2>/dev/null"
 alias grep='grep --color=auto'
 
+grep.sh() {
+    local opts=(
+        -H -n -R 
+        --color=auto 
+        --exclude-dir=.git 
+        --exclude-dir=__pycache__ 
+        --binary-files=without-match 
+        --devices=skip
+    )
+    grep "${opts[@]}" "$@"
+}
+
 # ENVs
 export PAGER=less
 export LESS=-R
