@@ -53,17 +53,17 @@ fi
 # $?, n jobs, date
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
-ZSH_AUTOSUGGEST_USE_ASYNC=1
-#ZSH_AUTOSUGGEST_MANUAL_REBIND=1    # how to rebind?
-ZSH_AUTOSUGGEST_STRATEGY=(history)  # completion, match_prev_cmd
-
+# plugins
 source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
 source $HOME/.zsh/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-history-substring-search.zsh
 source $HOME/.zsh/zsh-iterm2-shell-integration.zsh
 
+# autosuggestions: Ctrl+l
 bindkey '^l' autosuggest-accept
+typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=1
+typeset -g ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd)
 
 # no underline for path
 typeset -g ZSH_HIGHLIGHT_STYLES[path]=''
