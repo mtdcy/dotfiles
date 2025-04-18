@@ -207,21 +207,21 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 alias sudo="sudo --preserve-env=PATH"
 export SYSTEMD_EDITOR=vim
 
-# alias
+# alias: gnu utils preferred
 hidden="--hide='@*' --hide='#recycle'"
-if ls --version 2>/dev/null | grep -F "GNU coreutils" &> /dev/null; then
-    alias ls="ls --color=auto $hidden"
-elif which gls &> /dev/null; then
+if which gls &> /dev/null; then
     alias ls="gls --color=auto $hidden"
+elif ls --version 2>/dev/null | grep -F "GNU coreutils" &> /dev/null; then
+    alias ls="ls --color=auto $hidden"
 else
     alias ls='ls -G' # macOS ls, no hide
 fi
 alias ll='ls -lh'
 alias lla='ls -lha'
 alias du="du -ah --time --max-depth=1 --exclude='@eaDir' 2>/dev/null"
-alias grep='grep --color=auto'
 
-grep.sh() {
+alias grep='grep --color=auto'
+function grep.sh() {
     local opts=(
         -H -n -R 
         --color=auto 
@@ -256,7 +256,8 @@ alias -s 7z="7z x"
 alias ping="ping -c3"
 alias history="history 0"
 
-which rm2trash &> /dev/null && alias trm="rm2trash"
+# Big alias
+alias G='lazygit'
 
 if which tmux &> /dev/null; then
     alias T='tmux_attach_or_new'
@@ -264,17 +265,6 @@ else
     alias T='screen_attach_or_open'
 fi
 
-which lazygit &> /dev/null && alias G='lazygit' || true
-
 # DEBUG
 timezsh() { /usr/bin/time $SHELL -i -c exit; }
 #zprof
-
-#if [ "$(uname -o)" != Darwin ]; then
-#    sed -e 's/cpu_temp=.*$/cpu_temp="C"/' \
-#        -e 's/memory_unit=.*$/memory_unit=gib/' \
-#        -e 's/speed_shorthand=.*$/speed_shorthand=on/' \
-#        -i $HOME/.config/neofetch/config.conf &> /dev/null || true
-#
-#    neofetch 2> /dev/null
-#fi
