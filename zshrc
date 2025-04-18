@@ -36,10 +36,6 @@ zstyle ':completion:*' max-errors 3 numeric
 zstyle ':completion:*' word true
 zstyle :compinstall filename "$HOME/.zshrc"
 
-# plugins
-[ -d "$HOME/.zsh/zfunc" ] && fpath+=("$HOME/.zsh/zfunc")
-[ -d "$HOME/.docker/completions" ] && fpath+=("$HOME/.docker/completions")
-
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
@@ -54,6 +50,8 @@ fi
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
 # plugins
+fpath+=("$HOME/.zsh/zsh-completions")
+
 source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
 source $HOME/.zsh/zsh-syntax-highlighting.zsh
