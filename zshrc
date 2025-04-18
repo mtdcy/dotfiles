@@ -68,9 +68,6 @@ bindkey '^l' autosuggest-accept
 # no underline for path
 typeset -g ZSH_HIGHLIGHT_STYLES[path]=''
 
-autoload -U history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
 if [ "$(uname -s)" = "Linux" ]; then
     bindkey "$terminfo[kcuu1]" history-substring-search-up
     bindkey "$terminfo[kcud1]" history-substring-search-down
@@ -78,6 +75,12 @@ else
     bindkey '^[[A' history-substring-search-up
     bindkey '^[[B' history-substring-search-down
 fi
+
+# ** Outdated? history-search-end works well without this **
+# https://github.com/zsh-users/zsh/blob/master/Functions/Zle/history-search-end
+#autoload -U history-search-end
+#zle -N history-beginning-search-backward-end history-search-end
+#zle -N history-beginning-search-forward-end history-search-end
 
 # https://github.com/Eugeny/tabby/wiki/Shell-working-directory-reporting
 precmd () { echo -n "\x1b]1337;CurrentDir=$(pwd)\x07" }
