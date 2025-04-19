@@ -16,3 +16,6 @@ cp -fv zsh-completions/src/_* "$instdir/zsh-completions/"
 
 # docker completion
 curl -sL -o "$instdir/zsh-completions/_docker" https://raw.githubusercontent.com/docker/cli/master/contrib/completion/zsh/_docker
+
+# shell integration
+curl -sL -o "$instdir/zsh-iterm2-shell-integration.zsh" https://iterm2.com/shell_integration/zsh
