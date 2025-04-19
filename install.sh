@@ -60,7 +60,8 @@ done
 info "install fonts"
 if [ "$(uname)" = "Darwin" ]; then
     mkdir -pv ~/Library/Fonts
-    cp -rfv fonts/* ~/Library/Fonts/
+    find fonts -name "*.ttf" -exec cp -fv {} ~/Library/Fonts/ \;
+    find fonts -name "*.otf" -exec cp -fv {} ~/Library/Fonts/ \;
 else
     mkdir -pv ~/.local/share/fonts
     cp -rfv fonts/* ~/.local/share/fonts/
