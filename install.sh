@@ -48,9 +48,17 @@ fi
 [[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='./bin/ln -svfT'
 
 #>> install dotfiles
+
+# copy files
+files=(gitconfig)
+for x in "${files[@]}"; do
+    info "install .$x"
+    cp -fv "$x" "$HOME/.$x"
+done
+
 # 'fatal: Unable to mark file zsh/history'
 git update-index --assume-unchanged zsh/history || true
-files=(bin bashrc zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh)
+files=(bin bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh)
 for x in "${files[@]}"; do
     info "install symbolic .$x"
     $LN "$(pwd -P)/$x" "$HOME/.$x"
@@ -67,6 +75,11 @@ else
     cp -rfv fonts/* ~/.local/share/fonts/
     fc-cache -fv || true
 fi
+#<<
+
+#>> git:
+git config --global --replace-all user.name  "$(read -r -p 'git user.name: '; echo "$REPLY")"
+git config --global --replace-all user.email "$(read -r -p 'git user.email: '; echo "$REPLY")"
 #<<
 
 #>> install programs
@@ -130,37 +143,6 @@ if [ "$(uname)" = "Darwin" ]; then
     info "apply iterm2 settings"
     defaults import com.googlecode.iterm2 iterm2/com.googlecode.iterm2.plist
 fi
-#<<
-
-#>> git:
-info "apply git settings"
-which less &&
-git config --global --replace-all core.pager    "less -F -X" ||
-git config --global --replace-all core.pager    "more"
-git config --global --replace-all pull.rebase   true
-git config --global --replace-all push.default  simple
-git config --global --replace-all core.editor   vim
-git config --global --replace-all diff.tool     vimdiff
-git config --global --replace-all core.autocrlf false
-
-git config --global --replace-all core.mergeoptions --no-edit
-git config --global --replace-all mergetool.prompt false
-git config --global --replace-all merge.tool vimdiff
-git config --global --replace-all merge.conflictstyle diff3
-git config --global --replace-all core.excludesfile '*.swp'
-
-git config --global --replace-all alias.pl      "pull --rebase --recurse-submodules"
-git config --global --replace-all alias.st      status
-git config --global --replace-all alias.co      checkout
-git config --global --replace-all alias.ci      commit
-git config --global --replace-all alias.br      branch
-git config --global --replace-all alias.cp      "cherry-pick --no-ff -x"
-git config --global --replace-all alias.lg      "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %ci)'"
-git config --global --replace-all alias.lg1     "log -n 1 --color --name-status --parents"
-git config --global --replace-all alias.lga     "log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %cr)'"
-
-git config --global --get user.name     || git config --global --replace-all user.name  "$(read -r -p 'user.name: '; echo "$REPLY")"
-git config --global --get user.email    || git config --global --replace-all user.email "$(read -r -p 'user.email: '; echo "$REPLY")"
 #<<
 
 # vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
