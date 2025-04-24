@@ -23,7 +23,7 @@ if which brew &> /dev/null; then
 fi
 
 # rust & cargo
-if [ -d "$HOME/.cargo" ]; then
+if [ -f "$HOME/.cargo/env" ]; then
     export RUSTUP_DIST_SERVER=https://mirrors.mtdcy.top/rust-static
     export RUSTUP_UPDATE_ROOT=https://mirrors.mtdcy.top/rust-static/rustup
     . "$HOME/.cargo/env"
@@ -38,7 +38,7 @@ export GOPATH="$HOME/.go"
 [ -d "$HOME/.luarocks" ] && export PATH=$HOME/.luarocks/bin:$PATH
 
 # deno
-[ -d "$HOME/.deno" ] && source "$HOME/.deno/env"
+[ -f "$HOME/.deno/env" ] && source "$HOME/.deno/env"
 
 if [ -d "$HOME/.Miniconda3" ]; then
     if [ -f "$HOME/.Miniconda3/etc/profile.d/conda.sh" ]; then
