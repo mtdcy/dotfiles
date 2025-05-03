@@ -9,6 +9,9 @@ echocmd() {
     "$@"
 }
 
+info "request root privilege"
+sudo true
+
 if which brew; then
     info "Cleanup Homebrew"
     echocmd brew update 
