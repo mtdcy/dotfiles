@@ -45,7 +45,7 @@ if [ -z "$1" ] || [ "$1" = "install" ]; then
 fi
 
 # always copy in msys2
-[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='./bin/ln -svfT'
+[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='./bin/ln -sfn'
 
 #>> install dotfiles
 
@@ -58,10 +58,17 @@ done
 
 # 'fatal: Unable to mark file zsh/history'
 git update-index --assume-unchanged zsh/history || true
-files=(bin bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh)
+files=(bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh)
 for x in "${files[@]}"; do
     info "install symbolic .$x"
     $LN "$(pwd -P)/$x" "$HOME/.$x"
+done
+
+# link tools
+mkdir -p "$HOME/.bin"
+for x in tools/*; do
+    info "install $x"
+    $LN "$(pwd -P)/$x" "$HOME/.bin/$(basename "$x")"
 done
 
 # install fonts instead of create symlinks.
