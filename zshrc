@@ -232,6 +232,11 @@ function grep.sh() {
     )
     grep "${opts[@]}" "$@"
 }
+function replace.sh() { # <match> <replacement> <target>
+    grep.sh -w -l "$1" "$3" | xargs sed -i "s/\<$1\>/$2/g"
+}
+
+alias nvimdiff='nvim -d'
 
 # ENVs
 export PAGER=less
