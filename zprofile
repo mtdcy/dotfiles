@@ -2,6 +2,8 @@
 
 umask 0022
 
+MIRRORS=https://mirrors.mtdcy.top:8443
+
 # PATHs
 echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
 
@@ -19,15 +21,15 @@ if which brew &> /dev/null; then
     [ -d "$brewprefix/opt/gnu-tar"      ] && export PATH="$brewprefix/opt/gnu-tar/libexec/gnubin:$PATH"
     [ -d "$brewprefix/opt/findutils"    ] && export PATH="$brewprefix/opt/findutils/libexec/gnubin:$PATH"
 
-    export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.mtdcy.top/homebrew-bottles
-    export HOMEBREW_API_DOMAIN=https://mirrors.mtdcy.top/homebrew-bottles/api
+    export HOMEBREW_BOTTLE_DOMAIN=$MIRRORS/homebrew-bottles
+    export HOMEBREW_API_DOMAIN=$MIRRORS/homebrew-bottles/api
     export HOMEBREW_NO_AUTO_UPDATE=true
 fi
 
 # rust & cargo
 if [ -f "$HOME/.cargo/env" ]; then
-    export RUSTUP_DIST_SERVER=https://mirrors.mtdcy.top/rust-static
-    export RUSTUP_UPDATE_ROOT=https://mirrors.mtdcy.top/rust-static/rustup
+    export RUSTUP_DIST_SERVER=$MIRRORS/rust-static
+    export RUSTUP_UPDATE_ROOT=$MIRRORS/rust-static/rustup
     . "$HOME/.cargo/env"
 fi
 
@@ -35,7 +37,7 @@ fi
 [ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
 if which go &> /dev/null; then
     export GOPATH="$HOME/.go"
-    export GOPROXY="https://mirrors.mtdcy.top/gomods,direct"
+    export GOPROXY="$MIRRORS/gomods,direct"
     mkdir -p "$GOPATH"
 
     export PATH=$GOPATH/bin:$PATH
@@ -66,3 +68,5 @@ fi
 # default locales
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+
+unset MIRRORS

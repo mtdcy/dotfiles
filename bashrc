@@ -66,29 +66,6 @@ alias sudo="sudo env \"PATH=$PATH\""
 which trash > /dev/null 2>&1 && alias rm="trash"
 # }}}
 
-# extract#{{{
-extract () {
-    if [ -f "$1" ]; then
-	    case "$1" in
-		    *.tar.bz2)  tar xvjf "$@" 	;;
-    		*.tar.gz) 	tar xvzf "$@" 	;;
-            *.tar.xz)   tar xvfJ "$@"   ;;
-	    	*.bz2) 		bunzip2  "$@" 	;;
-    		*.rar) 		unrar x  "$@" 	;;
-	    	*.gz) 		gunzip   "$@" 	;;
-		    *.tar) 		tar xvf  "$@" 	;;
-    		*.tbz2) 	tar xvjf "$@" 	;;
-	    	*.tgz) 		tar xvzf "$@" 	;;
-		    *.zip) 		unzip    "$@" 	;;
-	    	*.7z) 		7z x     "$@" 	;;
-		    *) 	echo "Error: don't knwon how to extract $* ..." ;;
-	    esac
-    else
-	    echo "'$1' doesn't exist ..."
-    fi
-}
-#}}}
-
 # colorize the man-pages#{{{
 export LESS_TERMCAP_mb=$'\e[1;32m'
 export LESS_TERMCAP_md=$'\e[1;32m'
@@ -117,24 +94,4 @@ export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;
 # set the number of open files to be 1024
 ulimit -S -n 1024
 
-[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
-
 ##}}}
-
-# homebrew & linuxbrew
-[ -d /home/linuxbrew ]     && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-[ -x /usr/local/bin/brew ] && eval "$(/usr/local/bin/brew shellenv)"
-
-if which brew &> /dev/null; then
-    brewprefix="$(brew --prefix)" # run only once to reduce start time
-    export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
-    export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
-    export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
-
-    export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.mtdcy.top/homebrew-bottles
-    export HOMEBREW_API_DOMAIN=https://mirrors.mtdcy.top/homebrew-bottles/api
-fi
-
-export PATH=$HOME/.bin:$PATH
-. "$HOME/.cargo/env"
-. "/home/mtdcy/.deno/env"

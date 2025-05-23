@@ -168,75 +168,11 @@ function prompt_remote_host() {
     [ -z "$REMOTE_HOST" ]   || { p10k segment -f skyblue1 -t "⌨ $REMOTE_HOST ⌨"     ; return; }
 }
 
-# screen
-function screen_attach_or_open() {
-    [ $# -gt 0 ] && screen "$@" && return
-    screen -D -R -S "$(basename $PWD)"
-}
-
-function tmux_attach_or_new() {
-    # run tmux commands
-    [ $# -gt 0 ] && tmux "$@" && return
-    # detach if inside tmux
-    [ -n "$TMUX" ] && tmux detach && return
-    # attach or new
-    local ses=($(tmux list-sessions | awk -F: '{print $1}' | xargs))
-    if [ $#ses -gt 0 ]; then
-        echo -en "Current sessions:\n"
-        for ((i=1; i < ($#ses + 1); i++)) echo " $i) ${ses[$i]}"
-        echo -en "\nPlease select session (Enter to start new session): "
-        read ans
-        if [ -z "$ans" ] || [ "$ans" -gt $#ses ]; then
-            tmux new -t "$(basename "$PWD")"
-        else
-            tmux attach -t "${ses[$ans]}"
-        fi
-    else
-        tmux new -t "$(basename "$PWD")"
-    fi
-}
-
 # COLORS
 export LSCOLORS=exfxcxdxbxbxbxbxbxbxbx # BSD
 export LS_COLORS='no=00;37:fi=00:di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=31;40:cd=31;40:su=31;40:sg=31;40:tw=31;40:ow=31;40:'
 # Zsh to use the same colors as ls
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-
-# sudo & systemd
-#alias sudo="sudo env \"PATH=$PATH\""
-alias sudo="sudo --preserve-env=PATH"
-export SYSTEMD_EDITOR=vim
-
-# alias: gnu utils preferred
-hidden="--hide='@*' --hide='#recycle'"
-if which gls &> /dev/null; then
-    alias ls="gls --color=auto $hidden"
-elif ls --version 2>/dev/null | grep -F "GNU coreutils" &> /dev/null; then
-    alias ls="ls --color=auto $hidden"
-else
-    alias ls='ls -G' # macOS ls, no hide
-fi
-alias ll='ls -lh'
-alias lla='ls -lha'
-alias du="du -ah --time --max-depth=1 --exclude='@eaDir' 2>/dev/null"
-
-alias grep='grep --color=auto'
-function grep.sh() {
-    local opts=(
-        -H -n -R 
-        --color=auto 
-        --exclude-dir=.git 
-        --exclude-dir=__pycache__ 
-        --binary-files=without-match 
-        --devices=skip
-    )
-    grep "${opts[@]}" "$@"
-}
-function replace.sh() { # <match> <replacement> <target>
-    grep.sh -w -l "$1" "$3" | xargs sed -i "s/\<$1\>/$2/g"
-}
-
-alias nvimdiff='nvim -d'
 
 # ENVs
 export PAGER=less
@@ -258,17 +194,7 @@ alias -s tar="tar -xvf"
 alias -s Z="uncompress"
 alias -s 7z="7z x"
 
-alias ping="ping -c3"
-alias history="history 0"
-
-# Big alias
-alias G='lazygit'
-
-if which tmux &> /dev/null; then
-    alias T='tmux_attach_or_new'
-else
-    alias T='screen_attach_or_open'
-fi
+source "$HOME/.zsh/functions.sh"
 
 # DEBUG
 timezsh() { /usr/bin/time $SHELL -i -c exit; }
