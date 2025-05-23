@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 LANG=en_US.UTF-8
 
@@ -45,7 +45,7 @@ if [ -z "$1" ] || [ "$1" = "install" ]; then
 fi
 
 # always copy in msys2
-[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='./bin/ln -sfn'
+[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='ln -sfn'
 
 #>> install dotfiles
 
