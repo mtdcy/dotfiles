@@ -9,6 +9,8 @@ echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
 [ -d /home/linuxbrew ]     && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 [ -x /usr/local/bin/brew ] && eval "$(/usr/local/bin/brew shellenv)"
 
+[ -d /opt/homebrew ] && export PATH=/opt/homebrew/bin:$PATH
+
 if which brew &> /dev/null; then
     brewprefix="$(brew --prefix)" # run only once to reduce start time
     [ -d "$brewprefix/opt/coreutils"    ] && export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
