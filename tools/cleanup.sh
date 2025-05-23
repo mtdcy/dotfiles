@@ -61,6 +61,10 @@ if test -d "$HOME/Library/Caches/Google/Chrome"; then
     echocmd rm -rf "$HOME/Library/Caches/Google/Chrome/Default/Cache/*"
 fi
 
+if test -d "$HOME/.Trash"; then
+    echo 'tell application "Finder" to empty trash' | osascript
+fi
+
 # cleanup caches
 caches=(
     act
