@@ -32,9 +32,14 @@ if [ -f "$HOME/.cargo/env" ]; then
 fi
 
 # go
-export GOPATH="$HOME/.go"
 [ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
-[ -d "$GOPATH" ]     && export PATH=$GOPATH/bin:$PATH
+if which go &> /dev/null; then
+    export GOPATH="$HOME/.go"
+    export GOPROXY="https://mirrors.mtdcy.top/gomods,direct"
+    mkdir -p "$GOPATH"
+
+    export PATH=$GOPATH/bin:$PATH
+fi
 
 # luarocks
 [ -d "$HOME/.luarocks" ] && export PATH=$HOME/.luarocks/bin:$PATH
