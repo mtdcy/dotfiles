@@ -23,7 +23,9 @@ HISTSIZE=10000
 SAVEHIST=10000
 setopt autocd beep extendedglob histfindnodups histignorealldups
 setopt nomatch notify
-bindkey -v
+
+# vi mode
+#bindkey -v
 # End of lines configured by zsh-newuser-install
 
 # reconfig with 'autoload -U compinstall && compinstall'
