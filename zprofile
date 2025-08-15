@@ -27,10 +27,11 @@ if which brew &> /dev/null; then
 fi
 
 # rust & cargo
-if [ -f "$HOME/.cargo/env" ]; then
+if [ -d "$HOME/.cargo" ]; then
     export RUSTUP_DIST_SERVER=$MIRRORS/rust-static
     export RUSTUP_UPDATE_ROOT=$MIRRORS/rust-static/rustup
-    . "$HOME/.cargo/env"
+    [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+    [ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
 # go

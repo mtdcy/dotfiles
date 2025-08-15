@@ -93,6 +93,8 @@ alias ping="ping -c3"
 
 alias history="history 0"
 
+alias typora="open -a typora"
+
 # Big alias
 alias G='lazygit'
 

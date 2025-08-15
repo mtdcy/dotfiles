@@ -14,8 +14,8 @@ sudo true
 
 if which brew; then
     info "Cleanup Homebrew"
-    echocmd brew update 
-    echocmd brew upgrade 
+    #echocmd brew update 
+    #echocmd brew upgrade 
     echocmd brew cleanup --prune=all
 fi
 
@@ -69,6 +69,7 @@ fi
 caches=(
     act
     cmdlets
+    "Library/Application Support/typora-user-images"
 )
 
 for x in "${caches[@]}"; do
@@ -77,6 +78,9 @@ for x in "${caches[@]}"; do
         echocmd sudo rm -rf "$HOME/.cache/$x"
     elif test -d "$HOME/Library/Caches/$x"; then
         info "Cleanup Caches $x"
-        echocmd sudo rm -rf "$HOME/.cache/$x"
+        echocmd sudo rm -rf "$HOME/Library/Caches/$x"
+    elif test -d "$HOME/$x"; then
+        info "Cleanup $x"
+        echocmd sudo rm -rf "$HOME/$x"
     fi
 done
