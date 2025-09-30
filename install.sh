@@ -63,6 +63,9 @@ for x in "${files[@]}"; do
     $LN "$(pwd -P)/$x" "$HOME/.$x"
 done
 
+# fix: 'zsh compinit: insecure directories'
+chmod 0755 zsh/zsh-completions
+
 # link tools
 mkdir -p "$HOME/.bin"
 for x in tools/*; do
