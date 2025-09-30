@@ -4,22 +4,24 @@ LANG=en_US.UTF-8
 
 pushd "$(dirname "$0")"
 
+export PATH="$HOME/.bin:$PATH"
+
+mkdir -pv "$HOME/.bin"
+
 error() { echo -e "\\033[31m$*\\033[39m"; }
 info()  { echo -e "\\033[32m$*\\033[39m"; }
 warn()  { echo -e "\\033[33m$*\\033[39m"; }
 
-
 check() {
     case "$1" in
         http://*|https://*)
-            curl --fail -sIL -o /dev/null "$1"
+            curl --fail -sIL --connect-timeout 1 -o /dev/null "$1"
             ;;
     esac
 }
 
-if [ -z "$1" ] || [ "$1" = "install" ]; then
-    if [ -d "$(dirname "$0")/.git" ]; then
-        cd "$(dirname "$0")" || exit
+if [ "$1" = "install" ] || [ "$1" = "--update" ]; then
+    if [ -d .git ]; then
         git pull --rebase --force
     else
         git clone --depth=1 https://git.mtdcy.top/mtdcy/dotfiles.git "$HOME/.files"
@@ -27,28 +29,25 @@ if [ -z "$1" ] || [ "$1" = "install" ]; then
     fi
 
     info "install cmdlets.sh"
-    mkdir -pv bin
     if check https://git.mtdcy.top/mtdcy/cmdlets; then
-        curl -o bin/cmdlets.sh -sL https://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh
+        bash -c "$(curl -fsSL http://git.mtdcy.top/mtdcy/cmdlets/raw/branch/main/cmdlets.sh)" install
     else
-        curl -o bin/cmdlets.sh -sL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh)" install
     fi
-    chmod a+x bin/cmdlets.sh
 
     utils=(sed grep awk ln)
     for x in "${utils[@]}"; do
-        bash bin/cmdlets.sh install "$x"
+        cmdlets.sh install "$x" || true # ignore errors
     done
     #<< its safe to use gnu tools from now on ##
 
-    exec ./install.sh --no-update
+    exec ./install.sh --no-update --extra
 fi
 
 # always copy in msys2
-[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='ln -sfn'
+[[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='ln -srfn'
 
-#>> install dotfiles
-
+# install dotfiles
 # copy files
 files=(gitconfig)
 for x in "${files[@]}"; do
@@ -82,14 +81,7 @@ else
     cp -rfv fonts/* ~/.local/share/fonts/
     fc-cache -fv || true
 fi
-#<<
 
-#>> git:
-git config --global --replace-all user.name  "$(read -r -p 'git user.name: '; echo "$REPLY")"
-git config --global --replace-all user.email "$(read -r -p 'git user.email: '; echo "$REPLY")"
-#<<
-
-#>> install programs
 info "install programs"
 if which brew &>/dev/null; then # prefer
     NONINTERACTIVE=1 brew install -q \
@@ -125,15 +117,6 @@ else
     exit 1
 fi
 
-info "install nvim"
-if check https://git.mtdcy.top/mtdcy/pretty.nvim; then
-    bash -c "$(curl -fsSL https://git.mtdcy.top/mtdcy/pretty.nvim/raw/branch/main/install.sh)"
-else
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/pretty.nvim/main/install.sh)"
-fi
-#<<
-
-#>> default settings
 info "apply default settings"
 $SHELL --version | grep -qFw 'zsh 5' || {
     info "apply zsh shell"
@@ -150,6 +133,17 @@ if [ "$(uname)" = "Darwin" ]; then
     info "apply iterm2 settings"
     defaults import com.googlecode.iterm2 iterm2/com.googlecode.iterm2.plist
 fi
-#<<
+
+[[ "$*" =~ "--extra" ]] || exit 0
+
+git config --global --replace-all user.name  "$(read -r -p 'git user.name: '; echo "$REPLY")"
+git config --global --replace-all user.email "$(read -r -p 'git user.email: '; echo "$REPLY")"
+
+info "install nvim"
+if check https://git.mtdcy.top/mtdcy/pretty.nvim; then
+    bash -c "$(curl -fsSL https://git.mtdcy.top/mtdcy/pretty.nvim/raw/branch/main/install.sh)"
+else
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/pretty.nvim/main/install.sh)"
+fi
 
 # vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
