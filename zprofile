@@ -21,6 +21,7 @@ if which brew &> /dev/null; then
     [ -d "$brewprefix/opt/gnu-tar"      ] && export PATH="$brewprefix/opt/gnu-tar/libexec/gnubin:$PATH"
     [ -d "$brewprefix/opt/findutils"    ] && export PATH="$brewprefix/opt/findutils/libexec/gnubin:$PATH"
 
+    export HOMEBREW_BREW_GIT_REMOTE="$MIRRORS/brew.git"
     export HOMEBREW_BOTTLE_DOMAIN=$MIRRORS/homebrew-bottles
     export HOMEBREW_API_DOMAIN=$MIRRORS/homebrew-bottles/api
     export HOMEBREW_NO_AUTO_UPDATE=true
