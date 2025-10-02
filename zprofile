@@ -21,11 +21,11 @@ done
 unset _repo
 
 if test -n "$HOMEBREW_PREFIX"; then
-    gnubin=( coreutils gnu-sed gawk grep gnu-tar findutils )
-    for x in "${gnubin[@]}"; do
+    _gnubin=( coreutils gnu-sed gawk grep gnu-tar findutils )
+    for x in "${_gnubin[@]}"; do
         [ -d "$HOMEBREW_PREFIX/opt/$x/libexec" ] && export PATH="$HOMEBREW_PREFIX/opt/$x/libexec/gnubin:$PATH"
     done
-    unset gnubin
+    unset _gnubin
 
     export HOMEBREW_BREW_GIT_REMOTE="$MIRRORS/brew.git"
     export HOMEBREW_BOTTLE_DOMAIN=$MIRRORS/homebrew-bottles
@@ -34,28 +34,33 @@ if test -n "$HOMEBREW_PREFIX"; then
 fi
 
 # rust & cargo
-if [ -d "$HOME/.cargo" ]; then
+if which cargo &>/dev/null; then
+    mkdir -p "$HOME/.cargo/bin"
+    export PATH="$HOME/.cargo/bin:$PATH"
+
     export RUSTUP_DIST_SERVER=$MIRRORS/rust-static
     export RUSTUP_UPDATE_ROOT=$MIRRORS/rust-static/rustup
+    
     [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-    [ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
 # go
 [ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
 if which go &> /dev/null; then
     export GOPATH="$HOME/.go"
-    export GOPROXY="$MIRRORS/gomods,direct"
-    mkdir -p "$GOPATH"
-
+    export GOPROXY="$MIRRORS/gomods"
     export PATH=$GOPATH/bin:$PATH
+    mkdir -p "$GOPATH"
 fi
 
 # cmdlets
 export CMDLETS_MAIN_REPO=$MIRRORS/cmdlets/latest
 
 # luarocks
-[ -d "$HOME/.luarocks" ] && export PATH=$HOME/.luarocks/bin:$PATH
+if which luarocks &>/dev/null; then
+    mkdir -p "$HOME/.luarocks"
+    export PATH=$HOME/.luarocks/bin:$PATH
+fi
 
 # deno
 [ -f "$HOME/.deno/env" ] && source "$HOME/.deno/env"
