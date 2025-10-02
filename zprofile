@@ -45,6 +45,9 @@ if which go &> /dev/null; then
     export PATH=$GOPATH/bin:$PATH
 fi
 
+# cmdlets
+export CMDLETS_MAIN_REPO=$MIRRORS/cmdlets/latest
+
 # luarocks
 [ -d "$HOME/.luarocks" ] && export PATH=$HOME/.luarocks/bin:$PATH
 
