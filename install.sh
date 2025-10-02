@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 LANG=en_US.UTF-8
 
@@ -20,7 +20,7 @@ check() {
     esac
 }
 
-if [ "$1" = "install" ] || [ "$1" = "--update" ]; then
+if [ -z "$1" ] || [ "$1" = "install" ]; then
     if [ -d .git ]; then
         git pull --rebase --force
     else
@@ -87,34 +87,28 @@ fi
 
 info "install programs"
 if which brew &>/dev/null; then # prefer
-    NONINTERACTIVE=1 brew install -q \
-        zsh vim git wget curl tree tmux htop \
-        python3 npm
-    if [ "$(uname)" = "Darwin" ]; then
-        NONINTERACTIVE=1 brew install -q \
-            coreutils findutils go lazygit
-    fi
-elif [ -f /etc/apt/sources.list ]; then
-    if check http://mirrors.mtdcy.top; then
-        sudo sed -e "s|archive.ubuntu.com|mirrors.mtdcy.top|g" \
-                 -e "s|security.ubuntu.com|mirrors.mtdcy.top|g" \
-                 -i /etc/apt/sources.list \
-                 -i /etc/apt/sources.list.d/* || true
-    fi
-    sudo apt update
-    sudo apt install -y \
-        zsh vim git wget curl tree tmux htop  \
-        python3 python3-venv npm golang \
-        fontconfig
-elif which pacman &>/dev/null; then
-    if check http://mirrors.mtdcy.top; then
-        sed -e "s|mirror.msys2.org|mirrors.mtdcy.top/msys2|g" \
-            -i /etc/pacman.d/mirrorlist*
-    fi
-    pacman -Sy
-    pacman -Sq --noconfirm \
-        zsh vim git wget curl tree tmux htop  \
+    _formulae=( 
+        coreutils findutils
+        zsh vim git wget curl 
+        tree tmux htop 
         python3 npm go
+    )
+    NONINTERACTIVE=1 brew install -q "${_formulae[@]}"
+    unset _formulae
+elif [ -f /etc/apt/sources.list ]; then
+    _apt=(
+        zsh vim git wget curl tree tmux htop
+        python3 python3-venv npm golang
+        fontconfig
+    )
+    sudo apt update
+    sudo apt install -y "${_apt[@]}"
+    unset _apt
+elif which pacman &>/dev/null; then
+    _pac=( zsh vim git wget curl tree tmux htop python3 npm go )
+    pacman -Sy
+    pacman -Sq --noconfirm "${_pac[@]}"
+    unset _pac
 else
     error "Please set package manager first."
     exit 1
