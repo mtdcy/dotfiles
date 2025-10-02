@@ -8,18 +8,24 @@ MIRRORS=https://mirrors.mtdcy.top:8443
 echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
 
 # homebrew & linuxbrew
-[ -d /home/linuxbrew ]     && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-[ -x /usr/local/bin/brew ] && eval "$(/usr/local/bin/brew shellenv)"
+_repo=(
+    /home/linuxbrew
+    /usr/local
+    /opt/homebrew
+)
 
-[ -d /opt/homebrew ] && export PATH=/opt/homebrew/bin:$PATH
+for x in "${_repo[@]}"; do
+    [ -x "$x/bin/brew" ] || continue;
+    eval -- "$("$x/bin/brew" shellenv)" && break
+done
+unset _repo
 
-if which brew &> /dev/null; then
-    brewprefix="$(brew --prefix)" # run only once to reduce start time
-    [ -d "$brewprefix/opt/coreutils"    ] && export PATH="$brewprefix/opt/coreutils/libexec/gnubin:$PATH"
-    [ -d "$brewprefix/opt/gnu-sed"      ] && export PATH="$brewprefix/opt/gnu-sed/libexec/gnubin:$PATH"
-    [ -d "$brewprefix/opt/grep"         ] && export PATH="$brewprefix/opt/grep/libexec/gnubin:$PATH"
-    [ -d "$brewprefix/opt/gnu-tar"      ] && export PATH="$brewprefix/opt/gnu-tar/libexec/gnubin:$PATH"
-    [ -d "$brewprefix/opt/findutils"    ] && export PATH="$brewprefix/opt/findutils/libexec/gnubin:$PATH"
+if test -n "$HOMEBREW_PREFIX"; then
+    gnubin=( coreutils gnu-sed gawk grep gnu-tar findutils )
+    for x in "${gnubin[@]}"; do
+        [ -d "$HOMEBREW_PREFIX/opt/$x/libexec" ] && export PATH="$HOMEBREW_PREFIX/opt/$x/libexec/gnubin:$PATH"
+    done
+    unset gnubin
 
     export HOMEBREW_BREW_GIT_REMOTE="$MIRRORS/brew.git"
     export HOMEBREW_BOTTLE_DOMAIN=$MIRRORS/homebrew-bottles
