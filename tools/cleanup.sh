@@ -79,8 +79,5 @@ for x in "${caches[@]}"; do
     elif test -d "$HOME/Library/Caches/$x"; then
         info "Cleanup Caches $x"
         echocmd sudo rm -rf "$HOME/Library/Caches/$x"
-    elif test -d "$HOME/$x"; then
-        info "Cleanup $x"
-        echocmd sudo rm -rf "$HOME/$x"
     fi
 done
