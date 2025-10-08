@@ -2,7 +2,12 @@
 
 umask 0022
 
-MIRRORS=https://mirrors.mtdcy.top:8443
+MIRRORS=https://mirrors.mtdcy.top
+if ! curl -fsI --connect-timeout 1 "$MIRRORS" -o /dev/null; then
+    MIRRORS=https://mirrors.ustc.edu.cn
+else
+    export CMDLETS_MAIN_REPO=$MIRRORS/cmdlets/latest
+fi
 
 # PATHs
 echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
@@ -34,14 +39,16 @@ if test -n "$HOMEBREW_PREFIX"; then
 fi
 
 # rust & cargo
-if which cargo &>/dev/null; then
-    mkdir -p "$HOME/.cargo/bin"
-    export PATH="$HOME/.cargo/bin:$PATH"
+if which rustup &>/dev/null || which cargo &>/dev/null; then
+    export CARGO_HOME="$HOME/.cargo"
+    mkdir -p "$CARGO_HOME/bin"
+    export PATH="$CARGO_HOME/bin:$PATH"
 
+    [ -f "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
+
+    export RUSTUP_HOME="$HOME/.rustup"
     export RUSTUP_DIST_SERVER=$MIRRORS/rust-static
     export RUSTUP_UPDATE_ROOT=$MIRRORS/rust-static/rustup
-    
-    [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 fi
 
 # go
@@ -52,9 +59,6 @@ if which go &> /dev/null; then
     export PATH=$GOPATH/bin:$PATH
     mkdir -p "$GOPATH"
 fi
-
-# cmdlets
-export CMDLETS_MAIN_REPO=$MIRRORS/cmdlets/latest
 
 # luarocks
 if which luarocks &>/dev/null; then
