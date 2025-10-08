@@ -143,4 +143,7 @@ else
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/pretty.nvim/main/install.sh)"
 fi
 
+sudo update-alternatives --install $(which editor) editor $(which nvim) 100
+sudo update-alternatives --set editor "$(which nvim)"
+
 # vim:ts=4:sw=4:ai:foldmethod=marker:foldlevel=0:fmr=#>>,#<<
