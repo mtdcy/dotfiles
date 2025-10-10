@@ -48,16 +48,10 @@ fi
 [[ "$OSTYPE" =~ msys ]] && LN='cp -rfv' || LN='ln -srfn'
 
 # install dotfiles
-# copy files
-files=(gitconfig)
-for x in "${files[@]}"; do
-    info "install .$x"
-    cp -fv "$x" "$HOME/.$x"
-done
 
 # 'fatal: Unable to mark file zsh/history'
 git update-index --assume-unchanged zsh/history || true
-files=(bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh)
+files=(bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh gitconfig)
 for x in "${files[@]}"; do
     info "install symbolic .$x"
     $LN "$(pwd -P)/$x" "$HOME/.$x"

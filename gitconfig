@@ -13,6 +13,7 @@
 [mergetool]
 	prompt = false
 [merge]
+    ff = no
 	tool = vimdiff
 	conflictstyle = diff3
 [alias]
@@ -22,6 +23,8 @@
 	ci = commit
 	br = branch
 	cp = cherry-pick --no-ff -x
-	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %ci)'
+	lg = log --color=always --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %ci)' --decorate
 	lg1 = log -n 1 --color --name-status --parents
-	lga = log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %cr)'
+	lga = log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cn - %cr)' --decorate
+[safe]
+	directory = *
