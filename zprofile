@@ -52,12 +52,18 @@ if which rustup &>/dev/null || which cargo &>/dev/null; then
 fi
 
 # go
-[ -d /usr/local/go ] && export PATH=/usr/local/go/bin:$PATH
-if which go &> /dev/null; then
-    export GOPATH="$HOME/.go"
-    export GOPROXY="$MIRRORS/gomods"
-    export PATH=$GOPATH/bin:$PATH
-    mkdir -p "$GOPATH"
+export GOPATH="$HOME/.go"
+export GOPROXY="$MIRRORS/gomods"
+export PATH=$GOPATH/bin:$PATH
+mkdir -p "$GOPATH"
+
+if which go &>/dev/null; then
+    true
+elif test -d /usr/local/go; then
+    export PATH=/usr/local/go/bin:$PATH
+else
+    export GOROOT="$HOME/.goroot/current"
+    export PATH="$GOROOT/bin:$PATH"
 fi
 
 # luarocks
