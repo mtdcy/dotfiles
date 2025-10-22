@@ -1,6 +1,6 @@
 #!/bin/bash
 
-info() { 
+info() {
     echo -e "\\033[32m=== $*\\033[39m"
 }
 
@@ -14,14 +14,14 @@ sudo true
 
 if which brew; then
     info "Cleanup Homebrew"
-    #echocmd brew update 
-    #echocmd brew upgrade 
+    #echocmd brew update
+    #echocmd brew upgrade
     echocmd brew cleanup --prune=all
 fi
 
 if which docker; then
     info "Cleanup Docker"
-    echocmd docker system prune --volumes --force 
+    echocmd docker system prune --volumes --force
 fi
 
 if which python3; then
@@ -56,9 +56,9 @@ if test -d "/Library/Application Support/com.apple.idleassetsd"; then
     echocmd find "/Library/Application Support/com.apple.idleassetsd" -type f -name "*.mov" -exec sudo rm -rfv {} \;
 fi
 
-if test -d "$HOME/Library/Caches/Google/Chrome"; then
-    info "Cleanup Chrome"
-    echocmd rm -rf "$HOME/Library/Caches/Google/Chrome/Default/Cache/*"
+if test -d "$HOME/Library/Caches"; then
+    info "Cleanup ~/Library/Caches"
+    echocmd rm -rf "$HOME/Library/Caches"
 fi
 
 if test -d "$HOME/.Trash"; then
