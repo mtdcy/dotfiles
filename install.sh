@@ -35,10 +35,7 @@ if [ -z "$1" ] || [ "$1" = "install" ]; then
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/mtdcy/cmdlets/main/cmdlets.sh)" install
     fi
 
-    utils=(sed grep awk ln)
-    for x in "${utils[@]}"; do
-        cmdlets.sh install "$x" || true # ignore errors
-    done
+    cmdlets.sh install coreutils gsed gawk grep
     #<< its safe to use gnu tools from now on ##
 
     exec ./install.sh --no-update --extra
@@ -81,10 +78,9 @@ fi
 
 info "install programs"
 if which brew &>/dev/null; then # prefer
-    _formulae=( 
-        coreutils findutils
-        zsh vim git wget curl 
-        tree tmux htop 
+    _formulae=(
+        zsh vim git wget curl
+        tree tmux htop
         python3 npm go
     )
     NONINTERACTIVE=1 brew install -q "${_formulae[@]}"
