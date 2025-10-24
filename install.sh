@@ -48,7 +48,7 @@ fi
 
 # 'fatal: Unable to mark file zsh/history'
 git update-index --assume-unchanged zsh/history || true
-files=(bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh gitconfig)
+files=(bashrc profile zsh zshrc zprofile vim vimrc tmux.conf p10k.zsh)
 for x in "${files[@]}"; do
     info "install symbolic .$x"
     $LN "$(pwd -P)/$x" "$HOME/.$x"
