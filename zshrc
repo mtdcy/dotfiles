@@ -53,6 +53,7 @@ export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
 
 # plugins
 fpath+=("$HOME/.zsh/zsh-completions")
+fpath+=("$HOME/.zfunc")
 
 source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
