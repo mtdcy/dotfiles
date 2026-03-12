@@ -14,13 +14,13 @@ echo $PATH | grep -Fw "/sbin:" &> /dev/null || export PATH="/sbin:$PATH"
 
 # homebrew & linuxbrew
 _repo=(
-    /home/linuxbrew
+    /home/linuxbrew/.linuxbrew
     /usr/local
     /opt/homebrew
 )
 
 for x in "${_repo[@]}"; do
-    [ -x "$x/bin/brew" ] || continue;
+    [ -f "$x/bin/brew" ] || continue;
     eval -- "$("$x/bin/brew" shellenv)" && break
 done
 unset _repo
@@ -49,6 +49,8 @@ if which rustup &>/dev/null || which cargo &>/dev/null; then
     export RUSTUP_HOME="$HOME/.rustup"
     export RUSTUP_DIST_SERVER=$MIRRORS/rust-static
     export RUSTUP_UPDATE_ROOT=$MIRRORS/rust-static/rustup
+
+    [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 fi
 
 # go
@@ -96,3 +98,11 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 unset MIRRORS
+
+# musl-gcc:
+PATH=/opt/bin:$PATH
+
+# npm
+PATH="$HOME/.npm-global/bin:$PATH"
+
+export PATH

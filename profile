@@ -17,3 +17,10 @@ if test -x $ZSH; then
     export SHELL=$ZSH
     exec $ZSH
 fi
+
+PATH=/opt/bin:$PATH
+
+# npm
+PATH="$HOME/.npm-global/bin:$PATH"
+
+export PATH
