@@ -65,6 +65,12 @@ function replace.sh() { # <match> <replacement> <target>
     grep.sh -w -l "$1" "$3" | xargs sed -i "s/\<$1\>/$2/g"
 }
 
+function list.completions() {
+    for command completion in ${(kv)_comps}; do
+        printf "%-32s %s\n" "$command" "$completion"
+    done | sort
+}
+
 # sudo & systemd
 #alias sudo="sudo env \"PATH=$PATH\""
 alias sudo="sudo --preserve-env=PATH"
@@ -74,7 +80,7 @@ export SYSTEMD_EDITOR=vim
 hidden="--hide='@*' --hide='#recycle'"
 if which gls &> /dev/null; then
     alias ls="gls --color=auto $hidden"
-elif ls --version 2>/dev/null | grep -F "GNU coreutils" &> /dev/null; then
+elif ls --version 2>/dev/null | grep -F "coreutils" &> /dev/null; then
     alias ls="ls --color=auto $hidden"
 else
     alias ls='ls -G' # macOS ls, no hide
@@ -103,3 +109,5 @@ if which tmux &> /dev/null; then
 else
     alias T='screen_attach_or_open'
 fi
+
+alias oc='openclaw'

@@ -55,7 +55,7 @@ for x in "${files[@]}"; do
 done
 
 # fix: 'zsh compinit: insecure directories'
-chmod 0755 zsh/zsh-completions
+chmod 0755 zsh/completions
 
 # link tools
 mkdir -p "$HOME/.bin"
@@ -122,9 +122,6 @@ if [ "$(uname)" = "Darwin" ]; then
 fi
 
 [[ "$*" =~ "--extra" ]] || exit 0
-
-git config --global --replace-all user.name  "$(read -r -p 'git user.name: '; echo "$REPLY")"
-git config --global --replace-all user.email "$(read -r -p 'git user.email: '; echo "$REPLY")"
 
 info "install nvim"
 if check https://git.mtdcy.top/mtdcy/pretty.nvim; then

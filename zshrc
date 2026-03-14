@@ -7,6 +7,9 @@ fi
 
 # Copyright (c) 2014, Chen Fang mtdcy.chen@gmail.com
 
+# prepend our fpaths
+fpath=( "$HOME/.zsh/completions" "$HOME/.zfunc" $fpath )
+
 #zmodload zsh/zprof
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
@@ -40,6 +43,7 @@ zstyle :compinstall filename "$HOME/.zshrc"
 
 autoload -Uz compinit
 compinit
+
 # End of lines added by compinstall
 
 # keep these PROMPT settings in case p10k not working
@@ -50,10 +54,6 @@ else
 fi
 # $?, n jobs, date
 export RPROMPT='%(?..$? = %F{196}%?%f,) %(1j.%F{214}%j%f jobs,.) %*'
-
-# plugins
-fpath+=("$HOME/.zsh/zsh-completions")
-fpath+=("$HOME/.zfunc")
 
 source $HOME/.zsh/zsh-256color.zsh
 source $HOME/.zsh/zsh-autosuggestions.zsh
