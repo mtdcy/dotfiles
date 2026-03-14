@@ -54,6 +54,13 @@ for x in "${files[@]}"; do
     $LN "$(pwd -P)/$x" "$HOME/.$x"
 done
 
+exampls=( gitconfig )
+for x in "${exampls[@]}"; do
+    test -f ~/.$x && continue
+    info "install .$x"
+    cp exampls/$x ~/.$x
+done
+
 # fix: 'zsh compinit: insecure directories'
 chmod 0755 zsh/completions
 
